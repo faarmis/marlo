@@ -24,7 +24,7 @@ import android.os.Build;
 import android.support.annotation.ColorRes;
 import android.support.annotation.DrawableRes;
 
-class ResourceUtils {
+final class ResourceUtils {
     private final Context context;
 
     public ResourceUtils(Context context) {
