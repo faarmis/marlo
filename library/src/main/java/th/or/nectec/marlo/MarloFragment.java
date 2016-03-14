@@ -44,7 +44,6 @@ public class MarloFragment extends SupportMapFragment implements OnClickListener
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-
         getMapAsync(this);
 
         PolygonData polygonData = new PolygonData();
@@ -71,18 +70,18 @@ public class MarloFragment extends SupportMapFragment implements OnClickListener
 
 
     public void createPolygon(PolygonData polygonData) {
-        PolygonOptions rectGon = new PolygonOptions();
-        rectGon.strokeColor(Color.RED);
-        rectGon.fillColor(Color.YELLOW);
-        rectGon.strokeWidth(3);
+        PolygonOptions polygon = new PolygonOptions();
+        polygon.strokeColor(Color.RED);
+        polygon.fillColor(Color.YELLOW);
+        polygon.strokeWidth(3);
 
-        addBoundary(rectGon, polygonData);
-        addHole(rectGon, polygonData);
+        addBoundary(polygon, polygonData);
+        addHole(polygon, polygonData);
 
         if (polygonData.polygon != null)
             polygonData.polygon.remove();
         if (!polygonData.boundary.isEmpty())
-            polygonData.polygon = googleMap.addPolygon(rectGon);
+            polygonData.polygon = googleMap.addPolygon(polygon);
 
     }
 
@@ -92,14 +91,14 @@ public class MarloFragment extends SupportMapFragment implements OnClickListener
                 .draggable(true);
     }
 
-    private void addBoundary(PolygonOptions rectGon, PolygonData polygonData) {
+    private void addBoundary(PolygonOptions polygon, PolygonData polygonData) {
         Stack<Marker> markers = polygonData.boundary;
         for (Marker eachMarker : markers) {
-            rectGon.add(eachMarker.getPosition());
+            polygon.add(eachMarker.getPosition());
         }
     }
 
-    private void addHole(PolygonOptions rectGon, PolygonData polygonData) {
+    private void addHole(PolygonOptions polygon, PolygonData polygonData) {
         Stack<Marker> holeMarker = polygonData.hole;
         if (!holeMarker.isEmpty()) {
             List<LatLng> holes = new ArrayList<>();
@@ -107,7 +106,7 @@ public class MarloFragment extends SupportMapFragment implements OnClickListener
                 holes.add(eachMarker.getPosition());
             }
             if (holes.size() >= 3)
-                rectGon.addHole(holes);
+                polygon.addHole(holes);
         }
     }
 
@@ -143,6 +142,5 @@ public class MarloFragment extends SupportMapFragment implements OnClickListener
             polygonDataStack.pop();
         }
     }
-
 
 }
