@@ -17,9 +17,7 @@
 
 package th.or.nectec.marlo;
 
-import android.annotation.TargetApi;
 import android.graphics.Color;
-import android.os.Build;
 import android.support.annotation.DrawableRes;
 import android.view.Gravity;
 import android.view.ViewGroup;
@@ -30,10 +28,12 @@ import android.widget.ImageView;
 
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
-class ViewUtils {
+final class ViewUtils {
 
+    private ViewUtils() {
+    }
 
-    public static void addViewFinder(MarloFragment fragment){
+    public static void addViewFinder(MarloFragment fragment) {
         addViewFinder(fragment, R.drawable.view_finder);
     }
 
@@ -57,7 +57,7 @@ class ViewUtils {
         return viewFinder;
     }
 
-    public static void addUndoButton(MarloFragment fragment){
+    public static void addUndoButton(MarloFragment fragment) {
         Button undo = new Button(fragment.getContext());
         undo.setId(R.id.undo);
         undo.setText("Undo");
@@ -65,7 +65,7 @@ class ViewUtils {
 
         ViewGroup rootView = (ViewGroup) fragment.getView();
 
-        if(rootView != null) {
+        if (rootView != null) {
             LayoutParams params = new LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
             int horizonMargin = fragment.getResources().getDimensionPixelOffset(R.dimen.screen_horizontal_margin);
             int verticalMargin = fragment.getResources().getDimensionPixelOffset(R.dimen.screen_vertical_margin);

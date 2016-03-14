@@ -17,11 +17,17 @@
 
 package th.or.nectec.marlo;
 
-import android.app.Application;
-import android.test.ApplicationTestCase;
+import android.content.Context;
+import android.media.MediaPlayer;
+import android.support.annotation.RawRes;
 
-public class ApplicationTest extends ApplicationTestCase<Application> {
-    public ApplicationTest() {
-        super(Application.class);
+final class SoundUtility {
+
+    private SoundUtility() {
+    }
+
+    public static void play(Context context, @RawRes int mediaRawId) {
+        MediaPlayer soundEffect = MediaPlayer.create(context, mediaRawId);
+        soundEffect.start();
     }
 }

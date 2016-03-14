@@ -21,7 +21,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Toast;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -36,9 +35,9 @@ import java.util.Stack;
 
 public class MarloFragment extends SupportMapFragment implements OnClickListener, OnMapReadyCallback {
 
-    GoogleMap googleMap;
+    private GoogleMap googleMap;
 
-    Stack<PolygonData> polygonDataStack = new Stack<>();
+    private final Stack<PolygonData> polygonDataStack = new Stack<>();
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -56,7 +55,7 @@ public class MarloFragment extends SupportMapFragment implements OnClickListener
             PolygonData polygonData = polygonDataStack.peek();
             addMarker(polygonData.boundary);
             createPolygon(polygonData);
-        }else if (view.getId() == R.id.undo) {
+        } else if (view.getId() == R.id.undo) {
             undo();
         }
     }
@@ -64,10 +63,14 @@ public class MarloFragment extends SupportMapFragment implements OnClickListener
     private void addMarker(Stack<Marker> markers) {
         Marker marker = googleMap.addMarker(markerOnCenterOfScreen());
         markers.push(marker);
-        SoundUtils.play(getContext(), R.raw.thumpsoundeffect);
+        SoundUtility.play(getContext(), R.raw.thumpsoundeffect);
     }
 
-
+    private MarkerOptions markerOnCenterOfScreen() {
+        return new MarkerOptions()
+                .position(googleMap.getCameraPosition().target)
+                .draggable(true);
+    }
 
     public void createPolygon(PolygonData polygonData) {
         PolygonOptions polygon = new PolygonOptions();
@@ -78,17 +81,12 @@ public class MarloFragment extends SupportMapFragment implements OnClickListener
         addBoundary(polygon, polygonData);
         addHole(polygon, polygonData);
 
-        if (polygonData.polygon != null)
+        if (polygonData.polygon != null) {
             polygonData.polygon.remove();
-        if (!polygonData.boundary.isEmpty())
+        }
+        if (!polygonData.boundary.isEmpty()) {
             polygonData.polygon = googleMap.addPolygon(polygon);
-
-    }
-
-    MarkerOptions markerOnCenterOfScreen() {
-        return new MarkerOptions()
-                .position(googleMap.getCameraPosition().target)
-                .draggable(true);
+        }
     }
 
     private void addBoundary(PolygonOptions polygon, PolygonData polygonData) {
@@ -105,23 +103,10 @@ public class MarloFragment extends SupportMapFragment implements OnClickListener
             for (Marker eachMarker : holeMarker) {
                 holes.add(eachMarker.getPosition());
             }
-            if (holes.size() >= 3)
+            if (holes.size() >= 3) {
                 polygon.addHole(holes);
+            }
         }
-    }
-
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        this.googleMap = googleMap;
-        googleMap.getUiSettings().setZoomControlsEnabled(true);
-        googleMap.getUiSettings().isMyLocationButtonEnabled();
-
-        ViewUtils.addViewFinder(this);
-        ViewUtils.addUndoButton(this);
-    }
-
-    protected GoogleMap getGoogleMap() {
-        return googleMap;
     }
 
     public void undo() {
@@ -141,6 +126,20 @@ public class MarloFragment extends SupportMapFragment implements OnClickListener
         if (polygonDataStack.size() > 1 && markers.isEmpty()) {
             polygonDataStack.pop();
         }
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        this.googleMap = googleMap;
+        googleMap.getUiSettings().setZoomControlsEnabled(true);
+        googleMap.getUiSettings().isMyLocationButtonEnabled();
+
+        ViewUtils.addViewFinder(this);
+        ViewUtils.addUndoButton(this);
+    }
+
+    protected GoogleMap getGoogleMap() {
+        return googleMap;
     }
 
 }

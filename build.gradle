@@ -21,6 +21,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:1.5.0'
+        classpath 'com.noveogroup.android:check:1.2.3'
     }
 }
 
@@ -42,7 +43,6 @@ ext {
     supportLibVersion = "23.2.1"
     playServicesVersion = "8.4.0"
     androidMapUtilsVersion = "0.4.3"
-
 }
 
 task wrapper(type: Wrapper) {

@@ -25,7 +25,7 @@ import android.support.annotation.ColorRes;
 import android.support.annotation.DrawableRes;
 
 class ResourceUtils {
-    private Context context;
+    private final Context context;
 
     public ResourceUtils(Context context) {
         this.context = context;
@@ -37,19 +37,21 @@ class ResourceUtils {
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public Drawable getDrawable(@DrawableRes int drawableId) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             return context.getResources().getDrawable(drawableId, null);
-        else
+        } else {
             //noinspection deprecation
             return context.getResources().getDrawable(drawableId);
+        }
     }
 
     @TargetApi(Build.VERSION_CODES.M)
     public int getColor(@ColorRes int color) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             return context.getResources().getColor(color, context.getTheme());
-        else
+        } else {
             //noinspection deprecation
             return context.getResources().getColor(color);
+        }
     }
 }

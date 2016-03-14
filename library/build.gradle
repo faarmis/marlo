@@ -16,6 +16,7 @@
  */
 
 apply plugin: 'com.android.library'
+apply plugin: 'com.noveogroup.android.check'
 
 repositories {
     jcenter()
@@ -76,4 +77,8 @@ dependencies {
     compile("com.google.maps.android:android-maps-utils:$androidMapUtilsVersion") {
         exclude(group: "com.google.android.gms")
     }
+}
+
+check {
+    abortOnError true
 }
