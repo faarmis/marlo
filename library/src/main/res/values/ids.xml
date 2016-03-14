@@ -17,5 +17,6 @@
   -->
 
 <resources>
-    <string name="app_name">Marlo</string>
+    <item name="view_finder" type="id"/>
+    <item name="undo" type="id"/>
 </resources>

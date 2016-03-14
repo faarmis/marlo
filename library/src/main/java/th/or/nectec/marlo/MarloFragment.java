@@ -17,41 +17,124 @@
 
 package th.or.nectec.marlo;
 
-import android.annotation.TargetApi;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
-import android.view.Gravity;
-import android.view.ViewGroup;
-import android.widget.FrameLayout;
-import android.widget.ImageButton;
-import android.widget.ImageView;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Toast;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolygonOptions;
 
-public class MarloFragment extends SupportMapFragment {
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Stack;
+
+public class MarloFragment extends SupportMapFragment implements OnClickListener, OnMapReadyCallback {
+
+    GoogleMap googleMap;
+
+    Stack<PolygonData> polygonDataStack = new Stack<>();
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        addViewFinder();
+        ViewFinderUtils.addViewFinder(this);
+
+        getMapAsync(this);
+
+        PolygonData polygonData = new PolygonData();
+        polygonDataStack.push(polygonData);
     }
 
-    private void addViewFinder() {
-        ViewGroup rootView = (ViewGroup) getView();
-        rootView.addView(getViewFinder(), getViewFinderLayoutParams());
+    @Override
+    public void onClick(View view) {
+        if (view.getId() == R.id.view_finder) {
+            Toast.makeText(getContext(), "Click!", Toast.LENGTH_SHORT).show();
+            PolygonData polygonData = polygonDataStack.peek();
+            addMarker(polygonData.boundary);
+            createPolygon(polygonData);
+
+        }
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    private ImageButton getViewFinder() {
-        ImageButton viewFinder = new ImageButton(getContext());
-        viewFinder.setBackgroundColor(Color.TRANSPARENT);
-        viewFinder.setImageDrawable(ResourceUtils.from(getContext()).getDrawable(R.drawable.view_finder));
-        viewFinder.setScaleType(ImageView.ScaleType.FIT_XY);
-        return viewFinder;
+    private void addMarker(Stack<Marker> markers) {
+        Marker marker = googleMap.addMarker(markerOnCenterOfScreen());
+        markers.push(marker);
+        SoundUtils.play(getContext(), R.raw.thumpsoundeffect);
     }
 
-    private FrameLayout.LayoutParams getViewFinderLayoutParams() {
-        int size = getResources().getDimensionPixelOffset(R.dimen.view_finder_size);
-        return new FrameLayout.LayoutParams(size, size, Gravity.CENTER);
+    public void createPolygon(PolygonData polygonData) {
+        PolygonOptions rectGon = new PolygonOptions();
+        rectGon.strokeColor(Color.RED);
+        rectGon.fillColor(Color.YELLOW);
+        rectGon.strokeWidth(3);
+
+        addBoundary(rectGon, polygonData);
+        addHole(rectGon, polygonData);
+
+        if (polygonData.polygon != null)
+            polygonData.polygon.remove();
+        if (!polygonData.boundary.isEmpty())
+            polygonData.polygon = googleMap.addPolygon(rectGon);
+
     }
+
+    MarkerOptions markerOnCenterOfScreen() {
+        return new MarkerOptions().position(googleMap.getCameraPosition().target);
+    }
+
+    private void addBoundary(PolygonOptions rectGon, PolygonData polygonData) {
+        Stack<Marker> markers = polygonData.boundary;
+        for (Marker eachMarker : markers) {
+            rectGon.add(eachMarker.getPosition());
+        }
+    }
+
+    private void addHole(PolygonOptions rectGon, PolygonData polygonData) {
+        Stack<Marker> holeMarker = polygonData.hole;
+        if (!holeMarker.isEmpty()) {
+            List<LatLng> holes = new ArrayList<>();
+            for (Marker eachMarker : holeMarker) {
+                holes.add(eachMarker.getPosition());
+            }
+            if (holes.size() >= 3)
+                rectGon.addHole(holes);
+        }
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        this.googleMap = googleMap;
+        googleMap.getUiSettings().setZoomControlsEnabled(true);
+        googleMap.getUiSettings().isMyLocationButtonEnabled();
+    }
+
+    public GoogleMap getGoogleMap() {
+        return googleMap;
+    }
+
+    public void undo() {
+        Stack<Marker> holeMarker = polygonDataStack.peek().hole;
+        if (!holeMarker.isEmpty()) {
+            holeMarker.peek().remove();
+            holeMarker.pop();
+            createPolygon(polygonDataStack.peek());
+        }
+
+        Stack<Marker> markers = polygonDataStack.peek().boundary;
+        if (holeMarker.isEmpty() && !markers.isEmpty()) {
+            markers.peek().remove();
+            markers.pop();
+            createPolygon(polygonDataStack.peek());
+        }
+        if (polygonDataStack.size() > 1 && markers.isEmpty()) {
+            polygonDataStack.pop();
+        }
+    }
+
 }

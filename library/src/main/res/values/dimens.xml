@@ -18,4 +18,6 @@
 
 <resources>
     <dimen name="view_finder_size">100dp</dimen>
+    <dimen name="screen_vertical_margin">20dp</dimen>
+    <dimen name="screen_horizontal_margin">16dp</dimen>
 </resources>
