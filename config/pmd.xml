@@ -10,7 +10,9 @@
 
     <rule ref="rulesets/java/basic.xml"/>
 
-    <rule ref="rulesets/java/braces.xml"/>
+    <rule ref="rulesets/java/braces.xml">
+        <exclude name="IfStmtsMustUseBraces"/>
+    </rule>
 
     <rule ref="rulesets/java/clone.xml"/>
 
