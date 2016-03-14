@@ -17,16 +17,47 @@
 
 package th.or.nectec.marlo;
 
+import android.annotation.TargetApi;
+import android.graphics.Color;
+import android.os.Build;
+import android.support.annotation.DrawableRes;
+import android.view.Gravity;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.FrameLayout.LayoutParams;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
-class UndoButtonUtils {
+class ViewUtils {
 
-    public static void add(MarloFragment fragment){
+
+    public static void addViewFinder(MarloFragment fragment){
+        addViewFinder(fragment, R.drawable.view_finder);
+    }
+
+    public static void addViewFinder(MarloFragment fragment, @DrawableRes int viewFinderDrawableId) {
+        ViewGroup rootView = (ViewGroup) fragment.getView();
+        if (rootView != null) {
+            ImageButton viewFinder = getViewFinder(fragment);
+            viewFinder.setImageDrawable(ResourceUtils.from(fragment.getContext()).getDrawable(viewFinderDrawableId));
+            int size = fragment.getResources().getDimensionPixelOffset(R.dimen.view_finder_size);
+            LayoutParams layoutParams = new LayoutParams(size, size, Gravity.CENTER);
+            rootView.addView(viewFinder, layoutParams);
+        }
+    }
+
+    private static ImageButton getViewFinder(MarloFragment fragment) {
+        ImageButton viewFinder = new ImageButton(fragment.getContext());
+        viewFinder.setId(R.id.view_finder);
+        viewFinder.setBackgroundColor(Color.TRANSPARENT);
+        viewFinder.setScaleType(ImageView.ScaleType.FIT_XY);
+        viewFinder.setOnClickListener(fragment);
+        return viewFinder;
+    }
+
+    public static void addUndoButton(MarloFragment fragment){
         Button undo = new Button(fragment.getContext());
         undo.setId(R.id.undo);
         undo.setText("Undo");
@@ -42,4 +73,5 @@ class UndoButtonUtils {
             rootView.addView(undo, params);
         }
     }
+
 }

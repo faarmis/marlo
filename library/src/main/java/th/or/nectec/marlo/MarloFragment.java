@@ -43,7 +43,7 @@ public class MarloFragment extends SupportMapFragment implements OnClickListener
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        ViewFinderUtils.addViewFinder(this);
+
 
         getMapAsync(this);
 
@@ -54,11 +54,11 @@ public class MarloFragment extends SupportMapFragment implements OnClickListener
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.view_finder) {
-            Toast.makeText(getContext(), "Click!", Toast.LENGTH_SHORT).show();
             PolygonData polygonData = polygonDataStack.peek();
             addMarker(polygonData.boundary);
             createPolygon(polygonData);
-
+        }else if (view.getId() == R.id.undo) {
+            undo();
         }
     }
 
@@ -67,6 +67,8 @@ public class MarloFragment extends SupportMapFragment implements OnClickListener
         markers.push(marker);
         SoundUtils.play(getContext(), R.raw.thumpsoundeffect);
     }
+
+
 
     public void createPolygon(PolygonData polygonData) {
         PolygonOptions rectGon = new PolygonOptions();
@@ -85,7 +87,9 @@ public class MarloFragment extends SupportMapFragment implements OnClickListener
     }
 
     MarkerOptions markerOnCenterOfScreen() {
-        return new MarkerOptions().position(googleMap.getCameraPosition().target);
+        return new MarkerOptions()
+                .position(googleMap.getCameraPosition().target)
+                .draggable(true);
     }
 
     private void addBoundary(PolygonOptions rectGon, PolygonData polygonData) {
@@ -112,9 +116,12 @@ public class MarloFragment extends SupportMapFragment implements OnClickListener
         this.googleMap = googleMap;
         googleMap.getUiSettings().setZoomControlsEnabled(true);
         googleMap.getUiSettings().isMyLocationButtonEnabled();
+
+        ViewUtils.addViewFinder(this);
+        ViewUtils.addUndoButton(this);
     }
 
-    public GoogleMap getGoogleMap() {
+    protected GoogleMap getGoogleMap() {
         return googleMap;
     }
 
@@ -136,5 +143,6 @@ public class MarloFragment extends SupportMapFragment implements OnClickListener
             polygonDataStack.pop();
         }
     }
+
 
 }
