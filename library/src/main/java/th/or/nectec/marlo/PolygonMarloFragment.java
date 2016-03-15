@@ -32,7 +32,13 @@ public class PolygonMarloFragment extends MarloFragment {
     private final Stack<PolygonData> multiPolygon = new Stack<>();
     private PolygonData singlePolygon = new PolygonData();
     private State drawingState = State.BOUNDARY;
-    private Mode mode = Mode.SINGLE;
+    private Mode mode = Mode.MULTI;
+
+    public static PolygonMarloFragment newInstance(Mode mode) {
+        PolygonMarloFragment fragment = new PolygonMarloFragment();
+        fragment.mode = mode;
+        return fragment;
+    }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -123,7 +129,7 @@ public class PolygonMarloFragment extends MarloFragment {
         HOLE,
     }
 
-    private enum Mode {
+    public enum Mode {
         SINGLE,
         MULTI
     }
