@@ -29,19 +29,28 @@ import java.util.Stack;
 
 public class PolygonMarloFragment extends MarloFragment {
 
-    private PolygonData polygonData = new PolygonData();
+    private final Stack<PolygonData> multiPolygon = new Stack<>();
+    private PolygonData singlePolygon = new PolygonData();
     private State drawingState = State.BOUNDARY;
+    private Mode mode = Mode.SINGLE;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         ViewUtils.addHoleButton(this);
+        if (mode == Mode.MULTI) {
+            ViewUtils.addNewPolygonButton(this);
+        }
+        multiPolygon.push(new PolygonData());
     }
 
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.hole) {
             changeToHoleState();
+        } else if (view.getId() == R.id.new_polygon) {
+            multiPolygon.push(new PolygonData());
+            changeToBoundary();
         } else {
             super.onClick(view);
         }
@@ -51,6 +60,10 @@ public class PolygonMarloFragment extends MarloFragment {
         drawingState = State.HOLE;
     }
 
+    private void changeToBoundary() {
+        drawingState = State.BOUNDARY;
+    }
+
     @Override
     protected void onViewfinderClick(LatLng target) {
         SoundUtility.play(getContext(), R.raw.thumpsoundeffect);
@@ -58,13 +71,13 @@ public class PolygonMarloFragment extends MarloFragment {
         Marker marker = getGoogleMap().addMarker(getMarkerOptions(target));
         switch (drawingState) {
             case BOUNDARY:
-                polygonData.getBoundary().push(marker);
+                getActivePolygonData().getBoundary().push(marker);
                 break;
             case HOLE:
-                polygonData.getHole().push(marker);
+                getActivePolygonData().getHole().push(marker);
                 break;
         }
-        PolygonDrawUtils.createPolygon(getGoogleMap(), polygonData);
+        PolygonDrawUtils.createPolygon(getGoogleMap(), getActivePolygonData());
     }
 
     @Override
@@ -73,23 +86,23 @@ public class PolygonMarloFragment extends MarloFragment {
     }
 
     public void undo() {
-        Stack<Marker> holeMarker = polygonData.getHole();
+        Stack<Marker> holeMarker = getActivePolygonData().getHole();
         if (!holeMarker.isEmpty()) {
             holeMarker.peek().remove();
             holeMarker.pop();
         } else {
-            Stack<Marker> boundary = polygonData.getBoundary();
+            Stack<Marker> boundary = getActivePolygonData().getBoundary();
             if (!boundary.isEmpty()) {
                 changeToBoundary();
                 boundary.peek().remove();
                 boundary.pop();
             }
-        }
-        PolygonDrawUtils.createPolygon(getGoogleMap(), polygonData);
-    }
 
-    private void changeToBoundary() {
-        drawingState = State.BOUNDARY;
+            if (boundary.isEmpty() && mode == Mode.MULTI && multiPolygon.size() > 1) {
+                multiPolygon.pop();
+            }
+        }
+        PolygonDrawUtils.createPolygon(getGoogleMap(), getActivePolygonData());
     }
 
     private MarkerOptions getMarkerOptions(LatLng target) {
@@ -101,9 +114,18 @@ public class PolygonMarloFragment extends MarloFragment {
                         : BitmapDescriptorFactory.HUE_AZURE));
     }
 
+    public PolygonData getActivePolygonData() {
+        return mode == Mode.SINGLE ? singlePolygon : multiPolygon.peek();
+    }
+
     private enum State {
         BOUNDARY,
         HOLE,
+    }
+
+    private enum Mode {
+        SINGLE,
+        MULTI
     }
 
 }
