@@ -19,6 +19,7 @@ package th.or.nectec.marlo;
 
 import android.os.Bundle;
 import android.view.View;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -51,28 +52,24 @@ public class PolygonMarloFragment extends MarloFragment {
     }
 
     @Override
-    protected void onUndoClick() {
-        undo();
-    }
-
-    @Override
     protected void onViewfinderClick(LatLng target) {
         SoundUtility.play(getContext(), R.raw.thumpsoundeffect);
 
-        addMarker(drawingState == State.BOUNDARY ? polygonData.getBoundary() : polygonData.getHole());
+        Marker marker = getGoogleMap().addMarker(getMarkerOptions(target));
+        switch (drawingState) {
+            case BOUNDARY:
+                polygonData.getBoundary().push(marker);
+                break;
+            case HOLE:
+                polygonData.getHole().push(marker);
+                break;
+        }
         PolygonDrawUtils.createPolygon(getGoogleMap(), polygonData);
     }
 
-    private void addMarker(Stack<Marker> markers) {
-        Marker marker = getGoogleMap().addMarker(markerOnCenterOfScreen());
-        markers.push(marker);
-
-    }
-
-    private MarkerOptions markerOnCenterOfScreen() {
-        return new MarkerOptions()
-                .position(getGoogleMap().getCameraPosition().target)
-                .draggable(true);
+    @Override
+    protected void onUndoClick() {
+        undo();
     }
 
     public void undo() {
@@ -95,7 +92,16 @@ public class PolygonMarloFragment extends MarloFragment {
         drawingState = State.BOUNDARY;
     }
 
-    enum State {
+    private MarkerOptions getMarkerOptions(LatLng target) {
+        return new MarkerOptions()
+                .position(target)
+                .draggable(true)
+                .icon(BitmapDescriptorFactory.defaultMarker(drawingState == State.BOUNDARY
+                        ? BitmapDescriptorFactory.HUE_MAGENTA
+                        : BitmapDescriptorFactory.HUE_AZURE));
+    }
+
+    private enum State {
         BOUNDARY,
         HOLE,
     }
