@@ -30,7 +30,7 @@ import java.util.Stack;
 public class PolygonMarloFragment extends MarloFragment {
 
     private final Stack<PolygonData> multiPolygon = new Stack<>();
-    private PolygonData singlePolygon = new PolygonData();
+    private final PolygonData singlePolygon = new PolygonData();
     private State drawingState = State.BOUNDARY;
     private Mode mode = Mode.MULTI;
 

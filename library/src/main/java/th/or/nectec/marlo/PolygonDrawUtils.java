@@ -30,6 +30,9 @@ import java.util.Stack;
 
 final class PolygonDrawUtils {
 
+    private PolygonDrawUtils() {
+    }
+
     public static void createPolygon(GoogleMap map, PolygonData polygonData) {
         PolygonOptions polygon = new PolygonOptions();
         polygon.strokeColor(Color.RED);
