@@ -74,4 +74,40 @@ final class ViewUtils {
         }
     }
 
+    public static void addHoleButton(MarloFragment fragment) {
+        Button undo = new Button(fragment.getContext());
+        undo.setId(R.id.hole);
+        undo.setText("Hole");
+        undo.setOnClickListener(fragment);
+
+        ViewGroup rootView = (ViewGroup) fragment.getView();
+
+        if (rootView != null) {
+            LayoutParams params = new LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
+            int horizonMargin = fragment.getResources().getDimensionPixelOffset(R.dimen.screen_horizontal_margin);
+            int verticalMargin = fragment.getResources().getDimensionPixelOffset(R.dimen.screen_vertical_margin) * 3;
+
+            params.setMargins(horizonMargin, verticalMargin, 0, 0);
+            rootView.addView(undo, params);
+        }
+    }
+
+    public static void addNewPolygonButton(MarloFragment fragment) {
+        Button undo = new Button(fragment.getContext());
+        undo.setId(R.id.new_polygon);
+        undo.setText("New");
+        undo.setOnClickListener(fragment);
+
+        ViewGroup rootView = (ViewGroup) fragment.getView();
+
+        if (rootView != null) {
+            LayoutParams params = new LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
+            int horizonMargin = fragment.getResources().getDimensionPixelOffset(R.dimen.screen_horizontal_margin);
+            int verticalMargin = fragment.getResources().getDimensionPixelOffset(R.dimen.screen_vertical_margin) * 6;
+
+            params.setMargins(horizonMargin, verticalMargin, 0, 0);
+            rootView.addView(undo, params);
+        }
+    }
+
 }

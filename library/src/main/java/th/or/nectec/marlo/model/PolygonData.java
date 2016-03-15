@@ -15,17 +15,17 @@
  * limitations under the License.
  */
 
-package th.or.nectec.marlo;
+package th.or.nectec.marlo.model;
 
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.Polygon;
 
 import java.util.Stack;
 
-class PolygonData {
-    protected Stack<Marker> boundary;
-    protected Stack<Marker> hole;
-    protected Polygon polygon;
+public class PolygonData {
+    private final Stack<Marker> boundary;
+    private final Stack<Marker> hole;
+    private Polygon polygon;
 
     public PolygonData() {
         boundary = new Stack<>();
@@ -34,5 +34,21 @@ class PolygonData {
 
     public boolean isEmpty() {
         return boundary.isEmpty() && polygon == null;
+    }
+
+    public Stack<Marker> getBoundary() {
+        return boundary;
+    }
+
+    public Stack<Marker> getHole() {
+        return hole;
+    }
+
+    public Polygon getPolygon() {
+        return polygon;
+    }
+
+    public void setPolygon(Polygon polygon) {
+        this.polygon = polygon;
     }
 }

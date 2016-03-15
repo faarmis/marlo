@@ -19,4 +19,6 @@
 <resources>
     <item name="view_finder" type="id"/>
     <item name="undo" type="id"/>
+    <item name="hole" type="id"/>
+    <item name="new_polygon" type="id"/>
 </resources>

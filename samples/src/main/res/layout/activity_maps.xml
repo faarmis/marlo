@@ -21,4 +21,4 @@
           android:layout_height="match_parent"
           android:id="@+id/map"
           tools:context=".MapsActivity"
-          android:name="th.or.nectec.marlo.MarloFragment"/>
+          android:name="th.or.nectec.marlo.PolygonMarloFragment"/>
