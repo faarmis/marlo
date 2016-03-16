@@ -24,7 +24,7 @@
               android:layout_width="wrap_content">
 
     <android.support.design.widget.FloatingActionButton
-            android:id="@+id/boundary"
+            android:id="@id/marlo_boundary"
             android:src="@drawable/ic_boundary"
             android:layout_marginLeft="@dimen/fab_vertical_margin"
             android:layout_marginRight="@dimen/fab_vertical_margin"
@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"/>
 
     <android.support.design.widget.FloatingActionButton
-            android:id="@+id/hole"
+            android:id="@id/marlo_hole"
             android:src="@drawable/ic_hole"
             android:layout_marginLeft="@dimen/fab_vertical_margin"
             android:layout_marginRight="@dimen/fab_vertical_margin"
@@ -44,7 +44,7 @@
             android:layout_height="wrap_content"/>
 
     <android.support.design.widget.FloatingActionButton
-            android:id="@+id/undo"
+            android:id="@id/marlo_undo"
             android:src="@drawable/ic_undo"
             android:layout_marginLeft="@dimen/fab_vertical_margin"
             android:layout_marginRight="@dimen/fab_vertical_margin"
@@ -54,7 +54,7 @@
             android:layout_height="wrap_content"/>
 
     <android.support.design.widget.FloatingActionButton
-            android:id="@+id/mark"
+            android:id="@id/marlo_mark"
             android:layout_width="wrap_content"
             android:src="@drawable/ic_mark_location"
             app:elevation="@dimen/fab_elevation"

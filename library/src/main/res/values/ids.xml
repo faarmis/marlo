@@ -17,8 +17,11 @@
   -->
 
 <resources>
-    <item name="view_finder" type="id"/>
-    <item name="undo" type="id"/>
-    <item name="hole" type="id"/>
-    <item name="new_polygon" type="id"/>
+    <item name="marlo_view_finder" type="id"/>
+    <item name="marlo_mark" type="id"/>
+    <item name="marlo_undo" type="id"/>
+    <item name="marlo_hole" type="id"/>
+    <item name="marlo_boundary" type="id"/>
+    <item name="marlo_gps" type="id"/>
+
 </resources>

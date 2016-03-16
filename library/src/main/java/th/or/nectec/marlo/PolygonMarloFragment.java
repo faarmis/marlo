@@ -55,18 +55,18 @@ public class PolygonMarloFragment extends MarloFragment {
 
 
         ViewUtils.addPolygonToolsMenu(this);
-        findViewBy(R.id.boundary).setVisibility(mode == Mode.MULTI ? View.VISIBLE : View.GONE);
+        findViewBy(R.id.marlo_boundary).setVisibility(mode == Mode.MULTI ? View.VISIBLE : View.GONE);
         multiPolygon.push(new PolygonData());
     }
 
     @Override
     public void onClick(View view) {
-        if (view.getId() == R.id.hole) {
+        if (view.getId() == R.id.marlo_hole) {
             changeToHoleState();
-        } else if (view.getId() == R.id.new_polygon || view.getId() == R.id.boundary) {
+        } else if (view.getId() == R.id.marlo_boundary) {
             multiPolygon.push(new PolygonData());
             changeToBoundary();
-        } else if (view.getId() == R.id.undo) {
+        } else if (view.getId() == R.id.marlo_undo) {
             undo();
         } else {
             super.onClick(view);

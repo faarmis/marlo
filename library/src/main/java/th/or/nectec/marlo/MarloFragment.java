@@ -22,9 +22,7 @@ import android.support.annotation.IdRes;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.LatLng;
 
 public abstract class MarloFragment extends SupportMapFragment implements OnMapReadyCallback, OnClickListener {
@@ -39,13 +37,23 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
     }
 
     @Override
-    public void onMapReady(GoogleMap googleMap) {
+    public void onMapReady(final GoogleMap googleMap) {
         this.googleMap = googleMap;
+        UiSettings uiSettings = googleMap.getUiSettings();
+        uiSettings.setZoomControlsEnabled(false);
+        uiSettings.setMyLocationButtonEnabled(false);
+        uiSettings.setCompassEnabled(true);
+        googleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+            @Override
+            public void onMapLongClick(LatLng latLng) {
+                googleMap.animateCamera(CameraUpdateFactory.newLatLng(latLng), 500, null);
+            }
+        });
         ViewUtils.addViewFinder(this);
         ViewUtils.addGpsLocationButton(this);
     }
 
-    public View findViewBy(@IdRes int id) {
+    protected View findViewBy(@IdRes int id) {
         ViewGroup rootView = (ViewGroup) getView();
         if (rootView == null) throw new IllegalArgumentException("Root View should not be null");
         return rootView.findViewById(id);
@@ -53,7 +61,7 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
 
     @Override
     public void onClick(View view) {
-        if (view.getId() == R.id.view_finder || view.getId() == R.id.mark) {
+        if (view.getId() == R.id.marlo_view_finder || view.getId() == R.id.marlo_mark) {
             onViewfinderClick(cameraPosition());
         }
     }

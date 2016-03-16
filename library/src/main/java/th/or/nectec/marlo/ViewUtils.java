@@ -17,13 +17,13 @@
 
 package th.or.nectec.marlo;
 
+import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.support.annotation.DrawableRes;
 import android.support.design.widget.FloatingActionButton;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -52,36 +52,20 @@ final class ViewUtils {
 
     private static ImageButton getViewFinder(MarloFragment fragment) {
         ImageButton viewFinder = new ImageButton(fragment.getContext());
-        viewFinder.setId(R.id.view_finder);
+        viewFinder.setId(R.id.marlo_view_finder);
         viewFinder.setBackgroundColor(Color.TRANSPARENT);
         viewFinder.setScaleType(ImageView.ScaleType.FIT_XY);
         viewFinder.setOnClickListener(fragment);
         return viewFinder;
     }
 
-    public static void addUndoButton(MarloFragment fragment) {
-        Button undo = new Button(fragment.getContext());
-        undo.setId(R.id.undo);
-        undo.setText("Undo");
-        undo.setOnClickListener(fragment);
-
-        ViewGroup rootView = (ViewGroup) fragment.getView();
-
-        if (rootView != null) {
-            LayoutParams params = new LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
-            int horizonMargin = fragment.getResources().getDimensionPixelOffset(R.dimen.screen_horizontal_margin);
-            int verticalMargin = fragment.getResources().getDimensionPixelOffset(R.dimen.screen_vertical_margin);
-            params.setMargins(horizonMargin, verticalMargin, 0, 0);
-            rootView.addView(undo, params);
-        }
-    }
-
+    @SuppressLint("InflateParams")
     public static void addPolygonToolsMenu(MarloFragment fragment) {
         View tools = fragment.getLayoutInflater(null).inflate(R.layout.multi_polygon_tool, null);
-        tools.findViewById(R.id.undo).setOnClickListener(fragment);
-        tools.findViewById(R.id.mark).setOnClickListener(fragment);
-        tools.findViewById(R.id.hole).setOnClickListener(fragment);
-        tools.findViewById(R.id.boundary).setOnClickListener(fragment);
+        tools.findViewById(R.id.marlo_undo).setOnClickListener(fragment);
+        tools.findViewById(R.id.marlo_mark).setOnClickListener(fragment);
+        tools.findViewById(R.id.marlo_hole).setOnClickListener(fragment);
+        tools.findViewById(R.id.marlo_boundary).setOnClickListener(fragment);
 
         ViewGroup rootView = (ViewGroup) fragment.getView();
         if (rootView != null) {
@@ -92,7 +76,9 @@ final class ViewUtils {
 
     public static void addGpsLocationButton(MarloFragment fragment) {
         FloatingActionButton fab = new FloatingActionButton(fragment.getContext());
+        fab.setId(R.id.marlo_gps);
         fab.setImageResource(R.drawable.ic_gps);
+        fab.setOnClickListener(fragment);
 
         ViewGroup rootView = (ViewGroup) fragment.getView();
         if (rootView != null) {
