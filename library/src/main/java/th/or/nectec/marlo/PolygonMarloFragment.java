@@ -19,10 +19,8 @@ package th.or.nectec.marlo;
 
 import android.os.Bundle;
 import android.view.View;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 import th.or.nectec.marlo.model.PolygonData;
 
 import java.util.Stack;
@@ -33,6 +31,13 @@ public class PolygonMarloFragment extends MarloFragment {
     private final PolygonData singlePolygon = new PolygonData();
     private State drawingState = State.BOUNDARY;
     private Mode mode = Mode.SINGLE;
+    private PolygonFactory polygonFactory;
+
+    public PolygonMarloFragment() {
+        super();
+        this.markerFactory = new DefaultPolygonMarkerFactory();
+        this.polygonFactory = new DefaultPolygonFactory();
+    }
 
     public static PolygonMarloFragment newInstance(Mode mode) {
         PolygonMarloFragment fragment = new PolygonMarloFragment();
@@ -40,9 +45,14 @@ public class PolygonMarloFragment extends MarloFragment {
         return fragment;
     }
 
+    public void setPolygonFactory(PolygonFactory polygonFactory) {
+        this.polygonFactory = polygonFactory;
+    }
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
 
         ViewUtils.addPolygonToolsMenu(this);
         findViewBy(R.id.boundary).setVisibility(mode == Mode.MULTI ? View.VISIBLE : View.GONE);
@@ -88,7 +98,7 @@ public class PolygonMarloFragment extends MarloFragment {
                 multiPolygon.pop();
             }
         }
-        PolygonDrawUtils.createPolygon(getGoogleMap(), getActivePolygonData());
+        PolygonDrawUtils.createPolygon(getGoogleMap(), getActivePolygonData(), polygonFactory.build(this));
     }
 
     public PolygonData getActivePolygonData() {
@@ -99,7 +109,7 @@ public class PolygonMarloFragment extends MarloFragment {
     protected void onViewfinderClick(LatLng target) {
         SoundUtility.play(getContext(), R.raw.thumpsoundeffect);
 
-        Marker marker = getGoogleMap().addMarker(getMarkerOptions(target));
+        Marker marker = getGoogleMap().addMarker(markerFactory.build(this, target));
         switch (drawingState) {
             case BOUNDARY:
                 getActivePolygonData().getBoundary().push(marker);
@@ -108,24 +118,14 @@ public class PolygonMarloFragment extends MarloFragment {
                 getActivePolygonData().getHole().push(marker);
                 break;
         }
-        PolygonDrawUtils.createPolygon(getGoogleMap(), getActivePolygonData());
+        PolygonDrawUtils.createPolygon(getGoogleMap(), getActivePolygonData(), polygonFactory.build(this));
     }
 
-    @Override
-    protected void onUndoClick() {
-        undo();
+    public State getDrawingState() {
+        return drawingState;
     }
 
-    private MarkerOptions getMarkerOptions(LatLng target) {
-        return new MarkerOptions()
-                .position(target)
-                .draggable(true)
-                .icon(BitmapDescriptorFactory.defaultMarker(drawingState == State.BOUNDARY
-                        ? BitmapDescriptorFactory.HUE_MAGENTA
-                        : BitmapDescriptorFactory.HUE_AZURE));
-    }
-
-    private enum State {
+    public enum State {
         BOUNDARY,
         HOLE,
     }

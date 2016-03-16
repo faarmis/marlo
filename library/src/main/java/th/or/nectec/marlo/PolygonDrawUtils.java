@@ -17,7 +17,6 @@
 
 package th.or.nectec.marlo;
 
-import android.graphics.Color;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -33,12 +32,7 @@ final class PolygonDrawUtils {
     private PolygonDrawUtils() {
     }
 
-    public static void createPolygon(GoogleMap map, PolygonData polygonData) {
-        PolygonOptions polygon = new PolygonOptions();
-        polygon.strokeColor(Color.RED);
-        polygon.fillColor(Color.YELLOW);
-        polygon.strokeWidth(3);
-
+    public static void createPolygon(GoogleMap map, PolygonData polygonData, PolygonOptions polygon) {
         addBoundary(polygon, polygonData);
         addHole(polygon, polygonData);
 

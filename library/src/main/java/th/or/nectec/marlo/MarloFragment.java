@@ -30,6 +30,7 @@ import com.google.android.gms.maps.model.LatLng;
 public abstract class MarloFragment extends SupportMapFragment implements OnMapReadyCallback, OnClickListener {
 
     private GoogleMap googleMap;
+    protected MarkerFactory markerFactory;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -54,9 +55,11 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
     public void onClick(View view) {
         if (view.getId() == R.id.view_finder || view.getId() == R.id.mark) {
             onViewfinderClick(cameraPosition());
-        } else if (view.getId() == R.id.undo) {
-            onUndoClick();
         }
+    }
+
+    public void setMarkerFactory(MarkerFactory markerFactory) {
+        this.markerFactory = markerFactory;
     }
 
     protected abstract void onViewfinderClick(LatLng viewfinderTarget);
@@ -64,8 +67,6 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
     private LatLng cameraPosition() {
         return googleMap.getCameraPosition().target;
     }
-
-    protected abstract void onUndoClick();
 
     protected GoogleMap getGoogleMap() {
         return googleMap;
