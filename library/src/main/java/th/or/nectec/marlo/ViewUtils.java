@@ -19,7 +19,9 @@ package th.or.nectec.marlo;
 
 import android.graphics.Color;
 import android.support.annotation.DrawableRes;
+import android.support.design.widget.FloatingActionButton;
 import android.view.Gravity;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout.LayoutParams;
@@ -74,39 +76,31 @@ final class ViewUtils {
         }
     }
 
-    public static void addHoleButton(MarloFragment fragment) {
-        Button undo = new Button(fragment.getContext());
-        undo.setId(R.id.hole);
-        undo.setText("Hole");
-        undo.setOnClickListener(fragment);
+    public static void addPolygonToolsMenu(MarloFragment fragment) {
+        View tools = fragment.getLayoutInflater(null).inflate(R.layout.multi_polygon_tool, null);
+        tools.findViewById(R.id.undo).setOnClickListener(fragment);
+        tools.findViewById(R.id.mark).setOnClickListener(fragment);
+        tools.findViewById(R.id.hole).setOnClickListener(fragment);
+        tools.findViewById(R.id.boundary).setOnClickListener(fragment);
 
         ViewGroup rootView = (ViewGroup) fragment.getView();
-
         if (rootView != null) {
-            LayoutParams params = new LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
-            int horizonMargin = fragment.getResources().getDimensionPixelOffset(R.dimen.screen_horizontal_margin);
-            int verticalMargin = fragment.getResources().getDimensionPixelOffset(R.dimen.screen_vertical_margin) * 3;
-
-            params.setMargins(horizonMargin, verticalMargin, 0, 0);
-            rootView.addView(undo, params);
+            LayoutParams params = new LayoutParams(WRAP_CONTENT, WRAP_CONTENT, Gravity.BOTTOM | Gravity.END);
+            rootView.addView(tools, params);
         }
     }
 
-    public static void addNewPolygonButton(MarloFragment fragment) {
-        Button undo = new Button(fragment.getContext());
-        undo.setId(R.id.new_polygon);
-        undo.setText("New");
-        undo.setOnClickListener(fragment);
+    public static void addGpsLocationButton(MarloFragment fragment) {
+        FloatingActionButton fab = new FloatingActionButton(fragment.getContext());
+        fab.setImageResource(R.drawable.ic_gps);
 
         ViewGroup rootView = (ViewGroup) fragment.getView();
-
         if (rootView != null) {
-            LayoutParams params = new LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
+            LayoutParams params = new LayoutParams(WRAP_CONTENT, WRAP_CONTENT, Gravity.END);
             int horizonMargin = fragment.getResources().getDimensionPixelOffset(R.dimen.screen_horizontal_margin);
-            int verticalMargin = fragment.getResources().getDimensionPixelOffset(R.dimen.screen_vertical_margin) * 6;
-
-            params.setMargins(horizonMargin, verticalMargin, 0, 0);
-            rootView.addView(undo, params);
+            int verticalMargin = fragment.getResources().getDimensionPixelOffset(R.dimen.screen_vertical_margin);
+            params.setMargins(0, verticalMargin, horizonMargin, 0);
+            rootView.addView(fab, params);
         }
     }
 

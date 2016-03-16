@@ -18,8 +18,10 @@
 package th.or.nectec.marlo;
 
 import android.os.Bundle;
+import android.support.annotation.IdRes;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -39,12 +41,18 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
         ViewUtils.addViewFinder(this);
-        ViewUtils.addUndoButton(this);
+        ViewUtils.addGpsLocationButton(this);
+    }
+
+    public View findViewBy(@IdRes int id) {
+        ViewGroup rootView = (ViewGroup) getView();
+        if (rootView == null) throw new IllegalArgumentException("Root View should not be null");
+        return rootView.findViewById(id);
     }
 
     @Override
     public void onClick(View view) {
-        if (view.getId() == R.id.view_finder) {
+        if (view.getId() == R.id.view_finder || view.getId() == R.id.mark) {
             onViewfinderClick(cameraPosition());
         } else if (view.getId() == R.id.undo) {
             onUndoClick();
