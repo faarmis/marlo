@@ -36,8 +36,7 @@ public class MarkerMarloFragment extends MarloFragment {
                 .draggable(true));
     }
 
-
-    public Marker getMarker(){
+    public Marker getMarker() {
         return marker;
     }
 }

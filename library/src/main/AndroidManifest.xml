@@ -15,4 +15,7 @@
   ~ limitations under the License.
   -->
 
-<manifest package="th.or.nectec.marlo"/>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="th.or.nectec.marlo">
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+</manifest>

@@ -17,26 +17,50 @@
 
 package th.or.nectec.marlo.sample;
 
+import android.Manifest;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.Toast;
+
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolygonOptions;
+import com.gun0912.tedpermission.PermissionListener;
+import com.gun0912.tedpermission.TedPermission;
 import th.or.nectec.marlo.MarkerFactory;
 import th.or.nectec.marlo.MarloFragment;
 import th.or.nectec.marlo.PolygonFactory;
 import th.or.nectec.marlo.PolygonMarloFragment;
 
+import java.util.ArrayList;
+
 public class MapsActivity extends AppCompatActivity {
 
+    private PolygonMarloFragment marlo;
+    private final PermissionListener permissionlistener = new PermissionListener() {
+        @Override
+        public void onPermissionGranted() {
+            try {
+                marlo.enableMyLocationButton();
+            } catch (SecurityException security) {
+                Toast.makeText(MapsActivity.this, "Not have permission to enable MyLocation button",
+                        Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        @Override
+        public void onPermissionDenied(ArrayList<String> deniedPermissions) {
+            Toast.makeText(MapsActivity.this, "MyLocation disable!", Toast.LENGTH_SHORT).show();
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
-        PolygonMarloFragment marlo = (PolygonMarloFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        marlo = (PolygonMarloFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         marlo.setPolygonFactory(new PolygonFactory() {
             @Override
             public PolygonOptions build(PolygonMarloFragment fragment) {
@@ -53,6 +77,14 @@ public class MapsActivity extends AppCompatActivity {
                         .position(position);
             }
         });
+
+        new TedPermission(this)
+                .setPermissionListener(permissionlistener)
+                .setDeniedMessage("If you reject permission,you can not use this service\n\n"
+                        + "Please turn on permissions at [Setting] > [Permission]")
+                .setPermissions(Manifest.permission.ACCESS_FINE_LOCATION)
+                .check();
+
     }
 
 }
