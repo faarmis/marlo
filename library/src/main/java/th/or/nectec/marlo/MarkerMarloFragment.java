@@ -36,8 +36,8 @@ public class MarkerMarloFragment extends MarloFragment {
                 .draggable(true));
     }
 
-    @Override
-    protected void onUndoClick() {
 
+    public Marker getMarker(){
+        return marker;
     }
 }
