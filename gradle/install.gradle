@@ -1,0 +1,31 @@
+apply plugin: 'com.github.dcendents.android-maven'
+
+group = publishedGroupId
+
+install {
+    repositories.mavenInstaller {
+        pom.project {
+            name 'marlo'
+            inceptionYear '2016'
+            packaging 'aar'
+            licenses {
+                license {
+                    name 'The Apache Software License, Version 2.0'
+                    url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                }
+            }
+            developers {
+                developer {
+                    id 'chncs23'
+                    name 'Choatravee Nhanaen'
+                    email 'choatravee.nhanaen@nectec.or.th'
+                }
+            }
+            scm {
+                connection gitUrl
+                developerConnection gitUrl
+                url siteUrl
+            }
+        }
+    }
+}
