@@ -23,50 +23,37 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.widget.Toast;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
 import com.google.android.gms.location.LocationServices;
 
-public class PlayLocationService {
+public final class PlayLocationService implements OnConnectionFailedListener, ConnectionCallbacks {
 
-    private static PlayLocationService instance;
-    private final Context context;
+    private static PlayLocationService instance = new PlayLocationService();
+
+    private Context context;
     private GoogleApiClient locationApiClient;
 
-    private OnConnectionFailedListener connectionFailedListener = new OnConnectionFailedListener() {
-        @Override
-        public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-            Toast.makeText(context, "ไม่สามารถเชื่อมต่อ Google Play Services ได้", Toast.LENGTH_LONG).show();
-        }
-    };
-
-    private ConnectionCallbacks connectionCallbacks = new ConnectionCallbacks() {
-        @Override
-        public void onConnected(@Nullable Bundle bundle) {
-
-        }
-
-        @Override
-        public void onConnectionSuspended(int i) {
-            Toast.makeText(context, "Google Play Service ระงับการติดต่อชั่วคราว", Toast.LENGTH_LONG).show();
-        }
-    };
-
-    private PlayLocationService(Context context) {
-        this.context = context;
-        this.locationApiClient = new GoogleApiClient.Builder(context)
-                .addApi(LocationServices.API)
-                .addConnectionCallbacks(connectionCallbacks)
-                .addOnConnectionFailedListener(connectionFailedListener)
-                .build();
+    private PlayLocationService() {
     }
 
     public static PlayLocationService getInstance(Context context) {
-        if (instance == null)
-            instance = new PlayLocationService(context);
+        instance.setContext(context);
         return instance;
+    }
+
+    private void setContext(Context context) {
+        if (this.context != null)
+            return;
+        this.context = context;
+        this.locationApiClient = new GoogleApiClient.Builder(context)
+                .addApi(LocationServices.API)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .build();
     }
 
     public void connect() {
@@ -88,4 +75,20 @@ public class PlayLocationService {
         }
     }
 
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        if (BuildConfig.DEBUG) {
+            Toast.makeText(context, "Google Play Service Connected", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        Toast.makeText(context, "Google Play Service ระงับการติดต่อชั่วคราว", Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        Toast.makeText(context, "ไม่สามารถเชื่อมต่อ Google Play Services ได้", Toast.LENGTH_LONG).show();
+    }
 }
