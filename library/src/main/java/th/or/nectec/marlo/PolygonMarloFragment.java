@@ -19,6 +19,7 @@ package th.or.nectec.marlo;
 
 import android.os.Bundle;
 import android.view.View;
+
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import th.or.nectec.marlo.model.PolygonData;
@@ -52,7 +53,6 @@ public class PolygonMarloFragment extends MarloFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
 
         ViewUtils.addPolygonToolsMenu(this);
         findViewBy(R.id.marlo_boundary).setVisibility(mode == Mode.MULTI ? View.VISIBLE : View.GONE);
@@ -125,6 +125,14 @@ public class PolygonMarloFragment extends MarloFragment {
         return drawingState;
     }
 
+    public Stack<PolygonData> getPolygons() {
+        return multiPolygon;
+    }
+
+    public PolygonData getPolygon() {
+        return singlePolygon;
+    }
+
     public enum State {
         BOUNDARY,
         HOLE,
@@ -134,5 +142,4 @@ public class PolygonMarloFragment extends MarloFragment {
         SINGLE,
         MULTI
     }
-
 }
