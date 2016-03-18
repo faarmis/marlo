@@ -25,6 +25,7 @@ import android.support.annotation.RequiresPermission;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+
 import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.LatLng;
 
@@ -32,7 +33,7 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
 
     protected MarkerFactory markerFactory;
     private GoogleMap googleMap;
-    private boolean myLocationEnable = false;
+    private boolean myLocationEnable;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -107,7 +108,7 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
         return googleMap.getCameraPosition().target;
     }
 
-    private final void moveToMyLocation() {
+    private void moveToMyLocation() {
         Location lastKnowLocation = PlayLocationService.getInstance(getContext()).getLastKnowLocation();
         if (lastKnowLocation != null) {
             LatLng latLng = new LatLng(lastKnowLocation.getLatitude(), lastKnowLocation.getLongitude());
