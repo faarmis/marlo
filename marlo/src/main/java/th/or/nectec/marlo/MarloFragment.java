@@ -22,6 +22,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.RequiresPermission;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -30,6 +31,8 @@ import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.LatLng;
 
 public abstract class MarloFragment extends SupportMapFragment implements OnMapReadyCallback, OnClickListener {
+
+    private static final String TAG = "MarloFragment";
 
     protected MarkerFactory markerFactory;
     private GoogleMap googleMap;
@@ -56,8 +59,9 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
     @RequiresPermission(anyOf = {
             Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.ACCESS_FINE_LOCATION})
-    public void enableMyLocationButton() {
+    public void enableMyLocationButton() throws SecurityException {
         myLocationEnable = true;
+        if (googleMap != null) googleMap.setMyLocationEnabled(true);
         PlayLocationService.getInstance(getContext()).connect();
         updateMyLocationVisibility();
     }
@@ -82,12 +86,11 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
         uiSettings.setZoomControlsEnabled(false);
         uiSettings.setMyLocationButtonEnabled(false);
         uiSettings.setCompassEnabled(true);
-        googleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
-            @Override
-            public void onMapLongClick(LatLng latLng) {
-                googleMap.animateCamera(CameraUpdateFactory.newLatLng(latLng), 500, null);
-            }
-        });
+        try {
+            googleMap.setMyLocationEnabled(myLocationEnable);
+        } catch (SecurityException se) {
+            if (BuildConfig.DEBUG) Log.e(TAG, "onMapReady", se);
+        }
         ViewUtils.addViewFinder(this);
         ViewUtils.addGpsLocationButton(this);
 
@@ -113,7 +116,7 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
         Location lastKnowLocation = PlayLocationService.getInstance(getContext()).getLastKnowLocation();
         if (lastKnowLocation != null) {
             LatLng latLng = new LatLng(lastKnowLocation.getLatitude(), lastKnowLocation.getLongitude());
-            googleMap.animateCamera(CameraUpdateFactory.newLatLng(latLng), 1000, null);
+            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16), 1000, null);
         }
     }
 
