@@ -63,7 +63,8 @@ public final class PlayLocationService implements OnConnectionFailedListener, Co
     }
 
     public void disconnect() {
-        locationApiClient.disconnect();
+        if (locationApiClient.isConnecting() || locationApiClient.isConnected())
+            locationApiClient.disconnect();
     }
 
     public Location getLastKnowLocation() {

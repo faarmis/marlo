@@ -44,7 +44,7 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
     @Override
     public void onStart() {
         super.onStart();
-        PlayLocationService.getInstance(getContext()).connect();
+        if (myLocationEnable) PlayLocationService.getInstance(getContext()).connect();
     }
 
     @Override
@@ -58,6 +58,7 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
             Manifest.permission.ACCESS_FINE_LOCATION})
     public void enableMyLocationButton() {
         myLocationEnable = true;
+        PlayLocationService.getInstance(getContext()).connect();
         updateMyLocationVisibility();
     }
 
