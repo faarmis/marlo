@@ -33,6 +33,11 @@ install {
             }
             developers {
                 developer {
+                    id 'blazei'
+                    name 'Piruin Panichphol'
+                    email 'piruin.panichphol@nectec.or.th'
+                }
+                developer {
                     id 'chncs23'
                     name 'Choatravee Nhanaen'
                     email 'choatravee.nhanaen@nectec.or.th'
