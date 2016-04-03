@@ -71,23 +71,15 @@ public class PolygonMarloFragment extends MarloFragment {
     public void onClick(View view) {
         if (view.getId() == R.id.marlo_hole) {
             getActivePolygonData().newHole();
-            changeToHoleState();
+            getActivePolygonData().setCurrentState(PolygonData.State.HOLE);
         } else if (view.getId() == R.id.marlo_boundary) {
             multiPolygon.push(new PolygonData());
-            changeToBoundaryState();
+            getActivePolygonData().setCurrentState(PolygonData.State.BOUNDARY);
         } else if (view.getId() == R.id.marlo_undo) {
             undo();
         } else {
             super.onClick(view);
         }
-    }
-
-    private void changeToHoleState() {
-        getActivePolygonData().setCurrentState(PolygonData.State.HOLE);
-    }
-
-    private void changeToBoundaryState() {
-        getActivePolygonData().setCurrentState(PolygonData.State.BOUNDARY);
     }
 
     public PolygonData getActivePolygonData() {

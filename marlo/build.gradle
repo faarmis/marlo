@@ -77,9 +77,7 @@ dependencies {
     compile "com.android.support:design:$supportLibVersion"
     compile "com.google.android.gms:play-services-location:$playServicesVersion"
     compile "com.google.android.gms:play-services-maps:$playServicesVersion"
-    compile("com.google.maps.android:android-maps-utils:$androidMapUtilsVersion") {
-        exclude(group: "com.google.android.gms")
-    }
+    compile "com.google.maps.android:android-maps-utils:$androidMapUtilsVersion"
 }
 
 check {

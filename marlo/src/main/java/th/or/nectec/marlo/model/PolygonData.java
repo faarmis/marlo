@@ -71,8 +71,7 @@ public class PolygonData {
             return true;
         } else if (!boundary.isEmpty()) {
             currentState = State.BOUNDARY;
-            boundary.peek().remove();
-            boundary.pop();
+            boundary.pop().remove();
             return true;
         } else {
             return false;
@@ -116,7 +115,8 @@ public class PolygonData {
     }
 
     /**
-     * tell object that next addMarker() call should add to new Holes of polygon
+     * tell object that next addMarker() call should add to new Holes of polygon.
+     * If last hole is empty the command will be ignored.
      */
     public void newHole() {
         if (holes.isEmpty() || !holes.peek().isEmpty()) {
