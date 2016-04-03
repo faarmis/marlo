@@ -73,7 +73,7 @@ public class PolygonMarloFragment extends MarloFragment {
             changeToHoleState();
         } else if (view.getId() == R.id.marlo_boundary) {
             multiPolygon.push(new PolygonData());
-            changeToBoundary();
+            changeToBoundaryState();
         } else if (view.getId() == R.id.marlo_undo) {
             undo();
         } else {
@@ -85,7 +85,7 @@ public class PolygonMarloFragment extends MarloFragment {
         drawingState = State.HOLE;
     }
 
-    private void changeToBoundary() {
+    private void changeToBoundaryState() {
         drawingState = State.BOUNDARY;
     }
 
@@ -139,7 +139,7 @@ public class PolygonMarloFragment extends MarloFragment {
         } else {
             Stack<Marker> boundary = getActivePolygonData().getBoundary();
             if (!boundary.isEmpty()) {
-                changeToBoundary();
+                changeToBoundaryState();
                 boundary.peek().remove();
                 boundary.pop();
             }
