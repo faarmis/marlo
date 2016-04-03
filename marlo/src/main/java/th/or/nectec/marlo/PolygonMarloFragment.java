@@ -98,27 +98,32 @@ public class PolygonMarloFragment extends MarloFragment {
         SoundUtility.play(getContext(), R.raw.thumpsoundeffect);
 
         Marker marker = getGoogleMap().addMarker(markerFactory.build(this, target));
+        PolygonData activePolygon = getActivePolygonData();
         switch (drawingState) {
             case BOUNDARY:
-                getActivePolygonData().getBoundary().push(marker);
+                activePolygon.getBoundary().push(marker);
                 break;
             case HOLE:
-                Stack<Marker> lastHoles = getActivePolygonData().getHoles().peek();
-                List<LatLng> pointsOfActivePolygon = getActivePolygonData().getPolygon().getPoints();
+                Stack<Stack<Marker>> holes = activePolygon.getHoles();
+                if (holes.isEmpty()) {
+                    holes.push(new Stack<Marker>());
+                }
+                Stack<Marker> lastHoles = holes.peek();
+                List<LatLng> pointsOfActivePolygon = activePolygon.getPolygon().getPoints();
                 boolean inBoundary = PolyUtil.containsLocation(target, pointsOfActivePolygon, false);
                 if (inBoundary) {
                     lastHoles.push(marker);
                 } else {
-                    onMarkHoleOutBound(target, getActivePolygonData().getPolygon().getPoints());
+                    onMarkHoleOutBound(target, activePolygon.getPolygon().getPoints());
                     marker.remove();
                 }
                 break;
         }
-        PolygonDrawUtils.createPolygon(getGoogleMap(), getActivePolygonData(), polygonFactory.build(this));
+        PolygonDrawUtils.createPolygon(getGoogleMap(), activePolygon, polygonFactory.build(this));
     }
 
-    private void onMarkHoleOutBound(LatLng target, List<LatLng> points) {
-        Toast.makeText(getActivity(), "Out of polygon boundary", Toast.LENGTH_SHORT).show();
+    protected void onMarkHoleOutBound(LatLng target, List<LatLng> points) {
+        Toast.makeText(getActivity(), "Out of polygon boundary ", Toast.LENGTH_SHORT).show();
     }
 
     public void undo() {
