@@ -26,12 +26,8 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-
 import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-
-import java.util.Stack;
 
 public abstract class MarloFragment extends SupportMapFragment implements OnMapReadyCallback, OnClickListener {
 
