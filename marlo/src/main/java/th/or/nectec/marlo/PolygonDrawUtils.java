@@ -39,7 +39,7 @@ final class PolygonDrawUtils {
         if (polygonData.getPolygon() != null) {
             polygonData.getPolygon().remove();
         }
-        if (!polygonData.getBoundary().isEmpty()) {
+        if (!polygonData.isEmpty()) {
             polygonData.setPolygon(map.addPolygon(polygon));
         }
     }

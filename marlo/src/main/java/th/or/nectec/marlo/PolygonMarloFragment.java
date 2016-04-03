@@ -22,7 +22,6 @@ import android.view.View;
 import android.widget.Toast;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
-import com.google.maps.android.PolyUtil;
 import th.or.nectec.marlo.model.PolygonData;
 import th.or.nectec.marlo.option.DefaultPolygonMarkerOptionFactory;
 import th.or.nectec.marlo.option.DefaultPolygonOptionFactory;
@@ -72,7 +71,7 @@ public class PolygonMarloFragment extends MarloFragment {
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.marlo_hole) {
-            getActivePolygonData().getHoles().push(new Stack<Marker>());
+            getActivePolygonData().newHole();
             changeToHoleState();
         } else if (view.getId() == R.id.marlo_boundary) {
             multiPolygon.push(new PolygonData());
@@ -86,10 +85,12 @@ public class PolygonMarloFragment extends MarloFragment {
 
     private void changeToHoleState() {
         drawingState = State.HOLE;
+        getActivePolygonData().setCurrentState(PolygonData.State.HOLE);
     }
 
     private void changeToBoundaryState() {
         drawingState = State.BOUNDARY;
+        getActivePolygonData().setCurrentState(PolygonData.State.BOUNDARY);
     }
 
     public PolygonData getActivePolygonData() {
@@ -102,26 +103,12 @@ public class PolygonMarloFragment extends MarloFragment {
 
         Marker marker = googleMap.addMarker(markerOptionFactory.build(this, markPoint));
         PolygonData activePolygon = getActivePolygonData();
-        switch (drawingState) {
-            case BOUNDARY:
-                activePolygon.getBoundary().push(marker);
-                break;
-            case HOLE:
-                Stack<Stack<Marker>> holes = activePolygon.getHoles();
-                if (holes.isEmpty()) {
-                    holes.push(new Stack<Marker>());
-                }
-                Stack<Marker> lastHoles = holes.peek();
-                List<LatLng> pointsOfActivePolygon = activePolygon.getPolygon().getPoints();
-                boolean inBoundary = PolyUtil.containsLocation(markPoint, pointsOfActivePolygon, false);
-                if (inBoundary) {
-                    lastHoles.push(marker);
-                } else {
-                    onMarkHoleOutBound(markPoint, activePolygon.getPolygon().getPoints());
-                    marker.remove();
-                }
-                break;
+        boolean success = activePolygon.addMarker(marker);
+        if (!success) {
+            onMarkHoleOutBound(markPoint, activePolygon.getPolygon().getPoints());
+            marker.remove();
         }
+
         PolygonDrawUtils.createPolygon(googleMap, activePolygon, polygonOptionFactory.build(this));
     }
 
@@ -131,31 +118,15 @@ public class PolygonMarloFragment extends MarloFragment {
 
     public boolean undo() {
         PolygonData polygonData = getActivePolygonData();
-        if (polygonData.isEmpty() || polygonData.getBoundary().empty() ) {
+        if (polygonData.isEmpty()) {
             return false;
         }
+        boolean removed = polygonData.removeLastMarker();
 
-        Stack<Stack<Marker>> holeMarker = polygonData.getHoles();
-        if (!holeMarker.isEmpty()) {
-            Stack<Marker> lastHoles = holeMarker.peek();
-            if (!lastHoles.isEmpty()) {
-                lastHoles.pop().remove();
-            }
-            if (lastHoles.isEmpty()) {
-                holeMarker.pop();
-            }
-        } else {
-            Stack<Marker> boundary = polygonData.getBoundary();
-            if (!boundary.isEmpty()) {
-                changeToBoundaryState();
-                boundary.peek().remove();
-                boundary.pop();
-            }
-
-            if (boundary.isEmpty() && mode == Mode.MULTI && multiPolygon.size() > 1) {
-                multiPolygon.pop();
-            }
+        if (removed && polygonData.isEmpty() && mode == Mode.MULTI && multiPolygon.size() > 1) {
+            multiPolygon.pop();
         }
+
         PolygonDrawUtils.createPolygon(googleMap, polygonData, polygonOptionFactory.build(this));
         return true;
     }
