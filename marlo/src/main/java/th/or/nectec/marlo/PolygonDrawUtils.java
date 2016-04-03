@@ -54,7 +54,7 @@ final class PolygonDrawUtils {
     private static void addHole(PolygonOptions polygon, PolygonData polygonData) {
         Stack<Stack<Marker>> holeMarker = polygonData.getHoles();
         if (!holeMarker.isEmpty()) {
-            for (Stack<Marker> hole: holeMarker){
+            for (Stack<Marker> hole : holeMarker) {
                 List<LatLng> holes = new ArrayList<>();
                 for (Marker eachMarker : hole) {
                     holes.add(eachMarker.getPosition());
