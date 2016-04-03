@@ -119,7 +119,9 @@ public class PolygonData {
      * tell object that next addMarker() call should add to new Holes of polygon
      */
     public void newHole() {
-        holes.push(new Stack<Marker>());
+        if (holes.isEmpty() || !holes.peek().isEmpty()) {
+            holes.push(new Stack<Marker>());
+        }
     }
 
     public boolean isEmpty() {

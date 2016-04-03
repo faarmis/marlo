@@ -136,6 +136,10 @@ public class PolygonMarloFragment extends MarloFragment {
         return singlePolygon;
     }
 
+    public PolygonData.State getDrawingState() {
+        return getActivePolygonData().getCurrentState();
+    }
+
     public enum Mode {
         SINGLE,
         MULTI

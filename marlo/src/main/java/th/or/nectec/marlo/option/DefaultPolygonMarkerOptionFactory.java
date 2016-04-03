@@ -23,6 +23,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import th.or.nectec.marlo.MarloFragment;
 import th.or.nectec.marlo.PolygonMarloFragment;
+import th.or.nectec.marlo.model.PolygonData;
 
 import static com.google.android.gms.maps.model.BitmapDescriptorFactory.defaultMarker;
 
@@ -37,7 +38,7 @@ public class DefaultPolygonMarkerOptionFactory implements MarkerOptionFactory {
         return new MarkerOptions()
                 .position(position)
                 .draggable(true)
-                .icon(defaultMarker(polygonMarloFragment.getDrawingState() == PolygonMarloFragment.State.BOUNDARY
+                .icon(defaultMarker(polygonMarloFragment.getDrawingState() == PolygonData.State.BOUNDARY
                         ? BitmapDescriptorFactory.HUE_ROSE
                         : BitmapDescriptorFactory.HUE_YELLOW));
     }
