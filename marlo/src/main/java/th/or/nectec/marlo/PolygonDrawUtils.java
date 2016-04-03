@@ -52,14 +52,16 @@ final class PolygonDrawUtils {
     }
 
     private static void addHole(PolygonOptions polygon, PolygonData polygonData) {
-        Stack<Marker> holeMarker = polygonData.getHole();
+        Stack<Stack<Marker>> holeMarker = polygonData.getHoles();
         if (!holeMarker.isEmpty()) {
-            List<LatLng> holes = new ArrayList<>();
-            for (Marker eachMarker : holeMarker) {
-                holes.add(eachMarker.getPosition());
-            }
-            if (holes.size() >= 3) {
-                polygon.addHole(holes);
+            for (Stack<Marker> hole: holeMarker){
+                List<LatLng> holes = new ArrayList<>();
+                for (Marker eachMarker : hole) {
+                    holes.add(eachMarker.getPosition());
+                }
+                if (holes.size() >= 3) {
+                    polygon.addHole(holes);
+                }
             }
         }
     }

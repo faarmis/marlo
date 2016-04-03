@@ -31,6 +31,11 @@ public class PolygonMarloFragment extends MarloFragment {
     private final Stack<PolygonData> multiPolygon = new Stack<>();
     private final PolygonData singlePolygon = new PolygonData();
     private State drawingState = State.BOUNDARY;
+
+    public void setMode(Mode mode) {
+        this.mode = mode;
+    }
+
     private Mode mode = Mode.SINGLE;
     private PolygonFactory polygonFactory;
 
@@ -62,6 +67,7 @@ public class PolygonMarloFragment extends MarloFragment {
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.marlo_hole) {
+            getActivePolygonData().getHoles().push(new Stack<Marker>());
             changeToHoleState();
         } else if (view.getId() == R.id.marlo_boundary) {
             multiPolygon.push(new PolygonData());
@@ -82,11 +88,16 @@ public class PolygonMarloFragment extends MarloFragment {
     }
 
     public void undo() {
-        Stack<Marker> holeMarker = getActivePolygonData().getHole();
-        if (!holeMarker.isEmpty()) {
-            holeMarker.peek().remove();
-            holeMarker.pop();
-        } else {
+        Stack<Stack<Marker>> holeMarker = getActivePolygonData().getHoles();
+        if (!holeMarker.isEmpty()){
+            Stack<Marker> lastHoles = holeMarker.peek();
+            if (!lastHoles.isEmpty()) {
+                lastHoles.pop().remove();
+            }
+            if(lastHoles.isEmpty()){
+                holeMarker.pop();
+            }
+        }else {
             Stack<Marker> boundary = getActivePolygonData().getBoundary();
             if (!boundary.isEmpty()) {
                 changeToBoundary();
@@ -115,7 +126,8 @@ public class PolygonMarloFragment extends MarloFragment {
                 getActivePolygonData().getBoundary().push(marker);
                 break;
             case HOLE:
-                getActivePolygonData().getHole().push(marker);
+                Stack<Marker> lastHoles = getActivePolygonData().getHoles().peek();
+                lastHoles.push(marker);
                 break;
         }
         PolygonDrawUtils.createPolygon(getGoogleMap(), getActivePolygonData(), polygonFactory.build(this));

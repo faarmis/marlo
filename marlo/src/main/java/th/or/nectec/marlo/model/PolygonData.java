@@ -24,7 +24,7 @@ import java.util.Stack;
 
 public class PolygonData {
     private final Stack<Marker> boundary;
-    private final Stack<Marker> hole;
+    private final Stack<Stack<Marker>> hole;
     private Polygon polygon;
 
     public PolygonData() {
@@ -40,7 +40,7 @@ public class PolygonData {
         return boundary;
     }
 
-    public Stack<Marker> getHole() {
+    public Stack<Stack<Marker>> getHoles() {
         return hole;
     }
 

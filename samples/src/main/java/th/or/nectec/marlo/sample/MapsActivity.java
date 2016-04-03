@@ -61,6 +61,7 @@ public class MapsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_maps);
 
         marlo = (PolygonMarloFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        marlo.setMode(PolygonMarloFragment.Mode.MULTI);
         marlo.setPolygonFactory(new PolygonFactory() {
             @Override
             public PolygonOptions build(PolygonMarloFragment fragment) {
