@@ -43,7 +43,7 @@ final class ViewUtils {
         ViewGroup rootView = (ViewGroup) fragment.getView();
         if (rootView != null) {
             ImageButton viewFinder = getViewFinder(fragment);
-            viewFinder.setImageDrawable(ResourceUtils.from(fragment.getContext()).getDrawable(viewFinderDrawableId));
+            viewFinder.setImageResource(viewFinderDrawableId);
             int size = fragment.getResources().getDimensionPixelOffset(R.dimen.view_finder_size);
             LayoutParams layoutParams = new LayoutParams(size, size, Gravity.CENTER);
             rootView.addView(viewFinder, layoutParams);
