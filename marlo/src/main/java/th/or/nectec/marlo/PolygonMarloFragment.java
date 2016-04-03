@@ -19,10 +19,13 @@ package th.or.nectec.marlo;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
+import com.google.maps.android.PolyUtil;
 import th.or.nectec.marlo.model.PolygonData;
 
+import java.util.List;
 import java.util.Stack;
 
 public class PolygonMarloFragment extends MarloFragment {
@@ -86,6 +89,38 @@ public class PolygonMarloFragment extends MarloFragment {
         drawingState = State.BOUNDARY;
     }
 
+    public PolygonData getActivePolygonData() {
+        return mode == Mode.SINGLE ? singlePolygon : multiPolygon.peek();
+    }
+
+    @Override
+    protected void onViewfinderClick(LatLng target) {
+        SoundUtility.play(getContext(), R.raw.thumpsoundeffect);
+
+        Marker marker = getGoogleMap().addMarker(markerFactory.build(this, target));
+        switch (drawingState) {
+            case BOUNDARY:
+                getActivePolygonData().getBoundary().push(marker);
+                break;
+            case HOLE:
+                Stack<Marker> lastHoles = getActivePolygonData().getHoles().peek();
+                List<LatLng> pointsOfActivePolygon = getActivePolygonData().getPolygon().getPoints();
+                boolean inBoundary = PolyUtil.containsLocation(target, pointsOfActivePolygon, false);
+                if (inBoundary) {
+                    lastHoles.push(marker);
+                } else {
+                    onMarkHoleOutBound(target, getActivePolygonData().getPolygon().getPoints());
+                    marker.remove();
+                }
+                break;
+        }
+        PolygonDrawUtils.createPolygon(getGoogleMap(), getActivePolygonData(), polygonFactory.build(this));
+    }
+
+    private void onMarkHoleOutBound(LatLng target, List<LatLng> points) {
+        Toast.makeText(getActivity(), "Out of polygon boundary", Toast.LENGTH_SHORT).show();
+    }
+
     public void undo() {
         Stack<Stack<Marker>> holeMarker = getActivePolygonData().getHoles();
         if (!holeMarker.isEmpty()) {
@@ -107,27 +142,6 @@ public class PolygonMarloFragment extends MarloFragment {
             if (boundary.isEmpty() && mode == Mode.MULTI && multiPolygon.size() > 1) {
                 multiPolygon.pop();
             }
-        }
-        PolygonDrawUtils.createPolygon(getGoogleMap(), getActivePolygonData(), polygonFactory.build(this));
-    }
-
-    public PolygonData getActivePolygonData() {
-        return mode == Mode.SINGLE ? singlePolygon : multiPolygon.peek();
-    }
-
-    @Override
-    protected void onViewfinderClick(LatLng target) {
-        SoundUtility.play(getContext(), R.raw.thumpsoundeffect);
-
-        Marker marker = getGoogleMap().addMarker(markerFactory.build(this, target));
-        switch (drawingState) {
-            case BOUNDARY:
-                getActivePolygonData().getBoundary().push(marker);
-                break;
-            case HOLE:
-                Stack<Marker> lastHoles = getActivePolygonData().getHoles().peek();
-                lastHoles.push(marker);
-                break;
         }
         PolygonDrawUtils.createPolygon(getGoogleMap(), getActivePolygonData(), polygonFactory.build(this));
     }
