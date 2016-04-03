@@ -36,6 +36,11 @@ public class MarkerMarloFragment extends MarloFragment {
                 .draggable(true));
     }
 
+    @Override
+    public void undo() {
+        //This fragment can't undo
+    }
+
     public Marker getMarker() {
         return marker;
     }

@@ -20,13 +20,6 @@ public class MultiMarkerMarloFragment extends MarloFragment {
     }
 
     @Override
-    protected void onViewfinderClick(LatLng viewfinderTarget) {
-        SoundUtility.play(getContext(), R.raw.thumpsoundeffect);
-        Marker marker = getGoogleMap().addMarker(markerFactory.build(this, viewfinderTarget));
-        markers.push(marker);
-    }
-
-    @Override
     public void onClick(View view) {
         if (view.getId() == R.id.marlo_undo) {
             undo();
@@ -35,7 +28,14 @@ public class MultiMarkerMarloFragment extends MarloFragment {
         }
     }
 
-    private void undo() {
+    @Override
+    protected void onViewfinderClick(LatLng viewfinderTarget) {
+        SoundUtility.play(getContext(), R.raw.thumpsoundeffect);
+        Marker marker = getGoogleMap().addMarker(markerFactory.build(this, viewfinderTarget));
+        markers.push(marker);
+    }
+
+    public void undo() {
         if (!markers.empty())
             markers.pop().remove();
     }
