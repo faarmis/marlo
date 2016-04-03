@@ -48,7 +48,7 @@ public class MultiMarkerMarloFragment extends MarloFragment {
     @Override
     public void mark(LatLng markPoint) {
         SoundUtility.play(getContext(), R.raw.thumpsoundeffect);
-        Marker marker = googleMap.addMarker(markerFactory.build(this, markPoint));
+        Marker marker = googleMap.addMarker(markerOptionFactory.build(this, markPoint));
         markers.push(marker);
     }
 

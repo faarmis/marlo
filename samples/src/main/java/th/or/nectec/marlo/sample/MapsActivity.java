@@ -22,16 +22,15 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
-
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolygonOptions;
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
-import th.or.nectec.marlo.MarkerFactory;
 import th.or.nectec.marlo.MarloFragment;
-import th.or.nectec.marlo.PolygonFactory;
 import th.or.nectec.marlo.PolygonMarloFragment;
+import th.or.nectec.marlo.option.MarkerOptionFactory;
+import th.or.nectec.marlo.option.PolygonOptionFactory;
 
 import java.util.ArrayList;
 
@@ -62,7 +61,7 @@ public class MapsActivity extends AppCompatActivity {
 
         marlo = (PolygonMarloFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         marlo.setMode(PolygonMarloFragment.Mode.MULTI);
-        marlo.setPolygonFactory(new PolygonFactory() {
+        marlo.setPolygonOptionFactory(new PolygonOptionFactory() {
             @Override
             public PolygonOptions build(PolygonMarloFragment fragment) {
                 return new PolygonOptions()
@@ -71,7 +70,7 @@ public class MapsActivity extends AppCompatActivity {
                         .strokeWidth(5);
             }
         });
-        marlo.setMarkerFactory(new MarkerFactory() {
+        marlo.setMarkerOptionFactory(new MarkerOptionFactory() {
             @Override
             public MarkerOptions build(MarloFragment fragment, LatLng position) {
                 return new MarkerOptions()

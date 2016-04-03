@@ -15,28 +15,21 @@
  * limitations under the License.
  */
 
-package th.or.nectec.marlo;
+package th.or.nectec.marlo.option;
 
-
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import th.or.nectec.marlo.MarloFragment;
 
 import static com.google.android.gms.maps.model.BitmapDescriptorFactory.defaultMarker;
 
-public class DefaultPolygonMarkerFactory implements MarkerFactory {
+public class DefaultMarkerOptionFactory implements MarkerOptionFactory {
 
     @Override
     public MarkerOptions build(MarloFragment fragment, LatLng position) {
-        if (!(fragment instanceof PolygonMarloFragment)) {
-            throw new IllegalArgumentException("DefaultPolygonMarkerFactory must use with PolygonMarloFragment");
-        }
-        PolygonMarloFragment polygonMarloFragment = (PolygonMarloFragment) fragment;
         return new MarkerOptions()
                 .position(position)
                 .draggable(true)
-                .icon(defaultMarker(polygonMarloFragment.getDrawingState() == PolygonMarloFragment.State.BOUNDARY
-                        ? BitmapDescriptorFactory.HUE_ROSE
-                        : BitmapDescriptorFactory.HUE_YELLOW));
+                .icon(defaultMarker());
     }
 }

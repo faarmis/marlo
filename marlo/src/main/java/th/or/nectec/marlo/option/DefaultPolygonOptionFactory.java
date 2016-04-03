@@ -15,12 +15,13 @@
  * limitations under the License.
  */
 
-package th.or.nectec.marlo;
+package th.or.nectec.marlo.option;
 
 import android.graphics.Color;
 import com.google.android.gms.maps.model.PolygonOptions;
+import th.or.nectec.marlo.PolygonMarloFragment;
 
-public class DefaultPolygonFactory implements PolygonFactory {
+public class DefaultPolygonOptionFactory implements PolygonOptionFactory {
 
     @Override
     public PolygonOptions build(PolygonMarloFragment fragment) {

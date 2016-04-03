@@ -15,11 +15,12 @@
  * limitations under the License.
  */
 
-package th.or.nectec.marlo;
+package th.or.nectec.marlo.option;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import th.or.nectec.marlo.MarloFragment;
 
-public interface MarkerFactory {
+public interface MarkerOptionFactory {
     MarkerOptions build(MarloFragment fragment, LatLng position);
 }

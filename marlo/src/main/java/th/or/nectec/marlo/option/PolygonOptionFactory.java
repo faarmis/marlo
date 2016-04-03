@@ -15,10 +15,11 @@
  * limitations under the License.
  */
 
-package th.or.nectec.marlo;
+package th.or.nectec.marlo.option;
 
 import com.google.android.gms.maps.model.PolygonOptions;
+import th.or.nectec.marlo.PolygonMarloFragment;
 
-public interface PolygonFactory {
+public interface PolygonOptionFactory {
     PolygonOptions build(PolygonMarloFragment fragment);
 }

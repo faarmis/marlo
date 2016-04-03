@@ -24,6 +24,9 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.maps.android.PolyUtil;
 import th.or.nectec.marlo.model.PolygonData;
+import th.or.nectec.marlo.option.DefaultPolygonMarkerOptionFactory;
+import th.or.nectec.marlo.option.DefaultPolygonOptionFactory;
+import th.or.nectec.marlo.option.PolygonOptionFactory;
 
 import java.util.List;
 import java.util.Stack;
@@ -35,12 +38,12 @@ public class PolygonMarloFragment extends MarloFragment {
 
     private State drawingState = State.BOUNDARY;
     private Mode mode = Mode.SINGLE;
-    private PolygonFactory polygonFactory;
+    private PolygonOptionFactory polygonOptionFactory;
 
     public PolygonMarloFragment() {
         super();
-        this.markerFactory = new DefaultPolygonMarkerFactory();
-        this.polygonFactory = new DefaultPolygonFactory();
+        markerOptionFactory = new DefaultPolygonMarkerOptionFactory();
+        polygonOptionFactory = new DefaultPolygonOptionFactory();
     }
 
     public static PolygonMarloFragment newInstance(Mode mode) {
@@ -53,8 +56,8 @@ public class PolygonMarloFragment extends MarloFragment {
         this.mode = mode;
     }
 
-    public void setPolygonFactory(PolygonFactory polygonFactory) {
-        this.polygonFactory = polygonFactory;
+    public void setPolygonOptionFactory(PolygonOptionFactory polygonOptionFactory) {
+        this.polygonOptionFactory = polygonOptionFactory;
     }
 
     @Override
@@ -97,7 +100,7 @@ public class PolygonMarloFragment extends MarloFragment {
     public void mark(LatLng markPoint) {
         SoundUtility.play(getContext(), R.raw.thumpsoundeffect);
 
-        Marker marker = googleMap.addMarker(markerFactory.build(this, markPoint));
+        Marker marker = googleMap.addMarker(markerOptionFactory.build(this, markPoint));
         PolygonData activePolygon = getActivePolygonData();
         switch (drawingState) {
             case BOUNDARY:
@@ -119,7 +122,7 @@ public class PolygonMarloFragment extends MarloFragment {
                 }
                 break;
         }
-        PolygonDrawUtils.createPolygon(googleMap, activePolygon, polygonFactory.build(this));
+        PolygonDrawUtils.createPolygon(googleMap, activePolygon, polygonOptionFactory.build(this));
     }
 
     protected void onMarkHoleOutBound(LatLng target, List<LatLng> points) {
@@ -148,7 +151,7 @@ public class PolygonMarloFragment extends MarloFragment {
                 multiPolygon.pop();
             }
         }
-        PolygonDrawUtils.createPolygon(googleMap, getActivePolygonData(), polygonFactory.build(this));
+        PolygonDrawUtils.createPolygon(googleMap, getActivePolygonData(), polygonOptionFactory.build(this));
     }
 
     public State getDrawingState() {

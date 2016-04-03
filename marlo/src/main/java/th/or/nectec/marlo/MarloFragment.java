@@ -28,12 +28,14 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.LatLng;
+import th.or.nectec.marlo.option.DefaultMarkerOptionFactory;
+import th.or.nectec.marlo.option.MarkerOptionFactory;
 
 public abstract class MarloFragment extends SupportMapFragment implements OnMapReadyCallback, OnClickListener {
 
     private static final String TAG = "MarloFragment";
 
-    protected MarkerFactory markerFactory = new DefaultMarkerFactory();
+    protected MarkerOptionFactory markerOptionFactory = new DefaultMarkerOptionFactory();
     protected GoogleMap googleMap;
     private boolean myLocationEnable;
 
@@ -118,8 +120,8 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
 
     public abstract void undo();
 
-    public void setMarkerFactory(MarkerFactory markerFactory) {
-        this.markerFactory = markerFactory;
+    public void setMarkerOptionFactory(MarkerOptionFactory markerOptionFactory) {
+        this.markerOptionFactory = markerOptionFactory;
     }
 
 }
