@@ -19,7 +19,6 @@ package th.or.nectec.marlo;
 
 import android.os.Bundle;
 import android.view.View;
-
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import th.or.nectec.marlo.model.PolygonData;
@@ -30,12 +29,8 @@ public class PolygonMarloFragment extends MarloFragment {
 
     private final Stack<PolygonData> multiPolygon = new Stack<>();
     private final PolygonData singlePolygon = new PolygonData();
+
     private State drawingState = State.BOUNDARY;
-
-    public void setMode(Mode mode) {
-        this.mode = mode;
-    }
-
     private Mode mode = Mode.SINGLE;
     private PolygonFactory polygonFactory;
 
@@ -49,6 +44,10 @@ public class PolygonMarloFragment extends MarloFragment {
         PolygonMarloFragment fragment = new PolygonMarloFragment();
         fragment.mode = mode;
         return fragment;
+    }
+
+    public void setMode(Mode mode) {
+        this.mode = mode;
     }
 
     public void setPolygonFactory(PolygonFactory polygonFactory) {
@@ -89,15 +88,15 @@ public class PolygonMarloFragment extends MarloFragment {
 
     public void undo() {
         Stack<Stack<Marker>> holeMarker = getActivePolygonData().getHoles();
-        if (!holeMarker.isEmpty()){
+        if (!holeMarker.isEmpty()) {
             Stack<Marker> lastHoles = holeMarker.peek();
             if (!lastHoles.isEmpty()) {
                 lastHoles.pop().remove();
             }
-            if(lastHoles.isEmpty()){
+            if (lastHoles.isEmpty()) {
                 holeMarker.pop();
             }
-        }else {
+        } else {
             Stack<Marker> boundary = getActivePolygonData().getBoundary();
             if (!boundary.isEmpty()) {
                 changeToBoundary();
