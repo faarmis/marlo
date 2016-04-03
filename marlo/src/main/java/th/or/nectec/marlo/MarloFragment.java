@@ -118,7 +118,7 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
         }
     }
 
-    public abstract void undo();
+    public abstract boolean undo();
 
     public void setMarkerOptionFactory(MarkerOptionFactory markerOptionFactory) {
         this.markerOptionFactory = markerOptionFactory;

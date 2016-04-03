@@ -37,8 +37,8 @@ public class MarkerMarloFragment extends MarloFragment {
     }
 
     @Override
-    public void undo() {
-        //This fragment can't undo
+    public boolean undo() {
+        return false;
     }
 
     public Marker getMarker() {

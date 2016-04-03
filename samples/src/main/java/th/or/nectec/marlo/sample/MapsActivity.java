@@ -87,4 +87,10 @@ public class MapsActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onBackPressed() {
+        if (!marlo.undo()) {
+            super.onBackPressed();
+        }
+    }
 }

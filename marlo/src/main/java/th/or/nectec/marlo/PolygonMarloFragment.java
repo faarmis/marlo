@@ -129,8 +129,13 @@ public class PolygonMarloFragment extends MarloFragment {
         Toast.makeText(getActivity(), "Out of polygon boundary ", Toast.LENGTH_SHORT).show();
     }
 
-    public void undo() {
-        Stack<Stack<Marker>> holeMarker = getActivePolygonData().getHoles();
+    public boolean undo() {
+        PolygonData polygonData = getActivePolygonData();
+        if (polygonData.isEmpty() || polygonData.getBoundary().empty() ) {
+            return false;
+        }
+
+        Stack<Stack<Marker>> holeMarker = polygonData.getHoles();
         if (!holeMarker.isEmpty()) {
             Stack<Marker> lastHoles = holeMarker.peek();
             if (!lastHoles.isEmpty()) {
@@ -140,7 +145,7 @@ public class PolygonMarloFragment extends MarloFragment {
                 holeMarker.pop();
             }
         } else {
-            Stack<Marker> boundary = getActivePolygonData().getBoundary();
+            Stack<Marker> boundary = polygonData.getBoundary();
             if (!boundary.isEmpty()) {
                 changeToBoundaryState();
                 boundary.peek().remove();
@@ -151,7 +156,8 @@ public class PolygonMarloFragment extends MarloFragment {
                 multiPolygon.pop();
             }
         }
-        PolygonDrawUtils.createPolygon(googleMap, getActivePolygonData(), polygonOptionFactory.build(this));
+        PolygonDrawUtils.createPolygon(googleMap, polygonData, polygonOptionFactory.build(this));
+        return true;
     }
 
     public State getDrawingState() {

@@ -52,8 +52,11 @@ public class MultiMarkerMarloFragment extends MarloFragment {
         markers.push(marker);
     }
 
-    public void undo() {
-        if (!markers.empty())
+    public boolean undo() {
+        if (!markers.empty()) {
             markers.pop().remove();
+            return true;
+        }
+        return false;
     }
 }
