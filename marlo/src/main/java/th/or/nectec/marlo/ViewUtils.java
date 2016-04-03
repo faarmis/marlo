@@ -54,7 +54,7 @@ final class ViewUtils {
         ImageButton viewFinder = new ImageButton(fragment.getContext());
         viewFinder.setId(R.id.marlo_view_finder);
         viewFinder.setBackgroundColor(Color.TRANSPARENT);
-        viewFinder.setScaleType(ImageView.ScaleType.FIT_XY);
+        viewFinder.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
         viewFinder.setOnClickListener(fragment);
         return viewFinder;
     }
