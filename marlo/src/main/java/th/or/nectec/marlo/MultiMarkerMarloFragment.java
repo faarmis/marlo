@@ -9,7 +9,7 @@ import java.util.Stack;
 
 public class MultiMarkerMarloFragment extends MarloFragment {
 
-    private Stack<Marker> markers = new Stack<>();
+    private final Stack<Marker> markers = new Stack<>();
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
