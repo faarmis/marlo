@@ -94,10 +94,10 @@ public class PolygonMarloFragment extends MarloFragment {
     }
 
     @Override
-    protected void onViewfinderClick(LatLng target) {
+    public void mark(LatLng markPoint) {
         SoundUtility.play(getContext(), R.raw.thumpsoundeffect);
 
-        Marker marker = getGoogleMap().addMarker(markerFactory.build(this, target));
+        Marker marker = googleMap.addMarker(markerFactory.build(this, markPoint));
         PolygonData activePolygon = getActivePolygonData();
         switch (drawingState) {
             case BOUNDARY:
@@ -110,16 +110,16 @@ public class PolygonMarloFragment extends MarloFragment {
                 }
                 Stack<Marker> lastHoles = holes.peek();
                 List<LatLng> pointsOfActivePolygon = activePolygon.getPolygon().getPoints();
-                boolean inBoundary = PolyUtil.containsLocation(target, pointsOfActivePolygon, false);
+                boolean inBoundary = PolyUtil.containsLocation(markPoint, pointsOfActivePolygon, false);
                 if (inBoundary) {
                     lastHoles.push(marker);
                 } else {
-                    onMarkHoleOutBound(target, activePolygon.getPolygon().getPoints());
+                    onMarkHoleOutBound(markPoint, activePolygon.getPolygon().getPoints());
                     marker.remove();
                 }
                 break;
         }
-        PolygonDrawUtils.createPolygon(getGoogleMap(), activePolygon, polygonFactory.build(this));
+        PolygonDrawUtils.createPolygon(googleMap, activePolygon, polygonFactory.build(this));
     }
 
     protected void onMarkHoleOutBound(LatLng target, List<LatLng> points) {
@@ -148,7 +148,7 @@ public class PolygonMarloFragment extends MarloFragment {
                 multiPolygon.pop();
             }
         }
-        PolygonDrawUtils.createPolygon(getGoogleMap(), getActivePolygonData(), polygonFactory.build(this));
+        PolygonDrawUtils.createPolygon(googleMap, getActivePolygonData(), polygonFactory.build(this));
     }
 
     public State getDrawingState() {

@@ -29,9 +29,9 @@ public class MultiMarkerMarloFragment extends MarloFragment {
     }
 
     @Override
-    protected void onViewfinderClick(LatLng viewfinderTarget) {
+    public void mark(LatLng markPoint) {
         SoundUtility.play(getContext(), R.raw.thumpsoundeffect);
-        Marker marker = getGoogleMap().addMarker(markerFactory.build(this, viewfinderTarget));
+        Marker marker = googleMap.addMarker(markerFactory.build(this, markPoint));
         markers.push(marker);
     }
 

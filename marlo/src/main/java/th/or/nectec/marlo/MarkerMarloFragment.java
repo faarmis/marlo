@@ -26,13 +26,13 @@ public class MarkerMarloFragment extends MarloFragment {
     private Marker marker;
 
     @Override
-    protected void onViewfinderClick(LatLng viewfinderTarget) {
+    public void mark(LatLng markPoint) {
         SoundUtility.play(getContext(), R.raw.thumpsoundeffect);
         if (marker != null) {
             marker.remove();
         }
-        marker = getGoogleMap().addMarker(new MarkerOptions()
-                .position(viewfinderTarget)
+        marker = googleMap.addMarker(new MarkerOptions()
+                .position(markPoint)
                 .draggable(true));
     }
 

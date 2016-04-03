@@ -34,7 +34,7 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
     private static final String TAG = "MarloFragment";
 
     protected MarkerFactory markerFactory = new DefaultMarkerFactory();
-    private GoogleMap googleMap;
+    protected GoogleMap googleMap;
     private boolean myLocationEnable;
 
     @Override
@@ -69,9 +69,9 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
     }
 
     private void updateMyLocationVisibility() {
-        View myLocation = findViewBy(R.id.marlo_gps);
-        if (myLocation != null) {
-            myLocation.setVisibility(myLocationEnable ? View.VISIBLE : View.GONE);
+        View myLocationButton = findViewBy(R.id.marlo_gps);
+        if (myLocationButton != null) {
+            myLocationButton.setVisibility(myLocationEnable ? View.VISIBLE : View.GONE);
         }
     }
 
@@ -100,17 +100,13 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.marlo_view_finder || view.getId() == R.id.marlo_mark) {
-            onViewfinderClick(cameraPosition());
+            mark(googleMap.getCameraPosition().target);
         } else if (view.getId() == R.id.marlo_gps) {
             moveToMyLocation();
         }
     }
 
-    protected abstract void onViewfinderClick(LatLng viewfinderTarget);
-
-    private LatLng cameraPosition() {
-        return googleMap.getCameraPosition().target;
-    }
+    public abstract void mark(LatLng markPoint);
 
     private void moveToMyLocation() {
         Location lastKnowLocation = PlayLocationService.getInstance(getContext()).getLastKnowLocation();
@@ -124,10 +120,6 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
 
     public void setMarkerFactory(MarkerFactory markerFactory) {
         this.markerFactory = markerFactory;
-    }
-
-    protected GoogleMap getGoogleMap() {
-        return googleMap;
     }
 
 }
