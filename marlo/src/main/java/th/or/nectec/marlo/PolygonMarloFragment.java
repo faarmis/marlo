@@ -35,7 +35,6 @@ public class PolygonMarloFragment extends MarloFragment {
     private final Stack<PolygonData> multiPolygon = new Stack<>();
     private final PolygonData singlePolygon = new PolygonData();
 
-    private State drawingState = State.BOUNDARY;
     private Mode mode = Mode.SINGLE;
     private PolygonOptionFactory polygonOptionFactory;
 
@@ -84,12 +83,10 @@ public class PolygonMarloFragment extends MarloFragment {
     }
 
     private void changeToHoleState() {
-        drawingState = State.HOLE;
         getActivePolygonData().setCurrentState(PolygonData.State.HOLE);
     }
 
     private void changeToBoundaryState() {
-        drawingState = State.BOUNDARY;
         getActivePolygonData().setCurrentState(PolygonData.State.BOUNDARY);
     }
 
@@ -131,21 +128,12 @@ public class PolygonMarloFragment extends MarloFragment {
         return true;
     }
 
-    public State getDrawingState() {
-        return drawingState;
-    }
-
     public Stack<PolygonData> getPolygons() {
         return multiPolygon;
     }
 
     public PolygonData getPolygon() {
         return singlePolygon;
-    }
-
-    public enum State {
-        BOUNDARY,
-        HOLE,
     }
 
     public enum Mode {

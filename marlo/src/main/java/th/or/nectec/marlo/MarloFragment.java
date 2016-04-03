@@ -31,6 +31,10 @@ import com.google.android.gms.maps.model.LatLng;
 import th.or.nectec.marlo.option.DefaultMarkerOptionFactory;
 import th.or.nectec.marlo.option.MarkerOptionFactory;
 
+/**
+ * Base fragment of Marlo Project, Contain common process such as Setup map, Add common ui component
+ * and Enable my location feature
+ */
 public abstract class MarloFragment extends SupportMapFragment implements OnMapReadyCallback, OnClickListener {
 
     private static final String TAG = "MarloFragment";
@@ -51,7 +55,9 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
     @Override
     public void onStart() {
         super.onStart();
-        if (myLocationEnable) PlayLocationService.getInstance(getContext()).connect();
+        if (myLocationEnable) {
+            PlayLocationService.getInstance(getContext()).connect();
+        }
     }
 
     @Override
@@ -65,7 +71,9 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
             Manifest.permission.ACCESS_FINE_LOCATION})
     public void enableMyLocationButton() throws SecurityException {
         myLocationEnable = true;
-        if (googleMap != null) googleMap.setMyLocationEnabled(true);
+        if (googleMap != null) {
+            googleMap.setMyLocationEnabled(true);
+        }
         PlayLocationService.getInstance(getContext()).connect();
         updateMyLocationVisibility();
     }
@@ -95,7 +103,6 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
         } catch (SecurityException se) {
             if (BuildConfig.DEBUG) Log.e(TAG, "onMapReady", se);
         }
-
         updateMyLocationVisibility();
     }
 
@@ -108,6 +115,11 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
         }
     }
 
+    /**
+     * execute mark process of fragment
+     *
+     * @param markPoint latlng position to mark
+     */
     public abstract void mark(LatLng markPoint);
 
     private void moveToMyLocation() {
@@ -118,6 +130,11 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
         }
     }
 
+    /**
+     * execute undo process of fragment
+     *
+     * @return true if undo process of fragment was done, false when fragment have noting to undo
+     */
     public abstract boolean undo();
 
     public void setMarkerOptionFactory(MarkerOptionFactory markerOptionFactory) {
