@@ -77,7 +77,7 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
 
     protected final View findViewBy(@IdRes int id) {
         ViewGroup rootView = (ViewGroup) getView();
-        if (rootView == null) throw new IllegalArgumentException("Root View should not be null");
+        if (rootView == null) throw new IllegalArgumentException("Root view is null");
         return rootView.findViewById(id);
     }
 
