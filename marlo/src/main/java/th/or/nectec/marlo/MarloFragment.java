@@ -29,12 +29,15 @@ import android.view.ViewGroup;
 
 import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+
+import java.util.Stack;
 
 public abstract class MarloFragment extends SupportMapFragment implements OnMapReadyCallback, OnClickListener {
 
     private static final String TAG = "MarloFragment";
 
-    protected MarkerFactory markerFactory;
+    protected MarkerFactory markerFactory = new DefaultMarkerFactory();
     private GoogleMap googleMap;
     private boolean myLocationEnable;
 
@@ -42,6 +45,9 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         getMapAsync(this);
+
+        ViewUtils.addViewFinder(this);
+        ViewUtils.addGpsLocationButton(this);
     }
 
     @Override
@@ -73,7 +79,7 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
         }
     }
 
-    protected View findViewBy(@IdRes int id) {
+    protected final View findViewBy(@IdRes int id) {
         ViewGroup rootView = (ViewGroup) getView();
         if (rootView == null) throw new IllegalArgumentException("Root View should not be null");
         return rootView.findViewById(id);
@@ -91,8 +97,6 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
         } catch (SecurityException se) {
             if (BuildConfig.DEBUG) Log.e(TAG, "onMapReady", se);
         }
-        ViewUtils.addViewFinder(this);
-        ViewUtils.addGpsLocationButton(this);
 
         updateMyLocationVisibility();
     }

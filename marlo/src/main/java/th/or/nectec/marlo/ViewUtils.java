@@ -79,6 +79,7 @@ final class ViewUtils {
         fab.setId(R.id.marlo_gps);
         fab.setImageResource(R.drawable.ic_gps);
         fab.setOnClickListener(fragment);
+        fab.setVisibility(View.GONE);
 
         ViewGroup rootView = (ViewGroup) fragment.getView();
         if (rootView != null) {
