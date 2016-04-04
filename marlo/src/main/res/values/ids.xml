@@ -23,5 +23,6 @@
     <item name="marlo_hole" type="id"/>
     <item name="marlo_boundary" type="id"/>
     <item name="marlo_gps" type="id"/>
+    <item name="map_toggle" type="id"/>
 
 </resources>
