@@ -20,6 +20,8 @@ package th.or.nectec.marlo;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import th.or.nectec.marlo.model.PolygonData;
@@ -34,7 +36,8 @@ public class PolygonMarloFragment extends MarloFragment {
 
     private final Stack<PolygonData> multiPolygon = new Stack<>();
     private final PolygonData singlePolygon = new PolygonData();
-
+    private BitmapDescriptor activeMarkerIcon;
+    private BitmapDescriptor passiveMarkerIcon;
     private Mode mode = Mode.SINGLE;
     private PolygonOptionFactory polygonOptionFactory;
 
@@ -42,6 +45,7 @@ public class PolygonMarloFragment extends MarloFragment {
         super();
         markerOptionFactory = new DefaultPolygonMarkerOptionFactory();
         polygonOptionFactory = new DefaultPolygonOptionFactory();
+
     }
 
     public static PolygonMarloFragment newInstance(Mode mode) {
@@ -61,6 +65,9 @@ public class PolygonMarloFragment extends MarloFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+        activeMarkerIcon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
+        passiveMarkerIcon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN);
 
         ViewUtils.addPolygonToolsMenu(this);
         findViewBy(R.id.marlo_boundary).setVisibility(mode == Mode.MULTI ? View.VISIBLE : View.GONE);
@@ -92,12 +99,12 @@ public class PolygonMarloFragment extends MarloFragment {
 
         Marker marker = googleMap.addMarker(markerOptionFactory.build(this, markPoint));
         PolygonData activePolygon = getActivePolygonData();
+        setUpdateIconToLastMarker(passiveMarkerIcon);
         boolean success = activePolygon.addMarker(marker);
         if (!success) {
             onMarkHoleOutBound(markPoint, activePolygon.getPolygon().getPoints());
             marker.remove();
         }
-
         PolygonDrawUtils.createPolygon(googleMap, activePolygon, polygonOptionFactory.build(this));
     }
 
@@ -111,6 +118,7 @@ public class PolygonMarloFragment extends MarloFragment {
             return false;
         }
         boolean removed = polygonData.removeLastMarker();
+        setUpdateIconToLastMarker(activeMarkerIcon);
 
         if (removed && polygonData.isEmpty() && mode == Mode.MULTI && multiPolygon.size() > 1) {
             multiPolygon.pop();
@@ -118,6 +126,17 @@ public class PolygonMarloFragment extends MarloFragment {
 
         PolygonDrawUtils.createPolygon(googleMap, polygonData, polygonOptionFactory.build(this));
         return true;
+    }
+
+    private void setUpdateIconToLastMarker(BitmapDescriptor icon) {
+        Marker lastMarker = getActivePolygonData().getLastMarker();
+        if (lastMarker != null) {
+            lastMarker.setIcon(icon);
+        } else if (multiPolygon.size() > 1) {
+            PolygonData topPolygon = multiPolygon.pop();
+            multiPolygon.peek().getLastMarker().setIcon(icon);
+            multiPolygon.push(topPolygon);
+        }
     }
 
     public Stack<PolygonData> getPolygons() {
