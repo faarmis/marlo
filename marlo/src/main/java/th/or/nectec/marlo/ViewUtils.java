@@ -21,12 +21,17 @@ import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.support.annotation.DrawableRes;
 import android.support.design.widget.FloatingActionButton;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ToggleButton;
+
+import com.google.android.gms.maps.GoogleMap;
 
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
@@ -88,6 +93,41 @@ final class ViewUtils {
             int verticalMargin = fragment.getResources().getDimensionPixelOffset(R.dimen.screen_vertical_margin);
             params.setMargins(0, verticalMargin, horizonMargin, 0);
             rootView.addView(fab, params);
+        }
+    }
+
+    public static void changemapToggleButton(final MarloFragment fragment) {
+        ToggleButton toggleButton = new ToggleButton(fragment.getContext());
+        toggleButton.setId(R.id.map_toggle);
+        toggleButton.setBackgroundResource(R.drawable.selector_toggle_button);
+        toggleButton.setTextOff("");
+        toggleButton.setTextOn("");
+        toggleButton.setChecked(true);
+
+
+        toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    fragment.googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+                } else {
+                    fragment.googleMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+                }
+            }
+        });
+
+        ViewGroup rootView = (ViewGroup) fragment.getView();
+        if (rootView != null) {
+            int px = (int) TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP, 72,
+                    fragment.getResources().getDisplayMetrics());
+            LayoutParams params = new LayoutParams(px, px, Gravity.START | Gravity.BOTTOM);
+            int horizonMargin = fragment.getResources()
+                    .getDimensionPixelOffset(R.dimen.screen_horizontal_margin);
+            int verticalMargin = fragment.getResources()
+                    .getDimensionPixelOffset(R.dimen.over_google_margin);
+            params.setMargins(horizonMargin, 0, 0, verticalMargin);
+            rootView.addView(toggleButton, params);
         }
     }
 

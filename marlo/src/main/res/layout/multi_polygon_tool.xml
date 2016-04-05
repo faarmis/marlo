@@ -63,23 +63,4 @@
             android:layout_marginBottom="@dimen/fab_horizontal_margin"
             android:layout_height="wrap_content"/>
 
-    <ToggleButton
-        android:id="@id/map_toggle"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
-        android:layout_marginLeft="@dimen/fab_vertical_margin"
-        android:layout_marginRight="@dimen/fab_vertical_margin"
-        android:layout_marginBottom="@dimen/fab_horizontal_margin"
-        android:gravity="center"
-        android:background="@drawable/selector_toggle_button"
-        android:textOff=""
-        android:textOn=""/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="top"
-        android:layout_gravity="top"
-        android:text="444444" />
-
 </LinearLayout>
