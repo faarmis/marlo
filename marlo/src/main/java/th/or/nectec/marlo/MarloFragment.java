@@ -103,6 +103,10 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
         } catch (SecurityException se) {
             if (BuildConfig.DEBUG) Log.e(TAG, "onMapReady", se);
         }
+        ViewUtils.addViewFinder(this);
+        ViewUtils.addGpsLocationButton(this);
+        ViewUtils.changemapToggleButton(this);
+
         updateMyLocationVisibility();
     }
 
