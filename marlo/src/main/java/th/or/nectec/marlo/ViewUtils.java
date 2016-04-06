@@ -31,8 +31,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ToggleButton;
 
-import com.google.android.gms.maps.GoogleMap;
-
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
 final class ViewUtils {
@@ -44,25 +42,23 @@ final class ViewUtils {
         addViewFinder(fragment, R.drawable.view_finder);
     }
 
-    public static void addViewFinder(MarloFragment fragment, @DrawableRes int viewFinderDrawableId) {
+    public static View addViewFinder(MarloFragment fragment, @DrawableRes int viewFinderDrawableId) {
         ViewGroup rootView = (ViewGroup) fragment.getView();
         if (rootView != null) {
-            ImageButton viewFinder = getViewFinder(fragment);
+            ImageButton viewFinder = new ImageButton(fragment.getContext());
+            viewFinder.setId(R.id.marlo_view_finder);
+            viewFinder.setBackgroundColor(Color.TRANSPARENT);
+            viewFinder.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+            viewFinder.setOnClickListener(fragment);
             viewFinder.setImageResource(viewFinderDrawableId);
             int size = fragment.getResources().getDimensionPixelOffset(R.dimen.view_finder_size);
             LayoutParams layoutParams = new LayoutParams(size, size, Gravity.CENTER);
             rootView.addView(viewFinder, layoutParams);
+            return viewFinder;
         }
+        return null;
     }
 
-    private static ImageButton getViewFinder(MarloFragment fragment) {
-        ImageButton viewFinder = new ImageButton(fragment.getContext());
-        viewFinder.setId(R.id.marlo_view_finder);
-        viewFinder.setBackgroundColor(Color.TRANSPARENT);
-        viewFinder.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-        viewFinder.setOnClickListener(fragment);
-        return viewFinder;
-    }
 
     @SuppressLint("InflateParams")
     public static void addPolygonToolsMenu(MarloFragment fragment) {
@@ -96,25 +92,14 @@ final class ViewUtils {
         }
     }
 
-    public static void changemapToggleButton(final MarloFragment fragment) {
+    public static CompoundButton addMapTypeButton(MarloFragment fragment) {
         ToggleButton toggleButton = new ToggleButton(fragment.getContext());
         toggleButton.setId(R.id.map_toggle);
         toggleButton.setBackgroundResource(R.drawable.selector_toggle_button);
         toggleButton.setTextOff("");
         toggleButton.setTextOn("");
         toggleButton.setChecked(true);
-
-
-        toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    fragment.googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-                } else {
-                    fragment.googleMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
-                }
-            }
-        });
+        toggleButton.setOnCheckedChangeListener(fragment.onMapTypeButtonChange);
 
         ViewGroup rootView = (ViewGroup) fragment.getView();
         if (rootView != null) {
@@ -128,7 +113,9 @@ final class ViewUtils {
                     .getDimensionPixelOffset(R.dimen.over_google_margin);
             params.setMargins(horizonMargin, 0, 0, verticalMargin);
             rootView.addView(toggleButton, params);
+            return toggleButton;
         }
+        return null;
     }
 
 }

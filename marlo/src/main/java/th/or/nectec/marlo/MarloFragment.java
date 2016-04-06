@@ -26,6 +26,8 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.LatLng;
 import th.or.nectec.marlo.option.DefaultMarkerOptionFactory;
@@ -41,6 +43,14 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
 
     protected MarkerOptionFactory markerOptionFactory = new DefaultMarkerOptionFactory();
     protected GoogleMap googleMap;
+
+    protected final OnCheckedChangeListener onMapTypeButtonChange = new OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+            googleMap.setMapType(isChecked ? GoogleMap.MAP_TYPE_NORMAL : GoogleMap.MAP_TYPE_SATELLITE);
+        }
+    };
+
     private boolean myLocationEnable;
 
     @Override
@@ -50,7 +60,6 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
 
         ViewUtils.addViewFinder(this);
         ViewUtils.addGpsLocationButton(this);
-        ViewUtils.changemapToggleButton(this);
     }
 
     @Override
@@ -105,7 +114,7 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
             if (BuildConfig.DEBUG) Log.e(TAG, "onMapReady", se);
         }
 
-
+        ViewUtils.addMapTypeButton(this);
         updateMyLocationVisibility();
     }
 
