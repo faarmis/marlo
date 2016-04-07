@@ -15,4 +15,4 @@
  * limitations under the License.
  */
 
-include ':marlo', ':samples', ':marlo-samples'
+include ':marlo', ':marlo-samples'
