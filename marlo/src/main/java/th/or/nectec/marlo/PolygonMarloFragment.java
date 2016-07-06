@@ -20,15 +20,18 @@ package th.or.nectec.marlo;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
+
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
+import th.or.nectec.marlo.model.Polygon;
 import th.or.nectec.marlo.model.PolygonData;
 import th.or.nectec.marlo.option.DefaultPolygonMarkerOptionFactory;
 import th.or.nectec.marlo.option.DefaultPolygonOptionFactory;
 import th.or.nectec.marlo.option.PolygonOptionFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
@@ -93,6 +96,17 @@ public class PolygonMarloFragment extends MarloFragment {
         return mode == Mode.SINGLE ? singlePolygon : multiPolygon.peek();
     }
 
+    private void setUpdateIconToLastMarker(BitmapDescriptor icon) {
+        Marker lastMarker = getActivePolygonData().getLastMarker();
+        if (lastMarker != null) {
+            lastMarker.setIcon(icon);
+        } else if (multiPolygon.size() > 1) {
+            PolygonData topPolygon = multiPolygon.pop();
+            multiPolygon.peek().getLastMarker().setIcon(icon);
+            multiPolygon.push(topPolygon);
+        }
+    }
+
     @Override
     public void mark(LatLng markPoint) {
         SoundUtility.play(getContext(), R.raw.thumpsoundeffect);
@@ -128,23 +142,16 @@ public class PolygonMarloFragment extends MarloFragment {
         return true;
     }
 
-    private void setUpdateIconToLastMarker(BitmapDescriptor icon) {
-        Marker lastMarker = getActivePolygonData().getLastMarker();
-        if (lastMarker != null) {
-            lastMarker.setIcon(icon);
-        } else if (multiPolygon.size() > 1) {
-            PolygonData topPolygon = multiPolygon.pop();
-            multiPolygon.peek().getLastMarker().setIcon(icon);
-            multiPolygon.push(topPolygon);
+    public List<Polygon> getPolygons() {
+        ArrayList<Polygon> polygons = new ArrayList<>();
+        for (PolygonData polydata : multiPolygon) {
+            polygons.add(Polygon.fromPolygonData(polydata));
         }
+        return polygons;
     }
 
-    public Stack<PolygonData> getPolygons() {
-        return multiPolygon;
-    }
-
-    public PolygonData getPolygon() {
-        return singlePolygon;
+    public Polygon getPolygon() {
+        return Polygon.fromPolygonData(singlePolygon);
     }
 
     public PolygonData.State getDrawingState() {

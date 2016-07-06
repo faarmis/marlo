@@ -19,9 +19,13 @@ package th.or.nectec.marlo;
 
 import android.os.Bundle;
 import android.view.View;
+
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
+import th.or.nectec.marlo.model.Coordinate;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 
 public class MultiMarkerMarloFragment extends MarloFragment {
@@ -59,4 +63,13 @@ public class MultiMarkerMarloFragment extends MarloFragment {
         }
         return false;
     }
+
+    public List<Coordinate> getCoordinates() {
+        ArrayList<Coordinate> coordinates = new ArrayList<>();
+        for (Marker marker : markers) {
+            coordinates.add(Coordinate.fromMarker(marker));
+        }
+        return coordinates;
+    }
+
 }

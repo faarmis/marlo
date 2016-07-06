@@ -20,6 +20,7 @@ package th.or.nectec.marlo;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import th.or.nectec.marlo.model.Coordinate;
 
 public class MarkerMarloFragment extends MarloFragment {
 
@@ -41,7 +42,7 @@ public class MarkerMarloFragment extends MarloFragment {
         return false;
     }
 
-    public Marker getMarker() {
-        return marker;
+    public Coordinate getCoordinate() {
+        return Coordinate.fromMarker(marker);
     }
 }
