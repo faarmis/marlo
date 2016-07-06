@@ -20,7 +20,6 @@
               xmlns:app="http://schemas.android.com/apk/res-auto"
               android:orientation="vertical"
               android:paddingBottom="@dimen/screen_vertical_margin"
-              android:gravity="center"
               android:layout_height="wrap_content"
               android:layout_width="wrap_content">
 
@@ -31,7 +30,6 @@
             android:layout_marginRight="@dimen/fab_vertical_margin"
             android:layout_marginBottom="@dimen/fab_horizontal_margin"
             app:elevation="@dimen/fab_elevation"
-            app:fabSize="mini"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
@@ -42,18 +40,16 @@
             android:layout_marginRight="@dimen/fab_vertical_margin"
             android:layout_marginBottom="@dimen/fab_horizontal_margin"
             app:elevation="@dimen/fab_elevation"
-            app:fabSize="mini"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
     <android.support.design.widget.FloatingActionButton
-            android:id="@+id/marlo_undo"
+            android:id="@id/marlo_undo"
             android:src="@drawable/ic_undo"
             android:layout_marginLeft="@dimen/fab_vertical_margin"
             android:layout_marginRight="@dimen/fab_vertical_margin"
             android:layout_marginBottom="@dimen/fab_horizontal_margin"
             app:elevation="@dimen/fab_elevation"
-            app:fabSize="mini"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 

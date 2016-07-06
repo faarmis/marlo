@@ -17,11 +17,11 @@
   -->
 
 <resources>
-    <dimen name="view_finder_size">100dp</dimen>
-    <dimen name="screen_vertical_margin">12dp</dimen>
-    <dimen name="screen_horizontal_margin">8dp</dimen>
+    <dimen name="view_finder_size">120dp</dimen>
+    <dimen name="screen_vertical_margin">20dp</dimen>
+    <dimen name="screen_horizontal_margin">16dp</dimen>
     <dimen name="over_google_margin">32dp</dimen>
-    <dimen name="fab_vertical_margin">4dp</dimen>
-    <dimen name="fab_horizontal_margin">8dp</dimen>
-    <dimen name="fab_elevation">4dp</dimen>
+    <dimen name="fab_vertical_margin">16dp</dimen>
+    <dimen name="fab_horizontal_margin">16dp</dimen>
+    <dimen name="fab_elevation">6dp</dimen>
 </resources>
