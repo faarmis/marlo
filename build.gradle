@@ -45,6 +45,9 @@ ext {
     supportLibVersion = "23.2.1"
     playServicesVersion = "8.4.0"
     androidMapUtilsVersion = "0.4.3"
+
+    junitVersion = "4.12"
+    mockitoVersion = "1.10.19"
 }
 
 task wrapper(type: Wrapper) {
