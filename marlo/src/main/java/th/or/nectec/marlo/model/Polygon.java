@@ -43,6 +43,11 @@ public class Polygon implements Parcelable {
     private final List<Coordinate> boundary;
     private final List<List<Coordinate>> holes;
 
+    public Polygon() {
+        boundary = new ArrayList<>();
+        holes = new ArrayList<>();
+    }
+
     public Polygon(List<Coordinate> boundary, List<List<Coordinate>> holes) {
         this.boundary = boundary;
         this.holes = holes;
@@ -77,6 +82,10 @@ public class Polygon implements Parcelable {
         }
 
         return new Polygon(boundaryCoordinate, holeCoordinate);
+    }
+
+    public void addBoundary(Coordinate coordinate) {
+        boundary.add(coordinate);
     }
 
     public List<Coordinate> getBoundary() {
