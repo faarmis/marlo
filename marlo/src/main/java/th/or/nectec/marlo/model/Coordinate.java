@@ -24,6 +24,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 
 public class Coordinate implements Parcelable {
+
     public static final Parcelable.Creator<Coordinate> CREATOR = new Parcelable.Creator<Coordinate>() {
         @Override
         public Coordinate createFromParcel(Parcel source) {
@@ -35,8 +36,13 @@ public class Coordinate implements Parcelable {
             return new Coordinate[size];
         }
     };
+
     private double latitude;
     private double longitude;
+
+    public Coordinate(LatLng latLng) {
+        this(latLng.latitude, latLng.longitude);
+    }
 
     public Coordinate(double latitude, double longitude) {
         setLatitude(latitude);
