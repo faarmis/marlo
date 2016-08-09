@@ -20,18 +20,27 @@ package th.or.nectec.marlo;
 import org.junit.Test;
 import th.or.nectec.marlo.model.Coordinate;
 
-import static org.junit.Assert.assertNotNull;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
 
 public class PolygonControllerTest {
 
     @Test
     public void testMarkValid() throws Exception {
+        List<Coordinate> coordinates = new ArrayList<>();
+        coordinates.add(new Coordinate(0f, 0f));
+        coordinates.add(new Coordinate(1f, 1f));
+        coordinates.add(new Coordinate(0f, 1f));
+
         PolygonController controller = new PolygonController();
         controller.mark(new Coordinate(0f, 0f));
         controller.mark(new Coordinate(1f, 1f));
         controller.mark(new Coordinate(0f, 1f));
 
-        assertNotNull("Polygon should not be NULL", controller.getPolygon());
+        assertEquals(coordinates, controller.getPolygon().getBoundary());
+
     }
 
     @Test(expected = PolygonInvalidException.class)
@@ -41,5 +50,247 @@ public class PolygonControllerTest {
         controller.mark(new Coordinate(0f, 1f));
 
         controller.getPolygon();
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testChangeToHoleBeforeBoundaryCompleteShouldThrowException() {
+        PolygonController controller = new PolygonController();
+        controller.mark(new Coordinate(0f, 0f));
+        controller.mark(new Coordinate(0f, 1f));
+
+        controller.newHole();
+    }
+
+    @Test
+    public void testMark1Hole() throws Exception {
+        List<Coordinate> coordinates = new ArrayList<>();
+        coordinates.add(new Coordinate(1f, 1f));
+        coordinates.add(new Coordinate(1f, 2f));
+        coordinates.add(new Coordinate(2f, 2f));
+
+        PolygonController controller = new PolygonController();
+        controller.mark(new Coordinate(0f, 0f));
+        controller.mark(new Coordinate(3f, 0f));
+        controller.mark(new Coordinate(3f, 3f));
+        controller.mark(new Coordinate(0f, 3f));
+        controller.newHole();
+        controller.mark(new Coordinate(1f, 1f));
+        controller.mark(new Coordinate(1f, 2f));
+        controller.mark(new Coordinate(2f, 2f));
+
+        assertEquals(coordinates, controller.getPolygon().getHole(0));
+    }
+
+    @Test
+    public void testMarkHoleBoundaryStillValid() throws Exception {
+        List<Coordinate> coordinates = new ArrayList<>();
+        coordinates.add(new Coordinate(0f, 0f));
+        coordinates.add(new Coordinate(3f, 0f));
+        coordinates.add(new Coordinate(3f, 3f));
+        coordinates.add(new Coordinate(0f, 3f));
+
+        PolygonController controller = new PolygonController();
+        controller.mark(new Coordinate(0f, 0f));
+        controller.mark(new Coordinate(3f, 0f));
+        controller.mark(new Coordinate(3f, 3f));
+        controller.mark(new Coordinate(0f, 3f));
+        controller.newHole();
+        controller.mark(new Coordinate(1f, 1f));
+        controller.mark(new Coordinate(1f, 2f));
+        controller.mark(new Coordinate(2f, 2f));
+
+        assertEquals(coordinates, controller.getPolygon().getBoundary());
+    }
+
+    @Test
+    public void testMark3Hole() throws Exception {
+        List<Coordinate> coordinates = new ArrayList<>();
+        coordinates.add(new Coordinate(2f, 2f));
+        coordinates.add(new Coordinate(2f, 3f));
+        coordinates.add(new Coordinate(1f, 2f));
+        coordinates.add(new Coordinate(1f, 1f));
+
+        PolygonController controller = new PolygonController();
+        controller.mark(new Coordinate(0f, 0f));
+        controller.mark(new Coordinate(3f, 0f));
+        controller.mark(new Coordinate(3f, 3f));
+        controller.mark(new Coordinate(0f, 3f));
+        controller.newHole();
+        controller.mark(new Coordinate(1f, 1f));
+        controller.mark(new Coordinate(1f, 2f));
+        controller.mark(new Coordinate(2f, 2f));
+        controller.newHole();
+        controller.mark(new Coordinate(2f, 2f));
+        controller.mark(new Coordinate(2f, 3f));
+        controller.mark(new Coordinate(1f, 2f));
+        controller.mark(new Coordinate(1f, 1f));
+        controller.newHole();
+        controller.mark(new Coordinate(3f, 3f));
+        controller.mark(new Coordinate(1f, 1f));
+        controller.mark(new Coordinate(2f, 1f));
+
+        assertEquals("2nd Hole should valid when marked 3rd hole", coordinates, controller.getPolygon().getHole(1));
+    }
+
+    @Test(expected = HoleInvalidException.class)
+    public void testMarkHolesOutsideOfPolygonShouldThrowException() throws Exception {
+        PolygonController controller = new PolygonController();
+        controller.mark(new Coordinate(0f, 0f));
+        controller.mark(new Coordinate(3f, 0f));
+        controller.mark(new Coordinate(3f, 3f));
+        controller.mark(new Coordinate(0f, 3f));
+        controller.newHole();
+        controller.mark(new Coordinate(-1f, -1f));
+    }
+
+    @Test
+    public void testUndoBoundary() throws Exception {
+        ArrayList<Coordinate> boundary = new ArrayList<>();
+        boundary.add(new Coordinate(0f, 0f));
+        boundary.add(new Coordinate(3f, 0f));
+        boundary.add(new Coordinate(3f, 3f));
+
+        PolygonController controller = new PolygonController();
+        controller.mark(new Coordinate(0f, 0f));
+        controller.mark(new Coordinate(3f, 0f));
+        controller.mark(new Coordinate(3f, 3f));
+        controller.mark(new Coordinate(0f, 3f));
+        controller.undo();
+
+        assertEquals(boundary, controller.getPolygon().getBoundary());
+
+    }
+
+    @Test
+    public void testNewUndoHoles() throws Exception {
+        ArrayList<Coordinate> hole = new ArrayList<>();
+        hole.add(new Coordinate(1f, 1f));
+        hole.add(new Coordinate(1f, 2f));
+
+        PolygonController controller = new PolygonController();
+        controller.mark(new Coordinate(0f, 0f));
+        controller.mark(new Coordinate(3f, 0f));
+        controller.mark(new Coordinate(3f, 3f));
+        controller.mark(new Coordinate(0f, 3f));
+        controller.newHole();
+        controller.mark(new Coordinate(1f, 1f));
+        controller.mark(new Coordinate(1f, 2f));
+        controller.mark(new Coordinate(2f, 2f));
+        controller.undo();
+
+        assertEquals(hole, controller.getPolygon().getHole(0));
+
+    }
+
+    @Test
+    public void testUndoOnSecondHole() throws Exception {
+        ArrayList<Coordinate> hole = new ArrayList<>();
+        hole.add(new Coordinate(1f, 1f));
+        hole.add(new Coordinate(1f, 2f));
+
+        PolygonController controller = new PolygonController();
+        controller.mark(new Coordinate(0f, 0f));
+        controller.mark(new Coordinate(3f, 0f));
+        controller.mark(new Coordinate(3f, 3f));
+        controller.mark(new Coordinate(0f, 3f));
+        controller.newHole();
+        controller.mark(new Coordinate(1f, 1f));
+        controller.mark(new Coordinate(1f, 2f));
+        controller.mark(new Coordinate(2f, 2f));
+        controller.newHole();
+        controller.mark(new Coordinate(1f, 0.5f));
+
+        controller.undo();
+        controller.undo();
+
+        assertEquals(hole, controller.getPolygon().getHole(0));
+    }
+
+    @Test
+    public void testUndoThenMarkMore() throws Exception {
+        ArrayList<Coordinate> hole = new ArrayList<>();
+        hole.add(new Coordinate(1f, 1f));
+        hole.add(new Coordinate(1f, 2f));
+        hole.add(new Coordinate(2f, 2f));
+
+        PolygonController controller = new PolygonController();
+        controller.mark(new Coordinate(0f, 0f));
+        controller.mark(new Coordinate(3f, 0f));
+        controller.mark(new Coordinate(3f, 3f));
+        controller.mark(new Coordinate(0f, 3f));
+        controller.newHole();
+        controller.mark(new Coordinate(1f, 1f));
+        controller.mark(new Coordinate(1f, 2f));
+        controller.mark(new Coordinate(2f, 2f));
+        controller.newHole();
+        controller.mark(new Coordinate(1f, 0.5f));
+
+        controller.undo();
+        controller.undo();
+        controller.mark(new Coordinate(2f, 2f));
+
+        assertEquals(hole, controller.getPolygon().getLastHole());
+    }
+
+    @Test
+    public void testNewHoleThenUndoToMarkMoreBoundaryPoint() throws Exception {
+        ArrayList<Coordinate> boundary = new ArrayList<>();
+        boundary.add(new Coordinate(0f, 0f));
+        boundary.add(new Coordinate(3f, 0f));
+        boundary.add(new Coordinate(3f, 3f));
+        boundary.add(new Coordinate(0f, 3f));
+
+        PolygonController controller = new PolygonController();
+        controller.mark(new Coordinate(0f, 0f));
+        controller.mark(new Coordinate(3f, 0f));
+        controller.mark(new Coordinate(3f, 3f));
+        controller.newHole();
+
+        controller.undo();
+        controller.mark(new Coordinate(0f, 3f));
+
+        assertEquals(boundary, controller.getPolygon().getBoundary());
+    }
+
+    @Test
+    public void testUndoUntilNoCoordinate() throws Exception {
+        ArrayList<Coordinate> boundary = new ArrayList<>();
+        boundary.add(new Coordinate(0f, 0f));
+        boundary.add(new Coordinate(3f, 0f));
+        boundary.add(new Coordinate(3f, 3f));
+
+        PolygonController controller = new PolygonController();
+        controller.mark(new Coordinate(0f, 0f));
+        controller.mark(new Coordinate(3f, 0f));
+        controller.mark(new Coordinate(3f, 3f));
+        controller.mark(new Coordinate(0f, 3f));
+        controller.newHole();
+        controller.mark(new Coordinate(1f, 1f));
+        controller.mark(new Coordinate(1f, 2f));
+
+        controller.undo();
+        controller.undo();
+        controller.undo();
+        controller.undo();
+        controller.undo();
+        controller.undo();
+        controller.mark(new Coordinate(0f, 0f));
+        controller.mark(new Coordinate(3f, 0f));
+        controller.mark(new Coordinate(3f, 3f));
+
+        assertEquals(boundary, controller.getPolygon().getBoundary());
+    }
+
+    @Test(expected = HoleInvalidException.class)
+    public void testNewHoleWhenLastHoleNotFinishShouldThrowException() throws Exception {
+        PolygonController controller = new PolygonController();
+        controller.mark(new Coordinate(0f, 0f));
+        controller.mark(new Coordinate(3f, 0f));
+        controller.mark(new Coordinate(3f, 3f));
+        controller.mark(new Coordinate(0f, 3f));
+        controller.newHole();
+        controller.mark(new Coordinate(1f, 1f));
+        controller.mark(new Coordinate(1f, 2f));
+        controller.newHole();
     }
 }

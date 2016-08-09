@@ -20,18 +20,79 @@ package th.or.nectec.marlo;
 import th.or.nectec.marlo.model.Coordinate;
 import th.or.nectec.marlo.model.Polygon;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class PolygonController {
 
     private final Polygon polygon = new Polygon();
+    private PointInHoleValidator pointInBoundaryValidator = new PolygonUtils();
 
     public void mark(Coordinate coordinate) {
-        polygon.getBoundary().add(coordinate);
+        if (polygon.getHolesCount() > 0) {
+            validateHolePoint(coordinate);
+            polygon.getLastHole().add(coordinate);
+        } else {
+            polygon.getBoundary().add(coordinate);
+        }
+    }
+
+    private void validateHolePoint(Coordinate coordinate) {
+        if (!pointInBoundaryValidator.inBoundary(polygon, coordinate))
+            throw new HoleInvalidException();
     }
 
     public Polygon getPolygon() {
+        validatePolygon();
+        return polygon;
+    }
+
+    private void validatePolygon() {
         if (polygon.getBoundary().size() < 3) {
             throw new PolygonInvalidException();
         }
-        return polygon;
+    }
+
+    public void newHole() {
+        try {
+            validatePolygon();
+            if (polygon.getHolesCount() > 0) {
+                validateLastHole();
+            }
+        } catch (PolygonInvalidException invalid) {
+            throw new IllegalStateException("Polygon must valid before markHole");
+        }
+        polygon.addHoles(new ArrayList<Coordinate>());
+    }
+
+    private void validateLastHole() {
+        if (polygon.getLastHole().size() < 3) {
+            throw new HoleInvalidException();
+        }
+    }
+
+    public void setPointInHoleValidator(PointInHoleValidator validator) {
+        pointInBoundaryValidator = validator;
+    }
+
+    public void undo() {
+        if (polygon.getHolesCount() > 0) {
+            List<Coordinate> hole = polygon.getLastHole();
+            removeLastCoordinate(hole);
+            removeHoleWhenEmpty(hole);
+        } else {
+            List<Coordinate> boundary = polygon.getBoundary();
+            removeLastCoordinate(boundary);
+        }
+    }
+
+    private void removeLastCoordinate(List<Coordinate> coordinates) {
+        if (coordinates.size() != 0) {
+            coordinates.remove(coordinates.size() - 1);
+        }
+    }
+
+    private void removeHoleWhenEmpty(List<Coordinate> hole) {
+        if (hole.isEmpty()) polygon.getAllHoles().remove(polygon.getHolesCount() - 1);
     }
 }

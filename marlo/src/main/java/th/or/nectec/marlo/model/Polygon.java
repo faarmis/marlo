@@ -24,6 +24,7 @@ import com.google.android.gms.maps.model.Marker;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Stack;
 
 public class Polygon implements Parcelable {
@@ -119,4 +120,25 @@ public class Polygon implements Parcelable {
         }
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Polygon polygon = (Polygon) o;
+        return Objects.equals(boundary, polygon.boundary)
+                && Objects.equals(holes, polygon.holes);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(boundary, holes);
+    }
+
+    public void addHoles(List<Coordinate> coordinates) {
+        holes.add(coordinates);
+    }
+
+    public List<Coordinate> getLastHole() {
+        return holes.get(holes.size() - 1);
+    }
 }
