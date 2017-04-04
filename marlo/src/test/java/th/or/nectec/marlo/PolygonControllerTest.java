@@ -17,11 +17,11 @@
 
 package th.or.nectec.marlo;
 
-import org.junit.Test;
-import th.or.nectec.marlo.model.Coordinate;
-
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.Test;
+import th.or.nectec.marlo.model.Coordinate;
+import th.or.nectec.marlo.model.Polygon;
 
 import static org.junit.Assert.assertEquals;
 
@@ -67,6 +67,7 @@ public class PolygonControllerTest {
         coordinates.add(new Coordinate(1f, 1f));
         coordinates.add(new Coordinate(1f, 2f));
         coordinates.add(new Coordinate(2f, 2f));
+        Polygon hole = new Polygon(coordinates);
 
         PolygonController controller = new PolygonController();
         controller.mark(new Coordinate(0f, 0f));
@@ -78,7 +79,7 @@ public class PolygonControllerTest {
         controller.mark(new Coordinate(1f, 2f));
         controller.mark(new Coordinate(2f, 2f));
 
-        assertEquals(coordinates, controller.getPolygon().getHole(0));
+        assertEquals(hole, controller.getPolygon().getHole(0));
     }
 
     @Test
@@ -109,6 +110,7 @@ public class PolygonControllerTest {
         coordinates.add(new Coordinate(2f, 3f));
         coordinates.add(new Coordinate(1f, 2f));
         coordinates.add(new Coordinate(1f, 1f));
+        Polygon hole = new Polygon(coordinates);
 
         PolygonController controller = new PolygonController();
         controller.mark(new Coordinate(0f, 0f));
@@ -129,7 +131,7 @@ public class PolygonControllerTest {
         controller.mark(new Coordinate(1f, 1f));
         controller.mark(new Coordinate(2f, 1f));
 
-        assertEquals("2nd Hole should valid when marked 3rd hole", coordinates, controller.getPolygon().getHole(1));
+        assertEquals("2nd Hole should valid when marked 3rd hole", hole, controller.getPolygon().getHole(1));
     }
 
     @Test(expected = HoleInvalidException.class)
@@ -166,6 +168,7 @@ public class PolygonControllerTest {
         ArrayList<Coordinate> hole = new ArrayList<>();
         hole.add(new Coordinate(1f, 1f));
         hole.add(new Coordinate(1f, 2f));
+        Polygon unfinishHole = new Polygon(hole);
 
         PolygonController controller = new PolygonController();
         controller.mark(new Coordinate(0f, 0f));
@@ -178,15 +181,16 @@ public class PolygonControllerTest {
         controller.mark(new Coordinate(2f, 2f));
         controller.undo();
 
-        assertEquals(hole, controller.getPolygon().getHole(0));
+        assertEquals(unfinishHole, controller.getPolygon().getHole(0));
 
     }
 
     @Test
     public void testUndoOnSecondHole() throws Exception {
-        ArrayList<Coordinate> hole = new ArrayList<>();
+        List<Coordinate> hole = new ArrayList<>();
         hole.add(new Coordinate(1f, 1f));
         hole.add(new Coordinate(1f, 2f));
+        Polygon unfinishHole = new Polygon(hole);
 
         PolygonController controller = new PolygonController();
         controller.mark(new Coordinate(0f, 0f));
@@ -203,15 +207,16 @@ public class PolygonControllerTest {
         controller.undo();
         controller.undo();
 
-        assertEquals(hole, controller.getPolygon().getHole(0));
+        assertEquals(unfinishHole, controller.getPolygon().getHole(0));
     }
 
     @Test
     public void testUndoThenMarkMore() throws Exception {
-        ArrayList<Coordinate> hole = new ArrayList<>();
-        hole.add(new Coordinate(1f, 1f));
-        hole.add(new Coordinate(1f, 2f));
-        hole.add(new Coordinate(2f, 2f));
+        ArrayList<Coordinate> holeCoordinate = new ArrayList<>();
+        holeCoordinate.add(new Coordinate(1f, 1f));
+        holeCoordinate.add(new Coordinate(1f, 2f));
+        holeCoordinate.add(new Coordinate(2f, 2f));
+        Polygon hole = new Polygon(holeCoordinate);
 
         PolygonController controller = new PolygonController();
         controller.mark(new Coordinate(0f, 0f));
