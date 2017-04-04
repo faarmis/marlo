@@ -31,7 +31,7 @@ public class PolygonController {
     public void mark(Coordinate coordinate) {
         if (polygon.getHolesCount() > 0) {
             validateHolePoint(coordinate);
-            polygon.getLastHole().add(coordinate);
+            polygon.getLastHole().getBoundary().add(coordinate);
         } else {
             polygon.getBoundary().add(coordinate);
         }
@@ -62,11 +62,11 @@ public class PolygonController {
         } catch (PolygonInvalidException invalid) {
             throw new IllegalStateException("Polygon must valid before markHole");
         }
-        polygon.addHoles(new ArrayList<Coordinate>());
+        polygon.addHoles(new Polygon());
     }
 
     private void validateLastHole() {
-        if (polygon.getLastHole().size() < 3) {
+        if (polygon.getLastHole().getBoundary().size() < 3) {
             throw new HoleInvalidException();
         }
     }
@@ -77,7 +77,7 @@ public class PolygonController {
 
     public void undo() {
         if (polygon.getHolesCount() > 0) {
-            List<Coordinate> hole = polygon.getLastHole();
+            List<Coordinate> hole = polygon.getLastHole().getBoundary();
             removeLastCoordinate(hole);
             removeHoleWhenEmpty(hole);
         } else {

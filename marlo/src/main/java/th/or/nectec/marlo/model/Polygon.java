@@ -42,14 +42,18 @@ public class Polygon implements Parcelable {
     };
 
     private final List<Coordinate> boundary;
-    private final List<List<Coordinate>> holes;
+    private final List<Polygon> holes;
 
     public Polygon() {
         boundary = new ArrayList<>();
         holes = new ArrayList<>();
     }
 
-    public Polygon(List<Coordinate> boundary, List<List<Coordinate>> holes) {
+    public Polygon(List<Coordinate> boundary){
+        this(boundary, new ArrayList<Polygon>());
+    }
+
+    public Polygon(List<Coordinate> boundary, List<Polygon> holes) {
         this.boundary = boundary;
         this.holes = holes;
     }
@@ -60,7 +64,7 @@ public class Polygon implements Parcelable {
         int holesCount = in.readInt();
         this.holes = new ArrayList<>();
         for (int hole = 0; hole < holesCount; hole++) {
-            this.holes.add(in.createTypedArrayList(Coordinate.CREATOR));
+            this.holes.add((Polygon) in.readValue(Polygon.class.getClassLoader()));
         }
     }
 
@@ -72,17 +76,17 @@ public class Polygon implements Parcelable {
             boundaryCoordinate.add(Coordinate.fromMarker(marker));
         }
 
-        List<List<Coordinate>> holeCoordinate = new ArrayList<>();
+        List<Polygon> holesList = new ArrayList<>();
         Stack<Stack<Marker>> holes = polyData.getHoles();
         for (Stack<Marker> hole : holes) {
-            ArrayList<Coordinate> coHole = new ArrayList<>();
+            List<Coordinate> holeBoundary = new ArrayList<>();
             for (Marker marker : hole) {
-                coHole.add(Coordinate.fromMarker(marker));
+                holeBoundary.add(Coordinate.fromMarker(marker));
             }
-            holeCoordinate.add(coHole);
+            holesList.add(new Polygon(holeBoundary));
         }
 
-        return new Polygon(boundaryCoordinate, holeCoordinate);
+        return new Polygon(boundaryCoordinate, holesList);
     }
 
     public void addBoundary(Coordinate coordinate) {
@@ -93,11 +97,11 @@ public class Polygon implements Parcelable {
         return boundary;
     }
 
-    public List<Coordinate> getHole(int holeIndex) {
+    public Polygon getHole(int holeIndex) {
         return holes.get(holeIndex);
     }
 
-    public List<List<Coordinate>> getAllHoles() {
+    public List<Polygon> getAllHoles() {
         return holes;
     }
 
@@ -115,8 +119,8 @@ public class Polygon implements Parcelable {
         dest.writeTypedList(this.boundary);
 
         dest.writeInt(this.holes.size());
-        for (List<Coordinate> hole : this.holes) {
-            dest.writeTypedList(hole);
+        for (Polygon hole : this.holes) {
+            dest.writeValue(hole);
         }
     }
 
@@ -134,11 +138,11 @@ public class Polygon implements Parcelable {
         return Objects.hash(boundary, holes);
     }
 
-    public void addHoles(List<Coordinate> coordinates) {
+    public void addHoles(Polygon coordinates) {
         holes.add(coordinates);
     }
 
-    public List<Coordinate> getLastHole() {
+    public Polygon getLastHole() {
         return holes.get(holes.size() - 1);
     }
 }
