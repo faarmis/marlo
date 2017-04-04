@@ -38,12 +38,12 @@ ext {
     javaTargetCompatibility = JavaVersion.VERSION_1_7
 
     minSdkVersion = 19
-    targetSdkVersion = 23
-    compileSdkVersion = 23
+    targetSdkVersion = 25
+    compileSdkVersion = 25
     buildToolsVersion = "25.0.2"
 
-    supportLibVersion = "23.2.1"
-    playServicesVersion = "8.4.0"
+    supportLibVersion = "25.3.1"
+    playServicesVersion = "10.2.0"
     androidMapUtilsVersion = "0.5"
 
     junitVersion = "4.12"
