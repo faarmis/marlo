@@ -25,30 +25,57 @@ import java.util.List;
 
 public class PolygonController {
 
-    private final Polygon polygon = new Polygon();
+    private final List<Polygon> polygons;
+    private Polygon focusPolygon;
     private PointInHoleValidator pointInBoundaryValidator = new PolygonUtils();
 
+    public PolygonController() {
+        this(new ArrayList<Polygon>());
+    }
+
+    public PolygonController(List<Polygon> polygons) {
+        this.polygons = polygons;
+        if (polygons.size() > 0) focusPolygon = polygons.get(polygons.size() - 1);
+        else newPolygon();
+    }
+
     public void mark(Coordinate coordinate) {
-        if (polygon.getHolesCount() > 0) {
+        if (focusPolygon.haveHole()) {
             validateHolePoint(coordinate);
-            polygon.getLastHole().getBoundary().add(coordinate);
+            focusPolygon.getLastHole().add(coordinate);
         } else {
-            polygon.getBoundary().add(coordinate);
+            focusPolygon.add(coordinate);
         }
     }
 
+    public void newPolygon(){
+        if (focusPolygon != null)
+            validatePolygon();
+
+        Polygon newPolygon = new Polygon();
+        polygons.add(newPolygon);
+        focusPolygon = newPolygon;
+    }
+
     private void validateHolePoint(Coordinate coordinate) {
-        if (!pointInBoundaryValidator.inBoundary(polygon, coordinate))
+        if (!pointInBoundaryValidator.inBoundary(focusPolygon, coordinate))
             throw new HoleInvalidException();
     }
 
-    public Polygon getPolygon() {
+    public Polygon getFocusPolygon() {
         validatePolygon();
-        return polygon;
+        return focusPolygon;
+    }
+
+    public List<Polygon> getPolygons(){
+        for (Polygon poly : polygons){
+            if(!poly.isValid()) throw new PolygonInvalidException();
+        }
+        return polygons;
     }
 
     private void validatePolygon() {
-        if (polygon.getBoundary().size() < 3) {
+        if (!focusPolygon.isValid()) {
             throw new PolygonInvalidException();
         }
     }
@@ -56,43 +83,30 @@ public class PolygonController {
     public void newHole() {
         try {
             validatePolygon();
-            if (polygon.getHolesCount() > 0) {
+            if (focusPolygon.haveHole()) {
                 validateLastHole();
             }
         } catch (PolygonInvalidException invalid) {
             throw new IllegalStateException("Polygon must valid before markHole");
         }
-        polygon.addHoles(new Polygon());
+        focusPolygon.addHoles(new Polygon());
     }
 
     private void validateLastHole() {
-        if (polygon.getLastHole().getBoundary().size() < 3) {
+        if (!focusPolygon.getLastHole().isValid()) {
             throw new HoleInvalidException();
         }
     }
 
-    public void setPointInHoleValidator(PointInHoleValidator validator) {
-        pointInBoundaryValidator = validator;
-    }
-
     public void undo() {
-        if (polygon.getHolesCount() > 0) {
-            List<Coordinate> hole = polygon.getLastHole().getBoundary();
-            removeLastCoordinate(hole);
-            removeHoleWhenEmpty(hole);
+        if (focusPolygon.haveHole()) {
+            Polygon lastHole = focusPolygon.getLastHole();
+            lastHole.pop();
+            if (lastHole.isEmpty())
+                focusPolygon.removeHole(lastHole);
         } else {
-            List<Coordinate> boundary = polygon.getBoundary();
-            removeLastCoordinate(boundary);
+            focusPolygon.pop();
         }
     }
 
-    private void removeLastCoordinate(List<Coordinate> coordinates) {
-        if (coordinates.size() != 0) {
-            coordinates.remove(coordinates.size() - 1);
-        }
-    }
-
-    private void removeHoleWhenEmpty(List<Coordinate> hole) {
-        if (hole.isEmpty()) polygon.getAllHoles().remove(polygon.getHolesCount() - 1);
-    }
 }

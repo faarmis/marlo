@@ -32,9 +32,9 @@ final class PolygonDrawUtils {
     private PolygonDrawUtils() {
     }
 
-    public static void createPolygon(GoogleMap map, PolygonData polygonData, PolygonOptions polygon) {
-        addBoundary(polygon, polygonData);
-        addHole(polygon, polygonData);
+    public static void draw(GoogleMap map, PolygonData polygonData, PolygonOptions polygon) {
+        drawBoundary(polygon, polygonData);
+        drawHoles(polygon, polygonData);
 
         if (polygonData.getPolygon() != null) {
             polygonData.getPolygon().remove();
@@ -44,14 +44,14 @@ final class PolygonDrawUtils {
         }
     }
 
-    private static void addBoundary(PolygonOptions polygon, PolygonData polygonData) {
+    private static void drawBoundary(PolygonOptions polygon, PolygonData polygonData) {
         Stack<Marker> markers = polygonData.getBoundary();
         for (Marker eachMarker : markers) {
             polygon.add(eachMarker.getPosition());
         }
     }
 
-    private static void addHole(PolygonOptions polygon, PolygonData polygonData) {
+    private static void drawHoles(PolygonOptions polygon, PolygonData polygonData) {
         Stack<Stack<Marker>> holeMarker = polygonData.getHoles();
         if (!holeMarker.isEmpty()) {
             for (Stack<Marker> hole : holeMarker) {

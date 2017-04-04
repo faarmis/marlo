@@ -25,24 +25,24 @@ import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
+import th.or.nectec.marlo.model.Coordinate;
 import th.or.nectec.marlo.model.Polygon;
 import th.or.nectec.marlo.model.PolygonData;
 import th.or.nectec.marlo.option.DefaultPolygonMarkerOptionFactory;
 import th.or.nectec.marlo.option.DefaultPolygonOptionFactory;
 import th.or.nectec.marlo.option.PolygonOptionFactory;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
 public class PolygonMarloFragment extends MarloFragment {
 
     private final Stack<PolygonData> multiPolygon = new Stack<>();
-    private final PolygonData singlePolygon = new PolygonData();
     private BitmapDescriptor activeMarkerIcon;
     private BitmapDescriptor passiveMarkerIcon;
-    private Mode mode = Mode.SINGLE;
     private PolygonOptionFactory polygonOptionFactory;
+
+    private PolygonController controller = new PolygonController();
 
     public PolygonMarloFragment() {
         super();
@@ -51,14 +51,9 @@ public class PolygonMarloFragment extends MarloFragment {
 
     }
 
-    public static PolygonMarloFragment newInstance(Mode mode) {
+    public static PolygonMarloFragment newInstance() {
         PolygonMarloFragment fragment = new PolygonMarloFragment();
-        fragment.mode = mode;
         return fragment;
-    }
-
-    public void setMode(Mode mode) {
-        this.mode = mode;
     }
 
     public void setPolygonOptionFactory(PolygonOptionFactory polygonOptionFactory) {
@@ -73,7 +68,6 @@ public class PolygonMarloFragment extends MarloFragment {
         passiveMarkerIcon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN);
 
         ViewUtils.addPolygonToolsMenu(this);
-        findViewBy(R.id.marlo_boundary).setVisibility(mode == Mode.MULTI ? View.VISIBLE : View.GONE);
         multiPolygon.push(new PolygonData());
     }
 
@@ -89,11 +83,12 @@ public class PolygonMarloFragment extends MarloFragment {
             undo();
         } else {
             super.onClick(view);
+
         }
     }
 
     public PolygonData getActivePolygonData() {
-        return mode == Mode.SINGLE ? singlePolygon : multiPolygon.peek();
+        return multiPolygon.peek();
     }
 
     private void setUpdateIconToLastMarker(BitmapDescriptor icon) {
@@ -111,6 +106,8 @@ public class PolygonMarloFragment extends MarloFragment {
     public void mark(LatLng markPoint) {
         SoundUtility.play(getContext(), R.raw.thumpsoundeffect);
 
+        controller.mark(new Coordinate(markPoint));
+
         Marker marker = googleMap.addMarker(markerOptionFactory.build(this, markPoint));
         PolygonData activePolygon = getActivePolygonData();
         setUpdateIconToLastMarker(passiveMarkerIcon);
@@ -119,7 +116,7 @@ public class PolygonMarloFragment extends MarloFragment {
             onMarkHoleOutBound(markPoint, activePolygon.getPolygon().getPoints());
             marker.remove();
         }
-        PolygonDrawUtils.createPolygon(googleMap, activePolygon, polygonOptionFactory.build(this));
+        PolygonDrawUtils.draw(googleMap, activePolygon, polygonOptionFactory.build(this));
     }
 
     protected void onMarkHoleOutBound(LatLng target, List<LatLng> points) {
@@ -127,6 +124,7 @@ public class PolygonMarloFragment extends MarloFragment {
     }
 
     public boolean undo() {
+        controller.undo();
         PolygonData polygonData = getActivePolygonData();
         if (polygonData.isEmpty()) {
             return false;
@@ -134,32 +132,20 @@ public class PolygonMarloFragment extends MarloFragment {
         boolean removed = polygonData.removeLastMarker();
         setUpdateIconToLastMarker(activeMarkerIcon);
 
-        if (removed && polygonData.isEmpty() && mode == Mode.MULTI && multiPolygon.size() > 1) {
+        if (removed && polygonData.isEmpty() && multiPolygon.size() > 1) {
             multiPolygon.pop();
         }
 
-        PolygonDrawUtils.createPolygon(googleMap, polygonData, polygonOptionFactory.build(this));
+        PolygonDrawUtils.draw(googleMap, polygonData, polygonOptionFactory.build(this));
         return true;
     }
 
     public List<Polygon> getPolygons() {
-        ArrayList<Polygon> polygons = new ArrayList<>();
-        for (PolygonData polydata : multiPolygon) {
-            polygons.add(Polygon.fromPolygonData(polydata));
-        }
-        return polygons;
-    }
-
-    public Polygon getPolygon() {
-        return Polygon.fromPolygonData(singlePolygon);
+        return null;
     }
 
     public PolygonData.State getDrawingState() {
         return getActivePolygonData().getCurrentState();
     }
 
-    public enum Mode {
-        SINGLE,
-        MULTI
-    }
 }

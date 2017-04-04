@@ -39,7 +39,7 @@ public class PolygonControllerTest {
         controller.mark(new Coordinate(1f, 1f));
         controller.mark(new Coordinate(0f, 1f));
 
-        assertEquals(coordinates, controller.getPolygon().getBoundary());
+        assertEquals(coordinates, controller.getFocusPolygon().getBoundary());
 
     }
 
@@ -49,7 +49,7 @@ public class PolygonControllerTest {
         controller.mark(new Coordinate(0f, 0f));
         controller.mark(new Coordinate(0f, 1f));
 
-        controller.getPolygon();
+        controller.getFocusPolygon();
     }
 
     @Test(expected = IllegalStateException.class)
@@ -79,7 +79,7 @@ public class PolygonControllerTest {
         controller.mark(new Coordinate(1f, 2f));
         controller.mark(new Coordinate(2f, 2f));
 
-        assertEquals(hole, controller.getPolygon().getHole(0));
+        assertEquals(hole, controller.getFocusPolygon().getHole(0));
     }
 
     @Test
@@ -100,7 +100,7 @@ public class PolygonControllerTest {
         controller.mark(new Coordinate(1f, 2f));
         controller.mark(new Coordinate(2f, 2f));
 
-        assertEquals(coordinates, controller.getPolygon().getBoundary());
+        assertEquals(coordinates, controller.getFocusPolygon().getBoundary());
     }
 
     @Test
@@ -131,7 +131,7 @@ public class PolygonControllerTest {
         controller.mark(new Coordinate(1f, 1f));
         controller.mark(new Coordinate(2f, 1f));
 
-        assertEquals("2nd Hole should valid when marked 3rd hole", hole, controller.getPolygon().getHole(1));
+        assertEquals("2nd Hole should valid when marked 3rd hole", hole, controller.getFocusPolygon().getHole(1));
     }
 
     @Test(expected = HoleInvalidException.class)
@@ -159,7 +159,7 @@ public class PolygonControllerTest {
         controller.mark(new Coordinate(0f, 3f));
         controller.undo();
 
-        assertEquals(boundary, controller.getPolygon().getBoundary());
+        assertEquals(boundary, controller.getFocusPolygon().getBoundary());
 
     }
 
@@ -181,7 +181,7 @@ public class PolygonControllerTest {
         controller.mark(new Coordinate(2f, 2f));
         controller.undo();
 
-        assertEquals(unfinishHole, controller.getPolygon().getHole(0));
+        assertEquals(unfinishHole, controller.getFocusPolygon().getHole(0));
 
     }
 
@@ -207,7 +207,7 @@ public class PolygonControllerTest {
         controller.undo();
         controller.undo();
 
-        assertEquals(unfinishHole, controller.getPolygon().getHole(0));
+        assertEquals(unfinishHole, controller.getFocusPolygon().getHole(0));
     }
 
     @Test
@@ -234,7 +234,7 @@ public class PolygonControllerTest {
         controller.undo();
         controller.mark(new Coordinate(2f, 2f));
 
-        assertEquals(hole, controller.getPolygon().getLastHole());
+        assertEquals(hole, controller.getFocusPolygon().getLastHole());
     }
 
     @Test
@@ -254,7 +254,7 @@ public class PolygonControllerTest {
         controller.undo();
         controller.mark(new Coordinate(0f, 3f));
 
-        assertEquals(boundary, controller.getPolygon().getBoundary());
+        assertEquals(boundary, controller.getFocusPolygon().getBoundary());
     }
 
     @Test
@@ -283,7 +283,7 @@ public class PolygonControllerTest {
         controller.mark(new Coordinate(3f, 0f));
         controller.mark(new Coordinate(3f, 3f));
 
-        assertEquals(boundary, controller.getPolygon().getBoundary());
+        assertEquals(boundary, controller.getFocusPolygon().getBoundary());
     }
 
     @Test(expected = HoleInvalidException.class)
@@ -297,5 +297,24 @@ public class PolygonControllerTest {
         controller.mark(new Coordinate(1f, 1f));
         controller.mark(new Coordinate(1f, 2f));
         controller.newHole();
+    }
+
+    @Test
+    public void testMultiPolygon(){
+        PolygonController controller = new PolygonController();
+        controller.mark(new Coordinate(0f, 0f));
+        controller.mark(new Coordinate(3f, 0f));
+        controller.mark(new Coordinate(3f, 3f));
+        controller.mark(new Coordinate(0f, 3f));
+        controller.newPolygon();
+        controller.mark(new Coordinate(1f, 1f));
+        controller.mark(new Coordinate(1f, 2f));
+        controller.mark(new Coordinate(2f, 2f));
+
+        Polygon expected = new Polygon();
+        expected.addBoundary(new Coordinate(1f, 1f));
+        expected.addBoundary(new Coordinate(1f, 2f));
+        expected.addBoundary(new Coordinate(2f, 2f));
+        assertEquals(expected, controller.getFocusPolygon());
     }
 }

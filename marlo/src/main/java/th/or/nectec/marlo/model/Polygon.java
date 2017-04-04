@@ -68,6 +68,10 @@ public class Polygon implements Parcelable {
         }
     }
 
+    public void add(Coordinate coordinate){
+        boundary.add(coordinate);
+    }
+
     public static Polygon fromPolygonData(PolygonData polyData) {
         List<Coordinate> boundaryCoordinate = new ArrayList<>();
         Stack<Marker> boundary = polyData.getBoundary();
@@ -105,8 +109,39 @@ public class Polygon implements Parcelable {
         return holes;
     }
 
+    public boolean isValid() {
+        return boundary.size() >= 3;
+    }
+
+    public boolean isEmpty(){
+        return boundary.size() == 0;
+    }
+
     public int getHolesCount() {
         return holes.size();
+    }
+
+    public void addHoles(Polygon coordinates) {
+        holes.add(coordinates);
+    }
+
+    public Polygon getLastHole() {
+        return holes.get(holes.size() - 1);
+    }
+
+    public boolean haveHole() {
+        return getHolesCount() > 0;
+    }
+
+    public Coordinate pop() {
+        if (!boundary.isEmpty()) {
+            return boundary.remove(boundary.size() - 1);
+        }
+        return null;
+    }
+
+    public void removeHole(Polygon hole) {
+        holes.remove(hole);
     }
 
     @Override
@@ -136,13 +171,5 @@ public class Polygon implements Parcelable {
     @Override
     public int hashCode() {
         return Objects.hash(boundary, holes);
-    }
-
-    public void addHoles(Polygon coordinates) {
-        holes.add(coordinates);
-    }
-
-    public Polygon getLastHole() {
-        return holes.get(holes.size() - 1);
     }
 }
