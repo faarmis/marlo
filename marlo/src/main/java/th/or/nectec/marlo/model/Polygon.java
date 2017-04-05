@@ -29,18 +29,6 @@ import java.util.Stack;
 
 public class Polygon implements Parcelable {
 
-    public static final Parcelable.Creator<Polygon> CREATOR = new Parcelable.Creator<Polygon>() {
-        @Override
-        public Polygon createFromParcel(Parcel source) {
-            return new Polygon(source);
-        }
-
-        @Override
-        public Polygon[] newArray(int size) {
-            return new Polygon[size];
-        }
-    };
-
     private final List<Coordinate> boundary;
     private final List<Polygon> holes;
 
@@ -49,7 +37,7 @@ public class Polygon implements Parcelable {
         holes = new ArrayList<>();
     }
 
-    public Polygon(List<Coordinate> boundary){
+    public Polygon(List<Coordinate> boundary) {
         this(boundary, new ArrayList<Polygon>());
     }
 
@@ -58,17 +46,8 @@ public class Polygon implements Parcelable {
         this.holes = holes;
     }
 
-    protected Polygon(Parcel in) {
-        this.boundary = in.createTypedArrayList(Coordinate.CREATOR);
 
-        int holesCount = in.readInt();
-        this.holes = new ArrayList<>();
-        for (int hole = 0; hole < holesCount; hole++) {
-            this.holes.add((Polygon) in.readValue(Polygon.class.getClassLoader()));
-        }
-    }
-
-    public void add(Coordinate coordinate){
+    public void add(Coordinate coordinate) {
         boundary.add(coordinate);
     }
 
@@ -113,7 +92,7 @@ public class Polygon implements Parcelable {
         return boundary.size() >= 3;
     }
 
-    public boolean isEmpty(){
+    public boolean isEmpty() {
         return boundary.size() == 0;
     }
 
@@ -144,6 +123,44 @@ public class Polygon implements Parcelable {
         holes.remove(hole);
     }
 
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Polygon polygon = (Polygon) o;
+        return Objects.equals(boundary, polygon.boundary)
+                && Objects.equals(holes, polygon.holes);
+    }
+
+    //Parcelable
+    private Polygon(Parcel in) {
+        this.boundary = in.createTypedArrayList(Coordinate.CREATOR);
+
+        int holesCount = in.readInt();
+        this.holes = new ArrayList<>();
+        for (int hole = 0; hole < holesCount; hole++) {
+            this.holes.add((Polygon) in.readValue(Polygon.class.getClassLoader()));
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(boundary, holes);
+    }
+
+    public static final Parcelable.Creator<Polygon> CREATOR = new Parcelable.Creator<Polygon>() {
+        @Override
+        public Polygon createFromParcel(Parcel source) {
+            return new Polygon(source);
+        }
+
+        @Override
+        public Polygon[] newArray(int size) {
+            return new Polygon[size];
+        }
+    };
+
     @Override
     public int describeContents() {
         return 0;
@@ -159,17 +176,4 @@ public class Polygon implements Parcelable {
         }
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Polygon polygon = (Polygon) o;
-        return Objects.equals(boundary, polygon.boundary)
-                && Objects.equals(holes, polygon.holes);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(boundary, holes);
-    }
 }

@@ -24,34 +24,16 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 
 public class Coordinate implements Parcelable {
-
-    public static final Parcelable.Creator<Coordinate> CREATOR = new Parcelable.Creator<Coordinate>() {
-        @Override
-        public Coordinate createFromParcel(Parcel source) {
-            return new Coordinate(source);
-        }
-
-        @Override
-        public Coordinate[] newArray(int size) {
-            return new Coordinate[size];
-        }
-    };
-
     private double latitude;
     private double longitude;
-
-    public Coordinate(LatLng latLng) {
-        this(latLng.latitude, latLng.longitude);
-    }
 
     public Coordinate(double latitude, double longitude) {
         setLatitude(latitude);
         setLongitude(longitude);
     }
 
-    protected Coordinate(Parcel in) {
-        this.latitude = in.readDouble();
-        this.longitude = in.readDouble();
+    public Coordinate(LatLng latLng) {
+        this(latLng.latitude, latLng.longitude);
     }
 
     public static Coordinate fromMarker(Marker marker) {
@@ -102,10 +84,27 @@ public class Coordinate implements Parcelable {
     @Override
     public String toString() {
         return "Location{"
-                + "latitude=" + latitude
-                + ", longitude=" + longitude
-                + '}';
+            + "latitude=" + latitude
+            + ", longitude=" + longitude
+            + '}';
     }
+
+    //Parcelable
+    private Coordinate(Parcel in) {
+        this(in.readDouble(), in.readDouble());
+    }
+
+    public static final Parcelable.Creator<Coordinate> CREATOR = new Parcelable.Creator<Coordinate>() {
+        @Override
+        public Coordinate createFromParcel(Parcel source) {
+            return new Coordinate(source);
+        }
+
+        @Override
+        public Coordinate[] newArray(int size) {
+            return new Coordinate[size];
+        }
+    };
 
     @Override
     public int describeContents() {
