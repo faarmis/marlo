@@ -136,11 +136,11 @@ public class PolygonData {
         return holes;
     }
 
-    public Polygon getPolygon() {
+    public Polygon getDrawPolygon() {
         return polygon;
     }
 
-    public void setPolygon(Polygon polygon) {
+    public void setDrawPolygon(Polygon polygon) {
         this.polygon = polygon;
     }
 

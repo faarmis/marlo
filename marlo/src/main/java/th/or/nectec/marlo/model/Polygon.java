@@ -19,8 +19,11 @@ package th.or.nectec.marlo.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 
 import com.google.android.gms.maps.model.Marker;
+
+import org.json.JSONArray;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,10 +73,6 @@ public class Polygon implements Parcelable {
         }
 
         return new Polygon(boundaryCoordinate, holesList);
-    }
-
-    public void addBoundary(Coordinate coordinate) {
-        boundary.add(coordinate);
     }
 
     public List<Coordinate> getBoundary() {
@@ -176,4 +175,29 @@ public class Polygon implements Parcelable {
         }
     }
 
+    public JSONArray toGeoJson() {
+        JSONArray jsonPolygon = new JSONArray();
+        jsonPolygon.put(boundaryToJson());
+        for (Polygon hole : holes) {
+            jsonPolygon.put(hole.boundaryToJson());
+        }
+        return jsonPolygon;
+    }
+
+    @NonNull
+    private JSONArray boundaryToJson() {
+        JSONArray jsonBoundary = new JSONArray();
+        for (Coordinate point : boundary){
+            jsonBoundary.put(point.toGeoJson());
+        }
+        return jsonBoundary;
+    }
+
+    public static JSONArray toGeoJson(List<Polygon> polygons){
+        JSONArray multiPoly = new JSONArray();
+        for (Polygon polygon : polygons){
+            multiPoly.put(polygon.toGeoJson());
+        }
+        return multiPoly;
+    }
 }

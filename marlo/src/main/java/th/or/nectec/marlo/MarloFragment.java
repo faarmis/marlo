@@ -28,8 +28,14 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
-import com.google.android.gms.maps.*;
+
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
+
 import th.or.nectec.marlo.option.DefaultMarkerOptionFactory;
 import th.or.nectec.marlo.option.MarkerOptionFactory;
 
@@ -41,7 +47,7 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
 
     private static final String TAG = "MarloFragment";
 
-    protected MarkerOptionFactory markerOptionFactory = new DefaultMarkerOptionFactory();
+    protected MarkerOptionFactory markOptFactory = new DefaultMarkerOptionFactory();
     protected GoogleMap googleMap;
 
     protected final OnCheckedChangeListener onMapTypeButtonChange = new OnCheckedChangeListener() {
@@ -150,7 +156,7 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
     public abstract boolean undo();
 
     public void setMarkerOptionFactory(MarkerOptionFactory markerOptionFactory) {
-        this.markerOptionFactory = markerOptionFactory;
+        this.markOptFactory = markerOptionFactory;
     }
 
 }

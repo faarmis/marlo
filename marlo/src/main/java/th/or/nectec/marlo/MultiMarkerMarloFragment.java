@@ -22,11 +22,12 @@ import android.view.View;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
-import th.or.nectec.marlo.model.Coordinate;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
+
+import th.or.nectec.marlo.model.Coordinate;
 
 public class MultiMarkerMarloFragment extends MarloFragment {
 
@@ -52,7 +53,7 @@ public class MultiMarkerMarloFragment extends MarloFragment {
     @Override
     public void mark(LatLng markPoint) {
         SoundUtility.play(getContext(), R.raw.thumpsoundeffect);
-        Marker marker = googleMap.addMarker(markerOptionFactory.build(this, markPoint));
+        Marker marker = googleMap.addMarker(markOptFactory.build(this, markPoint));
         markers.push(marker);
     }
 

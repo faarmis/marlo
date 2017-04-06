@@ -21,26 +21,27 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.PolygonOptions;
-import th.or.nectec.marlo.model.PolygonData;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
+
+import th.or.nectec.marlo.model.PolygonData;
 
 final class PolygonDrawUtils {
 
     private PolygonDrawUtils() {
     }
 
-    public static void draw(GoogleMap map, PolygonData polygonData, PolygonOptions polygon) {
-        drawBoundary(polygon, polygonData);
-        drawHoles(polygon, polygonData);
+    public static void draw(GoogleMap map, PolygonData data, PolygonOptions polygon) {
+        drawBoundary(polygon, data);
+        drawHoles(polygon, data);
 
-        if (polygonData.getPolygon() != null) {
-            polygonData.getPolygon().remove();
+        if (data.getDrawPolygon() != null) {
+            data.getDrawPolygon().remove();
         }
-        if (!polygonData.isEmpty()) {
-            polygonData.setPolygon(map.addPolygon(polygon));
+        if (!data.isEmpty()) {
+            data.setDrawPolygon(map.addPolygon(polygon));
         }
     }
 

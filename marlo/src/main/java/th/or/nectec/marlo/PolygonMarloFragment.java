@@ -19,12 +19,16 @@ package th.or.nectec.marlo;
 
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Toast;
 
+import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
+
+import java.util.List;
+import java.util.Stack;
+
 import th.or.nectec.marlo.model.Coordinate;
 import th.or.nectec.marlo.model.Polygon;
 import th.or.nectec.marlo.model.PolygonData;
@@ -32,23 +36,18 @@ import th.or.nectec.marlo.option.DefaultPolygonMarkerOptionFactory;
 import th.or.nectec.marlo.option.DefaultPolygonOptionFactory;
 import th.or.nectec.marlo.option.PolygonOptionFactory;
 
-import java.util.List;
-import java.util.Stack;
-
 public class PolygonMarloFragment extends MarloFragment {
 
-    private final Stack<PolygonData> multiPolygon = new Stack<>();
     private BitmapDescriptor activeMarkerIcon;
     private BitmapDescriptor passiveMarkerIcon;
-    private PolygonOptionFactory polygonOptionFactory;
+    private PolygonOptionFactory polyOptFactory;
 
     private PolygonController controller = new PolygonController();
 
     public PolygonMarloFragment() {
         super();
-        markerOptionFactory = new DefaultPolygonMarkerOptionFactory();
-        polygonOptionFactory = new DefaultPolygonOptionFactory();
-
+        markOptFactory = new DefaultPolygonMarkerOptionFactory();
+        polyOptFactory = new DefaultPolygonOptionFactory();
     }
 
     public static PolygonMarloFragment newInstance() {
@@ -57,7 +56,7 @@ public class PolygonMarloFragment extends MarloFragment {
     }
 
     public void setPolygonOptionFactory(PolygonOptionFactory polygonOptionFactory) {
-        this.polygonOptionFactory = polygonOptionFactory;
+        this.polyOptFactory = polygonOptionFactory;
     }
 
     @Override
@@ -68,84 +67,133 @@ public class PolygonMarloFragment extends MarloFragment {
         passiveMarkerIcon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN);
 
         ViewUtils.addPolygonToolsMenu(this);
-        multiPolygon.push(new PolygonData());
     }
 
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.marlo_hole) {
-            getActivePolygonData().newHole();
-            getActivePolygonData().setCurrentState(PolygonData.State.HOLE);
+            controller.newHole();
         } else if (view.getId() == R.id.marlo_boundary) {
-            multiPolygon.push(new PolygonData());
-            getActivePolygonData().setCurrentState(PolygonData.State.BOUNDARY);
+            controller.startNewPolygon();
         } else if (view.getId() == R.id.marlo_undo) {
-            undo();
+            controller.undo();
         } else {
             super.onClick(view);
-
-        }
-    }
-
-    public PolygonData getActivePolygonData() {
-        return multiPolygon.peek();
-    }
-
-    private void setUpdateIconToLastMarker(BitmapDescriptor icon) {
-        Marker lastMarker = getActivePolygonData().getLastMarker();
-        if (lastMarker != null) {
-            lastMarker.setIcon(icon);
-        } else if (multiPolygon.size() > 1) {
-            PolygonData topPolygon = multiPolygon.pop();
-            multiPolygon.peek().getLastMarker().setIcon(icon);
-            multiPolygon.push(topPolygon);
         }
     }
 
     @Override
     public void mark(LatLng markPoint) {
-        SoundUtility.play(getContext(), R.raw.thumpsoundeffect);
-
-        controller.mark(new Coordinate(markPoint));
-
-        Marker marker = googleMap.addMarker(markerOptionFactory.build(this, markPoint));
-        PolygonData activePolygon = getActivePolygonData();
-        setUpdateIconToLastMarker(passiveMarkerIcon);
-        boolean success = activePolygon.addMarker(marker);
-        if (!success) {
-            onMarkHoleOutBound(markPoint, activePolygon.getPolygon().getPoints());
-            marker.remove();
+        try {
+            controller.mark(new Coordinate(markPoint));
+            SoundUtility.play(getContext(), R.raw.thumpsoundeffect);
+            onPolygonChange(controller.getPolygons());
+        } catch (HoleInvalidException expected){
+            onMarkInvalidHole(controller.getPolygons(), markPoint);
         }
-        PolygonDrawUtils.draw(googleMap, activePolygon, polygonOptionFactory.build(this));
     }
 
-    protected void onMarkHoleOutBound(LatLng target, List<LatLng> points) {
-        Toast.makeText(getActivity(), "Out of polygon boundary ", Toast.LENGTH_SHORT).show();
+    protected void onPolygonChange(List<Polygon> polygons) {
+
     }
 
+    protected void onMarkInvalidHole(List<Polygon> polygons, LatLng markPoint) {
+
+    }
+
+    @Override
     public boolean undo() {
+        boolean willRemove = !controller.getFocusPolygon().isEmpty();
         controller.undo();
-        PolygonData polygonData = getActivePolygonData();
-        if (polygonData.isEmpty()) {
-            return false;
-        }
-        boolean removed = polygonData.removeLastMarker();
-        setUpdateIconToLastMarker(activeMarkerIcon);
 
-        if (removed && polygonData.isEmpty() && multiPolygon.size() > 1) {
-            multiPolygon.pop();
-        }
-
-        PolygonDrawUtils.draw(googleMap, polygonData, polygonOptionFactory.build(this));
-        return true;
+        return willRemove;
     }
 
     public List<Polygon> getPolygons() {
-        return null;
+        return controller.getPolygons();
     }
 
-    public PolygonData.State getDrawingState() {
-        return getActivePolygonData().getCurrentState();
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        super.onMapReady(googleMap);
+        controller.setPresenter(new GoogleMapPresenter(googleMap));
     }
 
+    private class GoogleMapPresenter implements PolygonController.Presenter {
+
+        private final Stack<PolygonData> multiPolygon = new Stack<>();
+        private final GoogleMap googleMap;
+
+        public GoogleMapPresenter(GoogleMap googleMap) {
+            this.googleMap = googleMap;
+            multiPolygon.push(new PolygonData());
+        }
+
+        @Override
+        public void markHole(Coordinate coordinate) {
+            updateIconToLastMarker(passiveMarkerIcon);
+
+            LatLng markPoint = coordinate.toLatLng();
+            Marker marker = googleMap.addMarker(markOptFactory.build(PolygonMarloFragment.this, markPoint));
+            PolygonData activePolygon = getActivePolygonData();
+            activePolygon.addMarker(marker);
+            PolygonDrawUtils.draw(googleMap, activePolygon, polyOptFactory.build(PolygonMarloFragment.this));
+        }
+
+        @Override
+        public void markBoundary(Coordinate coordinate) {
+            updateIconToLastMarker(passiveMarkerIcon);
+
+            LatLng markPoint = coordinate.toLatLng();
+            Marker marker = googleMap.addMarker(markOptFactory.build(PolygonMarloFragment.this, markPoint));
+            PolygonData activePolygon = getActivePolygonData();
+            activePolygon.addMarker(marker);
+            PolygonDrawUtils.draw(googleMap, activePolygon, polyOptFactory.build(PolygonMarloFragment.this));
+        }
+
+        @Override
+        public void prepareForNewPolygon() {
+            multiPolygon.push(new PolygonData());
+            getActivePolygonData().setCurrentState(PolygonData.State.BOUNDARY);
+        }
+
+        @Override
+        public void prepareForNewHole() {
+            updateIconToLastMarker(passiveMarkerIcon);
+            getActivePolygonData().newHole();
+            getActivePolygonData().setCurrentState(PolygonData.State.HOLE);
+        }
+
+        @Override
+        public void removeLastMarker() {
+            PolygonData polygonData = getActivePolygonData();
+            if (polygonData.isEmpty()) {
+                return;
+            }
+            boolean removed = polygonData.removeLastMarker();
+            updateIconToLastMarker(activeMarkerIcon);
+
+            if (removed && polygonData.isEmpty() && multiPolygon.size() > 1) {
+                multiPolygon.pop();
+            }
+
+            PolygonDrawUtils.draw(googleMap, polygonData,
+                    polyOptFactory.build(PolygonMarloFragment.this));
+        }
+
+        private void updateIconToLastMarker(BitmapDescriptor icon) {
+            Marker lastMarker = getActivePolygonData().getLastMarker();
+            if (lastMarker != null) {
+                lastMarker.setIcon(icon);
+            } else if (multiPolygon.size() > 1) {
+                PolygonData topPolygon = multiPolygon.pop();
+                multiPolygon.peek().getLastMarker().setIcon(icon);
+                multiPolygon.push(topPolygon);
+            }
+        }
+
+        private PolygonData getActivePolygonData() {
+            return multiPolygon.peek();
+        }
+    }
 }

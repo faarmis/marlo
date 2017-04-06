@@ -21,22 +21,27 @@ import android.Manifest;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.TextView;
 import android.widget.Toast;
+
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolygonOptions;
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import th.or.nectec.marlo.MarloFragment;
 import th.or.nectec.marlo.PolygonMarloFragment;
+import th.or.nectec.marlo.model.Polygon;
 import th.or.nectec.marlo.option.MarkerOptionFactory;
 import th.or.nectec.marlo.option.PolygonOptionFactory;
 
-import java.util.ArrayList;
-
 public class MapsActivity extends AppCompatActivity {
 
-    private PolygonMarloFragment marlo;
+    private CustomMarloFragment marlo;
     private final PermissionListener permissionlistener = new PermissionListener() {
         @Override
         public void onPermissionGranted() {
@@ -54,13 +59,15 @@ public class MapsActivity extends AppCompatActivity {
         }
     };
 
+    TextView markerCount;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+        markerCount = (TextView) findViewById(R.id.marker_count);
 
-        marlo = (PolygonMarloFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-        marlo.setMode(PolygonMarloFragment.Mode.MULTI);
+        marlo = (CustomMarloFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         marlo.setPolygonOptionFactory(new PolygonOptionFactory() {
             @Override
             public PolygonOptions build(PolygonMarloFragment fragment) {
@@ -77,6 +84,7 @@ public class MapsActivity extends AppCompatActivity {
                         .position(position);
             }
         });
+        marlo.setActivity(this);
 
         new TedPermission(this)
                 .setPermissionListener(permissionlistener)
@@ -91,6 +99,33 @@ public class MapsActivity extends AppCompatActivity {
     public void onBackPressed() {
         if (!marlo.undo()) {
             super.onBackPressed();
+        }
+    }
+
+
+    public static class CustomMarloFragment extends PolygonMarloFragment{
+
+        private MapsActivity activity;
+
+        void setActivity(MapsActivity activity){
+            this.activity = activity;
+        }
+
+        @Override
+        protected void onPolygonChange(List<Polygon> polygons) {
+            int count = 0;
+            for (Polygon poly : polygons){
+                count += poly.getBoundary().size();
+                for (Polygon hole : poly.getAllHoles()){
+                    count += hole.getBoundary().size();
+                }
+            }
+            activity.markerCount.setText("Marker = " + count);
+        }
+
+        @Override
+        protected void onMarkInvalidHole(List<Polygon> polygons, LatLng markPoint) {
+            Toast.makeText(getContext(), "InvalidHole", Toast.LENGTH_SHORT).show();
         }
     }
 }

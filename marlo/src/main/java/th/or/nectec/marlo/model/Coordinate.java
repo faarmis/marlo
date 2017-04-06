@@ -23,6 +23,9 @@ import android.os.Parcelable;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
 public class Coordinate implements Parcelable {
     private double latitude;
     private double longitude;
@@ -60,6 +63,8 @@ public class Coordinate implements Parcelable {
             throw new IllegalArgumentException("-180 <= longitude <= 180, Your value is " + longitude);
         this.longitude = longitude;
     }
+
+    public LatLng toLatLng(){ return new LatLng(latitude, longitude); }
 
     @Override
     public boolean equals(Object o) {
@@ -115,5 +120,16 @@ public class Coordinate implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeDouble(this.latitude);
         dest.writeDouble(this.longitude);
+    }
+
+    public JSONArray toGeoJson(){
+        try {
+            JSONArray jsonArray = new JSONArray();
+            jsonArray.put(0, longitude);
+            jsonArray.put(1, latitude);
+            return jsonArray;
+        }catch (JSONException json){
+            throw new RuntimeException(json);
+        }
     }
 }

@@ -17,17 +17,19 @@
 
 package th.or.nectec.marlo;
 
-import th.or.nectec.marlo.model.Coordinate;
-import th.or.nectec.marlo.model.Polygon;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import th.or.nectec.marlo.model.Coordinate;
+import th.or.nectec.marlo.model.Polygon;
 
 public class PolygonController {
 
     private final List<Polygon> polygons;
     private Polygon focusPolygon;
     private PointInHoleValidator pointInBoundaryValidator = new PolygonUtils();
+
+    private Presenter presenter;
 
     public PolygonController() {
         this(new ArrayList<Polygon>());
@@ -36,22 +38,30 @@ public class PolygonController {
     public PolygonController(List<Polygon> polygons) {
         this.polygons = polygons;
         if (polygons.size() > 0) focusPolygon = polygons.get(polygons.size() - 1);
-        else newPolygon();
+        else createPolygonObject();
+    }
+
+    public void setPresenter(Presenter presenter) {
+        this.presenter = presenter;
     }
 
     public void mark(Coordinate coordinate) {
         if (focusPolygon.haveHole()) {
             validateHolePoint(coordinate);
             focusPolygon.getLastHole().add(coordinate);
+            presenter.markHole(coordinate);
         } else {
             focusPolygon.add(coordinate);
+            presenter.markBoundary(coordinate);
         }
     }
 
-    public void newPolygon(){
-        if (focusPolygon != null)
-            validatePolygon();
+    public void startNewPolygon(){
+        createPolygonObject();
+        presenter.prepareForNewPolygon();
+    }
 
+    private void createPolygonObject() {
         Polygon newPolygon = new Polygon();
         polygons.add(newPolygon);
         focusPolygon = newPolygon;
@@ -63,18 +73,11 @@ public class PolygonController {
     }
 
     public Polygon getFocusPolygon() {
-        validatePolygon();
         return focusPolygon;
     }
 
-    public List<Polygon> getPolygons(){
-        for (Polygon poly : polygons){
-            if(!poly.isValid()) throw new PolygonInvalidException();
-        }
-        return polygons;
-    }
 
-    private void validatePolygon() {
+    private void validateFocusPolygon() {
         if (!focusPolygon.isValid()) {
             throw new PolygonInvalidException();
         }
@@ -82,7 +85,7 @@ public class PolygonController {
 
     public void newHole() {
         try {
-            validatePolygon();
+            validateFocusPolygon();
             if (focusPolygon.haveHole()) {
                 validateLastHole();
             }
@@ -90,7 +93,13 @@ public class PolygonController {
             throw new IllegalStateException("Polygon must valid before markHole");
         }
         focusPolygon.addHoles(new Polygon());
+        presenter.prepareForNewHole();
     }
+
+    public List<Polygon> getPolygons(){
+        return polygons;
+    }
+
 
     private void validateLastHole() {
         if (!focusPolygon.getLastHole().isValid()) {
@@ -98,15 +107,35 @@ public class PolygonController {
         }
     }
 
-    public void undo() {
+    public boolean undo() {
+        Coordinate remove;
         if (focusPolygon.haveHole()) {
             Polygon lastHole = focusPolygon.getLastHole();
-            lastHole.pop();
+            remove = lastHole.pop();
             if (lastHole.isEmpty())
                 focusPolygon.removeHole(lastHole);
         } else {
-            focusPolygon.pop();
+            remove = focusPolygon.pop();
         }
+
+//        if (remove != null) {
+            presenter.removeLastMarker();
+//            return true;
+//        }
+        return false;
+    }
+
+    interface Presenter{
+
+        void markHole(Coordinate coordinate);
+
+        void markBoundary(Coordinate coordinate);
+
+        void prepareForNewPolygon();
+
+        void prepareForNewHole();
+
+        void removeLastMarker();
     }
 
 }

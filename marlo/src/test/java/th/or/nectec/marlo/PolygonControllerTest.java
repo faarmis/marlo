@@ -17,15 +17,50 @@
 
 package th.or.nectec.marlo;
 
+import org.junit.Before;
+import org.junit.Test;
+
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.Test;
+
 import th.or.nectec.marlo.model.Coordinate;
 import th.or.nectec.marlo.model.Polygon;
 
 import static org.junit.Assert.assertEquals;
 
 public class PolygonControllerTest {
+
+    private final PolygonController controller = new PolygonController();
+
+    @Before
+    public void setUp() throws Exception {
+        controller.setPresenter(new PolygonController.Presenter() {
+            @Override
+            public void markHole(Coordinate coordinate) {
+
+            }
+
+            @Override
+            public void markBoundary(Coordinate coordinate) {
+
+            }
+
+            @Override
+            public void prepareForNewPolygon() {
+
+            }
+
+            @Override
+            public void prepareForNewHole() {
+
+            }
+
+            @Override
+            public void removeLastMarker() {
+
+            }
+        });
+    }
 
     @Test
     public void testMarkValid() throws Exception {
@@ -34,7 +69,6 @@ public class PolygonControllerTest {
         coordinates.add(new Coordinate(1f, 1f));
         coordinates.add(new Coordinate(0f, 1f));
 
-        PolygonController controller = new PolygonController();
         controller.mark(new Coordinate(0f, 0f));
         controller.mark(new Coordinate(1f, 1f));
         controller.mark(new Coordinate(0f, 1f));
@@ -45,7 +79,6 @@ public class PolygonControllerTest {
 
     @Test(expected = PolygonInvalidException.class)
     public void testMarkIncompletePolygon() throws Exception {
-        PolygonController controller = new PolygonController();
         controller.mark(new Coordinate(0f, 0f));
         controller.mark(new Coordinate(0f, 1f));
 
@@ -54,7 +87,6 @@ public class PolygonControllerTest {
 
     @Test(expected = IllegalStateException.class)
     public void testChangeToHoleBeforeBoundaryCompleteShouldThrowException() {
-        PolygonController controller = new PolygonController();
         controller.mark(new Coordinate(0f, 0f));
         controller.mark(new Coordinate(0f, 1f));
 
@@ -69,7 +101,6 @@ public class PolygonControllerTest {
         coordinates.add(new Coordinate(2f, 2f));
         Polygon hole = new Polygon(coordinates);
 
-        PolygonController controller = new PolygonController();
         controller.mark(new Coordinate(0f, 0f));
         controller.mark(new Coordinate(3f, 0f));
         controller.mark(new Coordinate(3f, 3f));
@@ -90,7 +121,6 @@ public class PolygonControllerTest {
         coordinates.add(new Coordinate(3f, 3f));
         coordinates.add(new Coordinate(0f, 3f));
 
-        PolygonController controller = new PolygonController();
         controller.mark(new Coordinate(0f, 0f));
         controller.mark(new Coordinate(3f, 0f));
         controller.mark(new Coordinate(3f, 3f));
@@ -112,7 +142,6 @@ public class PolygonControllerTest {
         coordinates.add(new Coordinate(1f, 1f));
         Polygon hole = new Polygon(coordinates);
 
-        PolygonController controller = new PolygonController();
         controller.mark(new Coordinate(0f, 0f));
         controller.mark(new Coordinate(3f, 0f));
         controller.mark(new Coordinate(3f, 3f));
@@ -136,7 +165,6 @@ public class PolygonControllerTest {
 
     @Test(expected = HoleInvalidException.class)
     public void testMarkHolesOutsideOfPolygonShouldThrowException() throws Exception {
-        PolygonController controller = new PolygonController();
         controller.mark(new Coordinate(0f, 0f));
         controller.mark(new Coordinate(3f, 0f));
         controller.mark(new Coordinate(3f, 3f));
@@ -152,7 +180,6 @@ public class PolygonControllerTest {
         boundary.add(new Coordinate(3f, 0f));
         boundary.add(new Coordinate(3f, 3f));
 
-        PolygonController controller = new PolygonController();
         controller.mark(new Coordinate(0f, 0f));
         controller.mark(new Coordinate(3f, 0f));
         controller.mark(new Coordinate(3f, 3f));
@@ -170,7 +197,6 @@ public class PolygonControllerTest {
         hole.add(new Coordinate(1f, 2f));
         Polygon unfinishHole = new Polygon(hole);
 
-        PolygonController controller = new PolygonController();
         controller.mark(new Coordinate(0f, 0f));
         controller.mark(new Coordinate(3f, 0f));
         controller.mark(new Coordinate(3f, 3f));
@@ -192,7 +218,6 @@ public class PolygonControllerTest {
         hole.add(new Coordinate(1f, 2f));
         Polygon unfinishHole = new Polygon(hole);
 
-        PolygonController controller = new PolygonController();
         controller.mark(new Coordinate(0f, 0f));
         controller.mark(new Coordinate(3f, 0f));
         controller.mark(new Coordinate(3f, 3f));
@@ -218,7 +243,6 @@ public class PolygonControllerTest {
         holeCoordinate.add(new Coordinate(2f, 2f));
         Polygon hole = new Polygon(holeCoordinate);
 
-        PolygonController controller = new PolygonController();
         controller.mark(new Coordinate(0f, 0f));
         controller.mark(new Coordinate(3f, 0f));
         controller.mark(new Coordinate(3f, 3f));
@@ -245,7 +269,6 @@ public class PolygonControllerTest {
         boundary.add(new Coordinate(3f, 3f));
         boundary.add(new Coordinate(0f, 3f));
 
-        PolygonController controller = new PolygonController();
         controller.mark(new Coordinate(0f, 0f));
         controller.mark(new Coordinate(3f, 0f));
         controller.mark(new Coordinate(3f, 3f));
@@ -264,7 +287,6 @@ public class PolygonControllerTest {
         boundary.add(new Coordinate(3f, 0f));
         boundary.add(new Coordinate(3f, 3f));
 
-        PolygonController controller = new PolygonController();
         controller.mark(new Coordinate(0f, 0f));
         controller.mark(new Coordinate(3f, 0f));
         controller.mark(new Coordinate(3f, 3f));
@@ -288,7 +310,7 @@ public class PolygonControllerTest {
 
     @Test(expected = HoleInvalidException.class)
     public void testNewHoleWhenLastHoleNotFinishShouldThrowException() throws Exception {
-        PolygonController controller = new PolygonController();
+        
         controller.mark(new Coordinate(0f, 0f));
         controller.mark(new Coordinate(3f, 0f));
         controller.mark(new Coordinate(3f, 3f));
@@ -301,20 +323,19 @@ public class PolygonControllerTest {
 
     @Test
     public void testMultiPolygon(){
-        PolygonController controller = new PolygonController();
         controller.mark(new Coordinate(0f, 0f));
         controller.mark(new Coordinate(3f, 0f));
         controller.mark(new Coordinate(3f, 3f));
         controller.mark(new Coordinate(0f, 3f));
-        controller.newPolygon();
+        controller.startNewPolygon();
         controller.mark(new Coordinate(1f, 1f));
         controller.mark(new Coordinate(1f, 2f));
         controller.mark(new Coordinate(2f, 2f));
 
         Polygon expected = new Polygon();
-        expected.addBoundary(new Coordinate(1f, 1f));
-        expected.addBoundary(new Coordinate(1f, 2f));
-        expected.addBoundary(new Coordinate(2f, 2f));
+        expected.add(new Coordinate(1f, 1f));
+        expected.add(new Coordinate(1f, 2f));
+        expected.add(new Coordinate(2f, 2f));
         assertEquals(expected, controller.getFocusPolygon());
     }
 }

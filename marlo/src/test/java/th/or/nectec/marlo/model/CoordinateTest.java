@@ -18,9 +18,11 @@
 package th.or.nectec.marlo.model;
 
 import com.google.android.gms.maps.model.LatLng;
+
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.skyscreamer.jsonassert.JSONAssert;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
@@ -82,5 +84,10 @@ public class CoordinateTest {
     @Test(expected = IllegalArgumentException.class)
     public void testOutOfRangeLongitude() throws Exception {
         new Coordinate(0, 180.1f);
+    }
+
+    @Test
+    public void toGeoJson() throws Exception {
+        JSONAssert.assertEquals("[ 100.60312, 14.078606 ]", new Coordinate(LAT,LONG).toGeoJson(), false);
     }
 }

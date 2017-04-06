@@ -81,6 +81,7 @@ dependencies {
 
     testCompile "junit:junit:$junitVersion"
     testCompile "org.mockito:mockito-core:$mockitoVersion"
+    testCompile "org.skyscreamer:jsonassert:1.5.0"
 }
 
 check {
