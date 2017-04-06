@@ -66,6 +66,26 @@ public class Coordinate implements Parcelable {
 
     public LatLng toLatLng(){ return new LatLng(latitude, longitude); }
 
+    public JSONArray toGeoJson(){
+        try {
+            JSONArray jsonArray = new JSONArray();
+            jsonArray.put(0, longitude);
+            jsonArray.put(1, latitude);
+            return jsonArray;
+        }catch (JSONException json){
+            throw new RuntimeException(json);
+        }
+    }
+
+    public static Coordinate fromGeoJson(String coordinate) {
+        try{
+            JSONArray array = new JSONArray(coordinate);
+            return new Coordinate(array.getDouble(1), array.getDouble(0));
+        }catch (JSONException json){
+            throw new RuntimeException(json);
+        }
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -122,14 +142,5 @@ public class Coordinate implements Parcelable {
         dest.writeDouble(this.longitude);
     }
 
-    public JSONArray toGeoJson(){
-        try {
-            JSONArray jsonArray = new JSONArray();
-            jsonArray.put(0, longitude);
-            jsonArray.put(1, latitude);
-            return jsonArray;
-        }catch (JSONException json){
-            throw new RuntimeException(json);
-        }
-    }
+
 }

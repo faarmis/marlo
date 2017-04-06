@@ -77,13 +77,6 @@ public class PolygonControllerTest {
 
     }
 
-    @Test(expected = PolygonInvalidException.class)
-    public void testMarkIncompletePolygon() throws Exception {
-        controller.mark(new Coordinate(0f, 0f));
-        controller.mark(new Coordinate(0f, 1f));
-
-        controller.getFocusPolygon();
-    }
 
     @Test(expected = IllegalStateException.class)
     public void testChangeToHoleBeforeBoundaryCompleteShouldThrowException() {

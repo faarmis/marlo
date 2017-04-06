@@ -24,6 +24,7 @@ import android.support.annotation.NonNull;
 import com.google.android.gms.maps.model.Marker;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -123,6 +124,50 @@ public class Polygon implements Parcelable {
     }
 
 
+    public JSONArray toGeoJson() {
+        JSONArray jsonPolygon = new JSONArray();
+        jsonPolygon.put(boundaryToJson());
+        for (Polygon hole : holes) {
+            jsonPolygon.put(hole.boundaryToJson());
+        }
+        return jsonPolygon;
+    }
+
+    @NonNull
+    private JSONArray boundaryToJson() {
+        JSONArray jsonBoundary = new JSONArray();
+        for (Coordinate point : boundary){
+            jsonBoundary.put(point.toGeoJson());
+        }
+        return jsonBoundary;
+    }
+
+    public static JSONArray toGeoJson(List<Polygon> polygons){
+        JSONArray multiPoly = new JSONArray();
+        for (Polygon polygon : polygons){
+            multiPoly.put(polygon.toGeoJson());
+        }
+        return multiPoly;
+    }
+
+    public static Polygon fromGeoJson(@NonNull String coordinates) {
+        try {
+            Polygon returnObj = new Polygon();
+            JSONArray array = new JSONArray(coordinates);
+            for (int boundaryIndex = 0 ; boundaryIndex < array.length() ; boundaryIndex++){
+                Polygon polygon = boundaryIndex == 0 ? returnObj : new Polygon();
+                JSONArray boundary = array.getJSONArray(boundaryIndex);
+                for (int coordIndex = 0; coordIndex < boundary.length(); coordIndex++){
+                    polygon.add(Coordinate.fromGeoJson(boundary.get(coordIndex).toString()));
+                }
+                if (boundaryIndex != 0) returnObj.addHoles(polygon);
+            }
+            return returnObj;
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -175,29 +220,4 @@ public class Polygon implements Parcelable {
         }
     }
 
-    public JSONArray toGeoJson() {
-        JSONArray jsonPolygon = new JSONArray();
-        jsonPolygon.put(boundaryToJson());
-        for (Polygon hole : holes) {
-            jsonPolygon.put(hole.boundaryToJson());
-        }
-        return jsonPolygon;
-    }
-
-    @NonNull
-    private JSONArray boundaryToJson() {
-        JSONArray jsonBoundary = new JSONArray();
-        for (Coordinate point : boundary){
-            jsonBoundary.put(point.toGeoJson());
-        }
-        return jsonBoundary;
-    }
-
-    public static JSONArray toGeoJson(List<Polygon> polygons){
-        JSONArray multiPoly = new JSONArray();
-        for (Polygon polygon : polygons){
-            multiPoly.put(polygon.toGeoJson());
-        }
-        return multiPoly;
-    }
 }
