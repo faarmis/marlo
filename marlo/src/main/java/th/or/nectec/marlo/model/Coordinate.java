@@ -39,6 +39,10 @@ public class Coordinate implements Parcelable {
         this(latLng.latitude, latLng.longitude);
     }
 
+    public Coordinate(Coordinate coordinate){
+        this(coordinate.getLatitude(), coordinate.getLongitude());
+    }
+
     public static Coordinate fromMarker(Marker marker) {
         LatLng position = marker.getPosition();
         return new Coordinate(position.latitude, position.longitude);

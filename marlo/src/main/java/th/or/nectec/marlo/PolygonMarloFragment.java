@@ -73,6 +73,15 @@ public class PolygonMarloFragment extends MarloFragment {
         ViewUtils.addPolygonToolsMenu(this);
     }
 
+    private Polygon tempRestoreData;
+
+    public void setRestoreData(Polygon restoreData){
+        if (googleMap != null)
+            controller.retore(restoreData);
+        else
+            tempRestoreData = restoreData;
+    }
+
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.marlo_hole) {
@@ -121,6 +130,9 @@ public class PolygonMarloFragment extends MarloFragment {
     public void onMapReady(GoogleMap googleMap) {
         super.onMapReady(googleMap);
         controller.setPresenter(new GoogleMapPresenter(googleMap));
+
+        if (tempRestoreData != null)
+            controller.retore(tempRestoreData);
     }
 
     private class GoogleMapPresenter implements PolygonController.Presenter {

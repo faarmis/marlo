@@ -24,6 +24,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolygonOptions;
@@ -40,6 +41,11 @@ import th.or.nectec.marlo.option.MarkerOptionFactory;
 import th.or.nectec.marlo.option.PolygonOptionFactory;
 
 public class MapsActivity extends AppCompatActivity {
+
+    public static final String RESTORE_DATA = "[\n" +
+            "      [ [100.0, 0.0], [101.0, 0.0], [101.0, 1.0], [100.0, 1.0], [100.0, 0.0] ],\n" +
+            "      [ [100.2, 0.2], [100.8, 0.2], [100.8, 0.8], [100.2, 0.8], [100.2, 0.2] ]\n" +
+            "      ]";
 
     private CustomMarloFragment marlo;
     private final PermissionListener permissionlistener = new PermissionListener() {
@@ -85,6 +91,7 @@ public class MapsActivity extends AppCompatActivity {
             }
         });
         marlo.setActivity(this);
+        marlo.setRestoreData(Polygon.fromGeoJson(RESTORE_DATA));
 
         new TedPermission(this)
                 .setPermissionListener(permissionlistener)
@@ -109,6 +116,11 @@ public class MapsActivity extends AppCompatActivity {
 
         void setActivity(MapsActivity activity){
             this.activity = activity;
+        }
+
+        @Override
+        public void onMapReady(GoogleMap googleMap) {
+            super.onMapReady(googleMap);
         }
 
         @Override

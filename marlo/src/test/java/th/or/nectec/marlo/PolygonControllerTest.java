@@ -20,6 +20,7 @@ package th.or.nectec.marlo;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -315,7 +316,7 @@ public class PolygonControllerTest {
     }
 
     @Test
-    public void testMultiPolygon(){
+    public void testMultiPolygon() throws Exception {
         controller.mark(new Coordinate(0f, 0f));
         controller.mark(new Coordinate(3f, 0f));
         controller.mark(new Coordinate(3f, 3f));
@@ -325,11 +326,10 @@ public class PolygonControllerTest {
         controller.mark(new Coordinate(1f, 2f));
         controller.mark(new Coordinate(2f, 2f));
 
-        Polygon expected = new Polygon();
-        expected.add(new Coordinate(1f, 1f));
-        expected.add(new Coordinate(1f, 2f));
-        expected.add(new Coordinate(2f, 2f));
-        assertEquals(expected, controller.getFocusPolygon());
+        List<Polygon> actual = controller.getPolygons();
+        assertEquals(2, actual.size());
+        JSONAssert.assertEquals("[[[[0,0],[0,3],[3,3],[3,0]]],[[[1,1],[2,1],[2,2]]]]",
+                Polygon.toGeoJson(actual).toString(), false);
     }
 
     @Test(expected = IllegalStateException.class)
@@ -379,4 +379,5 @@ public class PolygonControllerTest {
 
         Assert.assertEquals(2, controller.getFocusPolygon().getBoundary().size());
     }
+
 }

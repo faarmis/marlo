@@ -120,6 +120,17 @@ public class PolygonController {
         return false;
     }
 
+    public void retore(Polygon polygon) {
+        //focusPolygon = new Polygon(polygon);
+        for (Coordinate point : polygon.getBoundary()){
+            mark(new Coordinate(point));
+        }
+        for (Polygon hole : polygon.getAllHoles()){
+            newHole();
+            retore(hole);
+        }
+    }
+
     interface Presenter {
 
         void markHole(Coordinate coordinate);
