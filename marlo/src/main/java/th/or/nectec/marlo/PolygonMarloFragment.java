@@ -76,22 +76,52 @@ public class PolygonMarloFragment extends MarloFragment {
     private Polygon tempRestoreData;
 
     public void setRestoreData(Polygon restoreData){
-        if (googleMap != null)
+        if (googleMap != null) {
             controller.retore(restoreData);
-        else
-            tempRestoreData = restoreData;
+            tempRestoreData = null;
+            return;
+        }
+        tempRestoreData = restoreData;
     }
 
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.marlo_hole) {
-            controller.newHole();
+            try { controller.newHole(); }
+            catch (IllegalStateException expected){ onNotReadyToNewHole(); }
         } else if (view.getId() == R.id.marlo_boundary) {
-            controller.startNewPolygon();
+            try { controller.startNewPolygon(); }
+            catch (IllegalStateException expected) { onNotReadyToNewPolygon(); }
         } else if (view.getId() == R.id.marlo_undo) {
-            controller.undo();
+            undo();
         } else {
             super.onClick(view);
+        }
+    }
+
+    protected void onNotReadyToNewHole() {
+        //For subclass to implement
+    }
+
+    protected void onNotReadyToNewPolygon() {
+        //For subclass to implement
+    }
+
+    protected void onPolygonChanged(List<Polygon> polygons, Coordinate focusCoordinate) {
+        //For subclass to implement
+    }
+
+    protected void onMarkInvalidHole(List<Polygon> polygons, LatLng markPoint) {
+        //For subclass to implement
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        super.onMapReady(googleMap);
+        controller.setPresenter(new GoogleMapPresenter(googleMap));
+
+        if (tempRestoreData != null) {
+            setRestoreData(tempRestoreData);
         }
     }
 
@@ -100,39 +130,23 @@ public class PolygonMarloFragment extends MarloFragment {
         try {
             controller.mark(new Coordinate(markPoint));
             SoundUtility.play(getContext(), R.raw.thumpsoundeffect);
-            onPolygonChange(controller.getPolygons());
+            onPolygonChanged(controller.getPolygons(), controller.getFocusPolygon().getLastCoordinate());
         } catch (HoleInvalidException expected){
             onMarkInvalidHole(controller.getPolygons(), markPoint);
         }
     }
 
-    protected void onPolygonChange(List<Polygon> polygons) {
-
-    }
-
-    protected void onMarkInvalidHole(List<Polygon> polygons, LatLng markPoint) {
-
-    }
-
     @Override
     public boolean undo() {
-        boolean willRemove = !controller.getFocusPolygon().isEmpty();
-        controller.undo();
-
-        return willRemove;
+        boolean undo = controller.undo();
+        if (undo){
+            onPolygonChanged(controller.getPolygons(), controller.getFocusPolygon().getLastCoordinate());
+        }
+        return undo;
     }
 
     public List<Polygon> getPolygons() {
         return controller.getPolygons();
-    }
-
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        super.onMapReady(googleMap);
-        controller.setPresenter(new GoogleMapPresenter(googleMap));
-
-        if (tempRestoreData != null)
-            controller.retore(tempRestoreData);
     }
 
     private class GoogleMapPresenter implements PolygonController.Presenter {

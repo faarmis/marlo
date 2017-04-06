@@ -104,6 +104,9 @@ public class PolygonController {
     }
 
     public boolean undo() {
+        if (polygons.size() == 1 && focusPolygon.isEmpty())
+            return false;
+
         if (focusPolygon.haveHole()) {
             Polygon lastHole = focusPolygon.getLastHole();
             lastHole.pop();
@@ -117,17 +120,16 @@ public class PolygonController {
             }
         }
         presenter.removeLastMarker();
-        return false;
+        return true;
     }
 
     public void retore(Polygon polygon) {
-        //focusPolygon = new Polygon(polygon);
         for (Coordinate point : polygon.getBoundary()){
             mark(new Coordinate(point));
         }
         for (Polygon hole : polygon.getAllHoles()){
             newHole();
-            retore(hole);
+            retore(hole); //Recursive
         }
     }
 
