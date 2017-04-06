@@ -47,6 +47,11 @@ public class PolygonData {
             if (!lastHole.isEmpty()) {
                 return lastHole.peek();
             }
+            if (holes.size() > 1){
+                Stack<Marker> beforeLastHole = holes.get(holes.size() - 2);
+                if (!beforeLastHole.isEmpty())
+                    return beforeLastHole.peek();
+            }
         }
         if (!boundary.isEmpty())
             return boundary.peek();

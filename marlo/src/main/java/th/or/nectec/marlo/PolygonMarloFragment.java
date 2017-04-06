@@ -59,6 +59,10 @@ public class PolygonMarloFragment extends MarloFragment {
         this.polyOptFactory = polygonOptionFactory;
     }
 
+    protected PolygonController getController() {
+        return controller;
+    }
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -159,7 +163,6 @@ public class PolygonMarloFragment extends MarloFragment {
 
         @Override
         public void prepareForNewHole() {
-            updateIconToLastMarker(passiveMarkerIcon);
             getActivePolygonData().newHole();
             getActivePolygonData().setCurrentState(PolygonData.State.HOLE);
         }

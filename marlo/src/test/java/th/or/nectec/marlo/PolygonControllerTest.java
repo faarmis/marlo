@@ -17,6 +17,7 @@
 
 package th.or.nectec.marlo;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -301,9 +302,8 @@ public class PolygonControllerTest {
         assertEquals(boundary, controller.getFocusPolygon().getBoundary());
     }
 
-    @Test(expected = HoleInvalidException.class)
+    @Test(expected = IllegalStateException.class)
     public void testNewHoleWhenLastHoleNotFinishShouldThrowException() throws Exception {
-        
         controller.mark(new Coordinate(0f, 0f));
         controller.mark(new Coordinate(3f, 0f));
         controller.mark(new Coordinate(3f, 3f));
@@ -330,5 +330,53 @@ public class PolygonControllerTest {
         expected.add(new Coordinate(1f, 2f));
         expected.add(new Coordinate(2f, 2f));
         assertEquals(expected, controller.getFocusPolygon());
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testNewPolygonWhenLastPolygonNotFinishShouldThrowException() throws Exception {
+        controller.mark(new Coordinate(0f, 0f));
+        controller.mark(new Coordinate(3f, 0f));
+        controller.startNewPolygon();
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testNewPolygonWhenLastHoleNotFinishShouldThrowException() throws Exception {
+        controller.mark(new Coordinate(0f, 0f));
+        controller.mark(new Coordinate(3f, 0f));
+        controller.mark(new Coordinate(3f, 3f));
+        controller.mark(new Coordinate(0f, 3f));
+        controller.newHole();
+        controller.mark(new Coordinate(1f, 1f));
+        controller.mark(new Coordinate(1f, 2f));
+        controller.startNewPolygon();
+    }
+
+    @Test
+    public void testUndoToLastPolygonThenDrawNewHole() throws Exception {
+        controller.mark(new Coordinate(0f, 0f));
+        controller.mark(new Coordinate(3f, 0f));
+        controller.mark(new Coordinate(3f, 3f));
+        controller.mark(new Coordinate(0f, 3f));
+        controller.startNewPolygon();
+        controller.mark(new Coordinate(1f, 1f));
+        controller.mark(new Coordinate(1f, 2f));
+
+        controller.undo();
+        controller.undo();
+        controller.newHole();
+        controller.mark(new Coordinate(1f, 1f));
+        controller.mark(new Coordinate(1f, 2f));
+        controller.mark(new Coordinate(2f, 2f));
+
+        Assert.assertEquals(3, controller.getFocusPolygon().getLastHole().getBoundary().size());
+    }
+
+    @Test
+    public void testIgnoreMarkSameCoordinateAsLastMark() throws Exception {
+        controller.mark(new Coordinate(0f, 0f));
+        controller.mark(new Coordinate(3f, 0f));
+        controller.mark(new Coordinate(3f, 0f));
+
+        Assert.assertEquals(2, controller.getFocusPolygon().getBoundary().size());
     }
 }

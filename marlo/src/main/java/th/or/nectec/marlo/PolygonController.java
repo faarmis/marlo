@@ -46,6 +46,9 @@ public class PolygonController {
     }
 
     public void mark(Coordinate coordinate) {
+        if (coordinate.equals(focusPolygon.getLastCoordinate()))
+            return;
+
         if (focusPolygon.haveHole()) {
             validateHolePoint(coordinate);
             focusPolygon.getLastHole().add(coordinate);
@@ -56,7 +59,14 @@ public class PolygonController {
         }
     }
 
-    public void startNewPolygon(){
+    public void startNewPolygon() {
+        if (!focusPolygon.isValid())
+            throw new IllegalStateException("Should finish last Polygon before create new one");
+        if (focusPolygon.haveHole()) {
+            if (!focusPolygon.getLastHole().isValid()) {
+                throw new IllegalStateException("Last hole should finish before add new polygon");
+            }
+        }
         createPolygonObject();
         presenter.prepareForNewPolygon();
     }
@@ -76,56 +86,41 @@ public class PolygonController {
         return focusPolygon;
     }
 
-
-    private void validateFocusPolygon() {
-        if (!focusPolygon.isValid()) {
-            throw new PolygonInvalidException();
-        }
-    }
-
     public void newHole() {
-        try {
-            validateFocusPolygon();
-            if (focusPolygon.haveHole()) {
-                validateLastHole();
+        if (!focusPolygon.isValid())
+            throw new IllegalStateException("Must be valid polygon before add hole");
+        if (focusPolygon.haveHole()) {
+            if (!focusPolygon.getLastHole().isValid()) {
+                throw new IllegalStateException("Last hole should finish before add new hole");
             }
-        } catch (PolygonInvalidException invalid) {
-            throw new IllegalStateException("Polygon must valid before markHole");
         }
+
         focusPolygon.addHoles(new Polygon());
         presenter.prepareForNewHole();
     }
 
-    public List<Polygon> getPolygons(){
+    public List<Polygon> getPolygons() {
         return polygons;
     }
 
-
-    private void validateLastHole() {
-        if (!focusPolygon.getLastHole().isValid()) {
-            throw new HoleInvalidException();
-        }
-    }
-
     public boolean undo() {
-        Coordinate remove;
         if (focusPolygon.haveHole()) {
             Polygon lastHole = focusPolygon.getLastHole();
-            remove = lastHole.pop();
+            lastHole.pop();
             if (lastHole.isEmpty())
                 focusPolygon.removeHole(lastHole);
-        } else {
-            remove = focusPolygon.pop();
+        } else if (!focusPolygon.isEmpty()){
+            focusPolygon.pop();
+            if (focusPolygon.isEmpty() && polygons.size() > 1){
+                polygons.remove(polygons.size() - 1);
+                focusPolygon = polygons.get(polygons.size() - 1);
+            }
         }
-
-//        if (remove != null) {
-            presenter.removeLastMarker();
-//            return true;
-//        }
+        presenter.removeLastMarker();
         return false;
     }
 
-    interface Presenter{
+    interface Presenter {
 
         void markHole(Coordinate coordinate);
 

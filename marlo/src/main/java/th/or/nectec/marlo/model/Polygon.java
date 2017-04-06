@@ -20,6 +20,7 @@ package th.or.nectec.marlo.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.google.android.gms.maps.model.Marker;
 
@@ -112,6 +113,20 @@ public class Polygon implements Parcelable {
         return getHolesCount() > 0;
     }
 
+    @Nullable
+    public Coordinate getLastCoordinate() {
+        if (haveHole()) {
+            return getLastHole().getLastCoordinate();
+        }
+
+        if (!isEmpty()) {
+            Coordinate peek = boundary.get(boundary.size() - 1);
+            return new Coordinate(peek.getLatitude(), peek.getLongitude());
+        } else {
+            return null;
+        }
+    }
+
     public Coordinate pop() {
         if (!boundary.isEmpty()) {
             return boundary.remove(boundary.size() - 1);
@@ -136,15 +151,15 @@ public class Polygon implements Parcelable {
     @NonNull
     private JSONArray boundaryToJson() {
         JSONArray jsonBoundary = new JSONArray();
-        for (Coordinate point : boundary){
+        for (Coordinate point : boundary) {
             jsonBoundary.put(point.toGeoJson());
         }
         return jsonBoundary;
     }
 
-    public static JSONArray toGeoJson(List<Polygon> polygons){
+    public static JSONArray toGeoJson(List<Polygon> polygons) {
         JSONArray multiPoly = new JSONArray();
-        for (Polygon polygon : polygons){
+        for (Polygon polygon : polygons) {
             multiPoly.put(polygon.toGeoJson());
         }
         return multiPoly;
@@ -154,10 +169,10 @@ public class Polygon implements Parcelable {
         try {
             Polygon returnObj = new Polygon();
             JSONArray array = new JSONArray(coordinates);
-            for (int boundaryIndex = 0 ; boundaryIndex < array.length() ; boundaryIndex++){
+            for (int boundaryIndex = 0; boundaryIndex < array.length(); boundaryIndex++) {
                 Polygon polygon = boundaryIndex == 0 ? returnObj : new Polygon();
                 JSONArray boundary = array.getJSONArray(boundaryIndex);
-                for (int coordIndex = 0; coordIndex < boundary.length(); coordIndex++){
+                for (int coordIndex = 0; coordIndex < boundary.length(); coordIndex++) {
                     polygon.add(Coordinate.fromGeoJson(boundary.get(coordIndex).toString()));
                 }
                 if (boundaryIndex != 0) returnObj.addHoles(polygon);
