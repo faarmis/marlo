@@ -107,7 +107,7 @@ public class MapsActivity extends AppCompatActivity {
         });
         marlo.setActivity(this);
         marlo.setRestoreData(Polygon.fromGeoJson(RESTORE_DATA));
-        //marlo.useDefaultToolsMenu();
+        marlo.useDefaultToolsMenu();
 
         new TedPermission(this)
                 .setPermissionListener(permissionlistener)

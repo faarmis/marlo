@@ -170,10 +170,10 @@ public class Polygon implements Parcelable {
         return multiPoly;
     }
 
-    public static Polygon fromGeoJson(@NonNull String coordinates) {
+    public static Polygon fromGeoJson(@NonNull JSONArray coordinates){
         try {
             Polygon returnObj = new Polygon();
-            JSONArray array = new JSONArray(coordinates);
+            JSONArray array = coordinates;
             for (int boundaryIndex = 0; boundaryIndex < array.length(); boundaryIndex++) {
                 Polygon polygon = boundaryIndex == 0 ? returnObj : new Polygon();
                 JSONArray boundary = array.getJSONArray(boundaryIndex);
@@ -184,6 +184,27 @@ public class Polygon implements Parcelable {
             }
             return returnObj;
         } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static Polygon fromGeoJson(@NonNull String coordinates) {
+        try {
+            return fromGeoJson(new JSONArray(coordinates));
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static List<Polygon> fromGeoJsonMultiPolygon(String coodinate) {
+        try {
+            JSONArray array = new JSONArray(coodinate);
+            List<Polygon> polygons = new ArrayList<>();
+            for (int polygonIndex = 0; polygonIndex < array.length(); polygonIndex++) {
+                polygons.add(Polygon.fromGeoJson(array.getJSONArray(polygonIndex)));
+            }
+            return polygons;
+        }catch (JSONException e) {
             throw new RuntimeException(e);
         }
     }
@@ -239,5 +260,6 @@ public class Polygon implements Parcelable {
             dest.writeValue(hole);
         }
     }
+
 
 }
