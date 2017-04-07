@@ -79,6 +79,7 @@ public class PolygonMarloFragment extends MarloFragment {
     }
 
     private Polygon tempRestoreData;
+    private List<Polygon> tmpRestoreDataList;
     private boolean shouldAnimateToRestorePolygon;
 
     public void setRestoreData(Polygon restoreData){
@@ -89,6 +90,18 @@ public class PolygonMarloFragment extends MarloFragment {
             return;
         }
         tempRestoreData = restoreData;
+    }
+
+    public void setRestoreData(List<Polygon> restoreData){
+        if (googleMap != null) {
+            for (Polygon poly : restoreData) {
+                controller.retore(poly);
+            }
+            shouldAnimateToRestorePolygon = true;
+            tmpRestoreDataList = null;
+            return;
+        }
+        tmpRestoreDataList = restoreData;
     }
 
     @Override
