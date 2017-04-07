@@ -62,6 +62,7 @@
             android:layout_width="wrap_content"
             android:src="@drawable/ic_mark_location"
             app:elevation="@dimen/fab_elevation"
+            android:visibility="gone"
             android:layout_marginLeft="@dimen/fab_vertical_margin"
             android:layout_marginRight="@dimen/fab_vertical_margin"
             android:layout_marginBottom="@dimen/fab_horizontal_margin"

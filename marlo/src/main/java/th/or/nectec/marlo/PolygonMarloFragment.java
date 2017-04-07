@@ -20,8 +20,10 @@ package th.or.nectec.marlo;
 import android.os.Bundle;
 import android.view.View;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -41,6 +43,7 @@ public class PolygonMarloFragment extends MarloFragment {
     private MarkerOptionFactory passiveMarkOptFactory;
     private PolygonOptionFactory polyOptFactory;
     private PolygonController controller = new PolygonController();
+    private int padding = 100;
 
     public PolygonMarloFragment() {
         super();
@@ -73,19 +76,43 @@ public class PolygonMarloFragment extends MarloFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-//        activeMarkerIcon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
-//        passiveMarkerIcon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN);
     }
 
     private Polygon tempRestoreData;
+    private boolean shouldAnimateToRestorePolygon;
 
     public void setRestoreData(Polygon restoreData){
         if (googleMap != null) {
             controller.retore(restoreData);
+            shouldAnimateToRestorePolygon = true;
             tempRestoreData = null;
             return;
         }
         tempRestoreData = restoreData;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (shouldAnimateToRestorePolygon){
+            animateToPolygons();
+            shouldAnimateToRestorePolygon = false;
+        }
+    }
+
+    public void animateToPolygons() {
+        List<Polygon> polygons = controller.getPolygons();
+
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+        boolean added = false;
+        for (Polygon focusPolygon : polygons) {
+            for (Coordinate coordinate : focusPolygon.getBoundary()){
+                builder.include(coordinate.toLatLng());
+                added = true;
+            }
+        }
+        if (added)
+            googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), padding));
     }
 
     public void useDefaultToolsMenu(){

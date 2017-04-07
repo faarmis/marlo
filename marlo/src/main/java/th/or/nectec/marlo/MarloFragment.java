@@ -65,7 +65,7 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
         getMapAsync(this);
 
         ViewUtils.addViewFinder(this);
-        ViewUtils.addGpsLocationButton(this);
+        ViewUtils.addMyLocationButton(this);
     }
 
     @Override

@@ -75,8 +75,9 @@ final class ViewUtils {
         }
     }
 
-    public static void addGpsLocationButton(MarloFragment fragment) {
+    public static void addMyLocationButton(MarloFragment fragment) {
         FloatingActionButton fab = new FloatingActionButton(fragment.getContext());
+        fab.setSize(FloatingActionButton.SIZE_MINI);
         fab.setId(R.id.marlo_gps);
         fab.setImageResource(R.drawable.ic_gps);
         fab.setOnClickListener(fragment);

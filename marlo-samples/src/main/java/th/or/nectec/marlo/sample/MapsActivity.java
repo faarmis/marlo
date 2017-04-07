@@ -90,6 +90,8 @@ public class MapsActivity extends AppCompatActivity {
             @Override
             public MarkerOptions build(MarloFragment fragment, LatLng position) {
                 return new MarkerOptions()
+                        .title("Marlo")
+                        .snippet(position.latitude + ", " + position.longitude)
                         .icon(defaultMarker(BitmapDescriptorFactory.HUE_RED))
                         .position(position);
             }
