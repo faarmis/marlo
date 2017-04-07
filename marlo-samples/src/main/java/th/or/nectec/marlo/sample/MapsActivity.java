@@ -24,7 +24,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolygonOptions;
@@ -40,6 +40,8 @@ import th.or.nectec.marlo.model.Coordinate;
 import th.or.nectec.marlo.model.Polygon;
 import th.or.nectec.marlo.option.MarkerOptionFactory;
 import th.or.nectec.marlo.option.PolygonOptionFactory;
+
+import static com.google.android.gms.maps.model.BitmapDescriptorFactory.defaultMarker;
 
 public class MapsActivity extends AppCompatActivity {
 
@@ -79,7 +81,7 @@ public class MapsActivity extends AppCompatActivity {
             @Override
             public PolygonOptions build(PolygonMarloFragment fragment) {
                 return new PolygonOptions()
-                        .fillColor(Color.DKGRAY)
+                        .fillColor(Color.argb(50, 255, 50, 50))
                         .strokeColor(Color.RED)
                         .strokeWidth(5);
             }
@@ -88,11 +90,22 @@ public class MapsActivity extends AppCompatActivity {
             @Override
             public MarkerOptions build(MarloFragment fragment, LatLng position) {
                 return new MarkerOptions()
+                        .icon(defaultMarker(BitmapDescriptorFactory.HUE_RED))
                         .position(position);
+            }
+        });
+        marlo.setPassiveMakerOptionFactory(new MarkerOptionFactory() {
+            @Override
+            public MarkerOptions build(MarloFragment fragment, LatLng position) {
+                return new MarkerOptions()
+                        .position(position)
+                        .alpha(0.75f)
+                        .icon(defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
             }
         });
         marlo.setActivity(this);
         marlo.setRestoreData(Polygon.fromGeoJson(RESTORE_DATA));
+        //marlo.useDefaultToolsMenu();
 
         new TedPermission(this)
                 .setPermissionListener(permissionlistener)
@@ -117,11 +130,6 @@ public class MapsActivity extends AppCompatActivity {
 
         void setActivity(MapsActivity activity){
             this.activity = activity;
-        }
-
-        @Override
-        public void onMapReady(GoogleMap googleMap) {
-            super.onMapReady(googleMap);
         }
 
         @Override

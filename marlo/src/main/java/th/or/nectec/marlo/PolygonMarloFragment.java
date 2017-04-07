@@ -21,10 +21,9 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.BitmapDescriptor;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.List;
 import java.util.Stack;
@@ -34,14 +33,13 @@ import th.or.nectec.marlo.model.Polygon;
 import th.or.nectec.marlo.model.PolygonData;
 import th.or.nectec.marlo.option.DefaultPolygonMarkerOptionFactory;
 import th.or.nectec.marlo.option.DefaultPolygonOptionFactory;
+import th.or.nectec.marlo.option.MarkerOptionFactory;
 import th.or.nectec.marlo.option.PolygonOptionFactory;
 
 public class PolygonMarloFragment extends MarloFragment {
 
-    private BitmapDescriptor activeMarkerIcon;
-    private BitmapDescriptor passiveMarkerIcon;
+    private MarkerOptionFactory passiveMarkOptFactory;
     private PolygonOptionFactory polyOptFactory;
-
     private PolygonController controller = new PolygonController();
 
     public PolygonMarloFragment() {
@@ -59,6 +57,15 @@ public class PolygonMarloFragment extends MarloFragment {
         this.polyOptFactory = polygonOptionFactory;
     }
 
+    @Override
+    public void setMarkerOptionFactory(MarkerOptionFactory markerOptionFactory) {
+        super.setMarkerOptionFactory(markerOptionFactory);
+    }
+
+    public void setPassiveMakerOptionFactory(MarkerOptionFactory passiveMarkerOptFactory){
+        this.passiveMarkOptFactory = passiveMarkerOptFactory;
+    }
+
     protected PolygonController getController() {
         return controller;
     }
@@ -66,11 +73,8 @@ public class PolygonMarloFragment extends MarloFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
-        activeMarkerIcon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
-        passiveMarkerIcon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN);
-
-        ViewUtils.addPolygonToolsMenu(this);
+//        activeMarkerIcon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
+//        passiveMarkerIcon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN);
     }
 
     private Polygon tempRestoreData;
@@ -82,6 +86,10 @@ public class PolygonMarloFragment extends MarloFragment {
             return;
         }
         tempRestoreData = restoreData;
+    }
+
+    public void useDefaultToolsMenu(){
+        ViewUtils.addPolygonToolsMenu(this);
     }
 
     @Override
@@ -161,7 +169,7 @@ public class PolygonMarloFragment extends MarloFragment {
 
         @Override
         public void markHole(Coordinate coordinate) {
-            updateIconToLastMarker(passiveMarkerIcon);
+            updateIconToLastMarker(passiveMarkOptFactory);
 
             LatLng markPoint = coordinate.toLatLng();
             Marker marker = googleMap.addMarker(markOptFactory.build(PolygonMarloFragment.this, markPoint));
@@ -172,7 +180,7 @@ public class PolygonMarloFragment extends MarloFragment {
 
         @Override
         public void markBoundary(Coordinate coordinate) {
-            updateIconToLastMarker(passiveMarkerIcon);
+            updateIconToLastMarker(passiveMarkOptFactory);
 
             LatLng markPoint = coordinate.toLatLng();
             Marker marker = googleMap.addMarker(markOptFactory.build(PolygonMarloFragment.this, markPoint));
@@ -200,7 +208,7 @@ public class PolygonMarloFragment extends MarloFragment {
                 return;
             }
             boolean removed = polygonData.removeLastMarker();
-            updateIconToLastMarker(activeMarkerIcon);
+            updateIconToLastMarker(markOptFactory);
 
             if (removed && polygonData.isEmpty() && multiPolygon.size() > 1) {
                 multiPolygon.pop();
@@ -210,19 +218,27 @@ public class PolygonMarloFragment extends MarloFragment {
                     polyOptFactory.build(PolygonMarloFragment.this));
         }
 
-        private void updateIconToLastMarker(BitmapDescriptor icon) {
+        private void updateIconToLastMarker(MarkerOptionFactory optionFactory) {
+            MarkerOptions option = optionFactory.build(PolygonMarloFragment.this, new LatLng(1, 1));
             Marker lastMarker = getActivePolygonData().getLastMarker();
             if (lastMarker != null) {
-                lastMarker.setIcon(icon);
+                updateByOption(lastMarker, option);
             } else if (multiPolygon.size() > 1) {
-                PolygonData topPolygon = multiPolygon.pop();
-                multiPolygon.peek().getLastMarker().setIcon(icon);
-                multiPolygon.push(topPolygon);
+                PolygonData topEmptyPolygon = multiPolygon.pop();
+                updateByOption(multiPolygon.peek().getLastMarker(), option);
+                multiPolygon.push(topEmptyPolygon);
             }
         }
 
         private PolygonData getActivePolygonData() {
             return multiPolygon.peek();
+        }
+
+        private void updateByOption(Marker marker, MarkerOptions options){
+            marker.setAlpha(options.getAlpha());
+            marker.setAnchor(options.getAnchorU(), options.getAnchorV());
+            marker.setIcon(options.getIcon());
+            marker.setFlat(options.isFlat());
         }
     }
 }

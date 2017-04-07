@@ -34,7 +34,6 @@ public class DefaultPolygonMarkerOptionFactory implements MarkerOptionFactory {
         if (!(fragment instanceof PolygonMarloFragment)) {
             throw new IllegalArgumentException("DefaultPolygonMarkerOptionFactory must use with PolygonMarloFragment");
         }
-        PolygonMarloFragment polygonMarloFragment = (PolygonMarloFragment) fragment;
         return new MarkerOptions()
                 .position(position)
                 .draggable(true)
