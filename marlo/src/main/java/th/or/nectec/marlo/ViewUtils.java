@@ -104,9 +104,9 @@ final class ViewUtils {
         ViewGroup rootView = (ViewGroup) fragment.getView();
         if (rootView != null) {
             int px = (int) TypedValue.applyDimension(
-                    TypedValue.COMPLEX_UNIT_DIP, 72,
+                    TypedValue.COMPLEX_UNIT_DIP, 60,
                     fragment.getResources().getDisplayMetrics());
-            LayoutParams params = new LayoutParams(px, px, Gravity.START | Gravity.BOTTOM);
+            LayoutParams params = new LayoutParams(px, (int) (px * 0.6), Gravity.START | Gravity.BOTTOM);
             int horizonMargin = fragment.getResources()
                     .getDimensionPixelOffset(R.dimen.screen_horizontal_margin);
             int verticalMargin = fragment.getResources()
