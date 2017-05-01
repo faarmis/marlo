@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 NECTEC
+ * Copyright (c) 2017 NECTEC
  *   National Electronics and Computer Technology Center, Thailand
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -47,7 +47,7 @@ public class PolygonData {
             if (!lastHole.isEmpty()) {
                 return lastHole.peek();
             }
-            if (holes.size() > 1){
+            if (holes.size() > 1) {
                 Stack<Marker> beforeLastHole = holes.get(holes.size() - 2);
                 if (!beforeLastHole.isEmpty())
                     return beforeLastHole.peek();

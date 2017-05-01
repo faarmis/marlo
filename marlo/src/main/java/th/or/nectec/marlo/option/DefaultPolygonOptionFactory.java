@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 NECTEC
+ * Copyright (c) 2017 NECTEC
  *   National Electronics and Computer Technology Center, Thailand
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,7 +18,9 @@
 package th.or.nectec.marlo.option;
 
 import android.graphics.Color;
+
 import com.google.android.gms.maps.model.PolygonOptions;
+
 import th.or.nectec.marlo.PolygonMarloFragment;
 
 public class DefaultPolygonOptionFactory implements PolygonOptionFactory {

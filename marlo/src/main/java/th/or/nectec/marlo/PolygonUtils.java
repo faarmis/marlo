@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 NECTEC
+ * Copyright (c) 2017 NECTEC
  *   National Electronics and Computer Technology Center, Thailand
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,12 +17,12 @@
 
 package th.or.nectec.marlo;
 
+import java.util.List;
+
 import th.or.nectec.marlo.model.Coordinate;
 import th.or.nectec.marlo.model.Polygon;
 
-import java.util.List;
-
-public final class PolygonUtils implements PointInHoleValidator {
+final class PolygonUtils implements PointInHoleValidator {
 
     @Override
     public boolean inBoundary(Polygon polygon, Coordinate coordinate) {

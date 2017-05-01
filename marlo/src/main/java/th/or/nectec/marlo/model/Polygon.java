@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 NECTEC
+ * Copyright (c) 2017 NECTEC
  *   National Electronics and Computer Technology Center, Thailand
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -34,6 +34,17 @@ import java.util.Stack;
 
 public class Polygon implements Parcelable {
 
+    public static final Parcelable.Creator<Polygon> CREATOR = new Parcelable.Creator<Polygon>() {
+        @Override
+        public Polygon createFromParcel(Parcel source) {
+            return new Polygon(source);
+        }
+
+        @Override
+        public Polygon[] newArray(int size) {
+            return new Polygon[size];
+        }
+    };
     private final List<Coordinate> boundary;
     private final List<Polygon> holes;
 
@@ -42,7 +53,7 @@ public class Polygon implements Parcelable {
         holes = new ArrayList<>();
     }
 
-    public Polygon(Polygon polygon){
+    public Polygon(Polygon polygon) {
         boundary = polygon.getBoundary();
         holes = polygon.getAllHoles();
     }
@@ -56,9 +67,15 @@ public class Polygon implements Parcelable {
         this.holes = holes;
     }
 
+    //Parcelable
+    private Polygon(Parcel in) {
+        this.boundary = in.createTypedArrayList(Coordinate.CREATOR);
 
-    public void add(Coordinate coordinate) {
-        boundary.add(coordinate);
+        int holesCount = in.readInt();
+        this.holes = new ArrayList<>();
+        for (int hole = 0; hole < holesCount; hole++) {
+            this.holes.add((Polygon) in.readValue(Polygon.class.getClassLoader()));
+        }
     }
 
     public static Polygon fromPolygonData(PolygonData polyData) {
@@ -82,16 +99,88 @@ public class Polygon implements Parcelable {
         return new Polygon(boundaryCoordinate, holesList);
     }
 
-    public List<Coordinate> getBoundary() {
-        return new ArrayList<>(boundary);
+    public static JSONArray toGeoJson(List<Polygon> polygons) {
+        JSONArray multiPoly = new JSONArray();
+        for (Polygon polygon : polygons) {
+            multiPoly.put(polygon.toGeoJson());
+        }
+        return multiPoly;
     }
 
-    public Polygon getHole(int holeIndex) {
-        return holes.get(holeIndex);
+    public static Polygon fromGeoJson(@NonNull String coordinates) {
+        try {
+            return fromGeoJson(new JSONArray(coordinates));
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static Polygon fromGeoJson(@NonNull JSONArray coordinates) {
+        try {
+            Polygon returnObj = new Polygon();
+            for (int boundaryIndex = 0; boundaryIndex < coordinates.length(); boundaryIndex++) {
+                Polygon polygon = boundaryIndex == 0 ? returnObj : new Polygon();
+                JSONArray boundary = coordinates.getJSONArray(boundaryIndex);
+                for (int coordIndex = 0; coordIndex < boundary.length(); coordIndex++) {
+                    polygon.add(Coordinate.fromGeoJson(boundary.get(coordIndex).toString()));
+                }
+                if (boundaryIndex != 0) returnObj.addHoles(polygon);
+            }
+            return returnObj;
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static List<Polygon> fromGeoJsonMultiPolygon(String coodinate) {
+        try {
+            JSONArray array = new JSONArray(coodinate);
+            List<Polygon> polygons = new ArrayList<>();
+            for (int polygonIndex = 0; polygonIndex < array.length(); polygonIndex++) {
+                polygons.add(Polygon.fromGeoJson(array.getJSONArray(polygonIndex)));
+            }
+            return polygons;
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public List<Coordinate> getBoundary() {
+        return boundary;
     }
 
     public List<Polygon> getAllHoles() {
         return new ArrayList<>(holes);
+    }
+
+    public JSONArray toGeoJson() {
+        JSONArray jsonPolygon = new JSONArray();
+        jsonPolygon.put(boundaryToJson());
+        for (Polygon hole : holes) {
+            jsonPolygon.put(hole.boundaryToJson());
+        }
+        return jsonPolygon;
+    }
+
+    @NonNull
+    private JSONArray boundaryToJson() {
+        JSONArray jsonBoundary = new JSONArray();
+        for (Coordinate point : boundary) {
+            jsonBoundary.put(point.toGeoJson());
+        }
+        return jsonBoundary;
+    }
+
+    public void add(Coordinate coordinate) {
+        boundary.add(coordinate);
+    }
+
+    public void addHoles(Polygon coordinates) {
+        holes.add(coordinates);
+    }
+
+    public Polygon getHole(int holeIndex) {
+        return holes.get(holeIndex);
     }
 
     public boolean isValid() {
@@ -104,10 +193,6 @@ public class Polygon implements Parcelable {
 
     public int getHolesCount() {
         return holes.size();
-    }
-
-    public void addHoles(Polygon coordinates) {
-        holes.add(coordinates);
     }
 
     public Polygon getLastHole() {
@@ -143,72 +228,6 @@ public class Polygon implements Parcelable {
         holes.remove(hole);
     }
 
-
-    public JSONArray toGeoJson() {
-        JSONArray jsonPolygon = new JSONArray();
-        jsonPolygon.put(boundaryToJson());
-        for (Polygon hole : holes) {
-            jsonPolygon.put(hole.boundaryToJson());
-        }
-        return jsonPolygon;
-    }
-
-    @NonNull
-    private JSONArray boundaryToJson() {
-        JSONArray jsonBoundary = new JSONArray();
-        for (Coordinate point : boundary) {
-            jsonBoundary.put(point.toGeoJson());
-        }
-        return jsonBoundary;
-    }
-
-    public static JSONArray toGeoJson(List<Polygon> polygons) {
-        JSONArray multiPoly = new JSONArray();
-        for (Polygon polygon : polygons) {
-            multiPoly.put(polygon.toGeoJson());
-        }
-        return multiPoly;
-    }
-
-    public static Polygon fromGeoJson(@NonNull JSONArray coordinates){
-        try {
-            Polygon returnObj = new Polygon();
-            JSONArray array = coordinates;
-            for (int boundaryIndex = 0; boundaryIndex < array.length(); boundaryIndex++) {
-                Polygon polygon = boundaryIndex == 0 ? returnObj : new Polygon();
-                JSONArray boundary = array.getJSONArray(boundaryIndex);
-                for (int coordIndex = 0; coordIndex < boundary.length(); coordIndex++) {
-                    polygon.add(Coordinate.fromGeoJson(boundary.get(coordIndex).toString()));
-                }
-                if (boundaryIndex != 0) returnObj.addHoles(polygon);
-            }
-            return returnObj;
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public static Polygon fromGeoJson(@NonNull String coordinates) {
-        try {
-            return fromGeoJson(new JSONArray(coordinates));
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public static List<Polygon> fromGeoJsonMultiPolygon(String coodinate) {
-        try {
-            JSONArray array = new JSONArray(coodinate);
-            List<Polygon> polygons = new ArrayList<>();
-            for (int polygonIndex = 0; polygonIndex < array.length(); polygonIndex++) {
-                polygons.add(Polygon.fromGeoJson(array.getJSONArray(polygonIndex)));
-            }
-            return polygons;
-        }catch (JSONException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -218,33 +237,10 @@ public class Polygon implements Parcelable {
                 && Objects.equals(holes, polygon.holes);
     }
 
-    //Parcelable
-    private Polygon(Parcel in) {
-        this.boundary = in.createTypedArrayList(Coordinate.CREATOR);
-
-        int holesCount = in.readInt();
-        this.holes = new ArrayList<>();
-        for (int hole = 0; hole < holesCount; hole++) {
-            this.holes.add((Polygon) in.readValue(Polygon.class.getClassLoader()));
-        }
-    }
-
     @Override
     public int hashCode() {
         return Objects.hash(boundary, holes);
     }
-
-    public static final Parcelable.Creator<Polygon> CREATOR = new Parcelable.Creator<Polygon>() {
-        @Override
-        public Polygon createFromParcel(Parcel source) {
-            return new Polygon(source);
-        }
-
-        @Override
-        public Polygon[] newArray(int size) {
-            return new Polygon[size];
-        }
-    };
 
     @Override
     public int describeContents() {

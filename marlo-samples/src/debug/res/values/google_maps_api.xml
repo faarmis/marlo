@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright (c) 2016 NECTEC
+  ~ Copyright (c) 2017 NECTEC
   ~   National Electronics and Computer Technology Center, Thailand
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,10 +26,10 @@ https://console.developers.google.com/flows/enableapi?apiid=maps_android_backend
     You can also add your credentials to an existing key, using this line:
     1A:7D:10:67:8E:69:AE:F6:B1:5D:0F:D4:8A:84:D5:F1:B3:23:51:C6;th.or.nectec.marlo.sample
 
-    Once you have your key (it starts with "AIza"), replace the "google_maps_key"
+    Once you have your key (it starts with "AIza"), replaceWith the "google_maps_key"
     string in this file.
     -->
-    <string name="google_maps_key" translatable="false" templateMergeStrategy="preserve">
+    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">
         AIzaSyB0qVjVP6qopjAFVMxp4UDGlmjx8cmwidU
     </string>
 </resources>

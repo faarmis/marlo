@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 NECTEC
+ * Copyright (c) 2017 NECTEC
  *   National Electronics and Computer Technology Center, Thailand
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -35,8 +35,7 @@ import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
 final class ViewUtils {
 
-    private ViewUtils() {
-    }
+    private ViewUtils() {}
 
     public static void addViewFinder(MarloFragment fragment) {
         addViewFinder(fragment, R.drawable.view_finder);
@@ -62,7 +61,7 @@ final class ViewUtils {
 
     @SuppressLint("InflateParams")
     public static void addPolygonToolsMenu(MarloFragment fragment) {
-        View tools = fragment.getLayoutInflater(null).inflate(R.layout.multi_polygon_tool, null);
+        View tools = fragment.getActivity().getLayoutInflater().inflate(R.layout.multi_polygon_tool, null);
         tools.findViewById(R.id.marlo_undo).setOnClickListener(fragment);
         tools.findViewById(R.id.marlo_mark).setOnClickListener(fragment);
         tools.findViewById(R.id.marlo_hole).setOnClickListener(fragment);

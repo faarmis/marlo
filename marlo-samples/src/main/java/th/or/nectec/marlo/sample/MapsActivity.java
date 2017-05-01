@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 NECTEC
+ * Copyright (c) 2017 NECTEC
  *   National Electronics and Computer Technology Center, Thailand
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -49,7 +49,7 @@ public class MapsActivity extends AppCompatActivity {
             "      [ [100.0, 0.0], [101.0, 0.0], [101.0, 1.0], [100.0, 1.0], [100.0, 0.0] ],\n" +
             "      [ [100.2, 0.2], [100.8, 0.2], [100.8, 0.8], [100.2, 0.8], [100.2, 0.2] ]\n" +
             "      ]";
-
+    TextView markerCount;
     private CustomMarloFragment marlo;
     private final PermissionListener permissionlistener = new PermissionListener() {
         @Override
@@ -67,8 +67,6 @@ public class MapsActivity extends AppCompatActivity {
             Toast.makeText(MapsActivity.this, "MyLocation disable!", Toast.LENGTH_SHORT).show();
         }
     };
-
-    TextView markerCount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,19 +88,22 @@ public class MapsActivity extends AppCompatActivity {
             @Override
             public MarkerOptions build(MarloFragment fragment, LatLng position) {
                 return new MarkerOptions()
-                        .title("Marlo")
-                        .snippet(position.latitude + ", " + position.longitude)
-                        .icon(defaultMarker(BitmapDescriptorFactory.HUE_RED))
-                        .position(position);
+                    .title("Marlo")
+                    .snippet(position.latitude + ", " + position.longitude)
+                    .icon(defaultMarker(BitmapDescriptorFactory.HUE_RED))
+                    .draggable(true)
+                    .position(position);
             }
         });
         marlo.setPassiveMakerOptionFactory(new MarkerOptionFactory() {
             @Override
             public MarkerOptions build(MarloFragment fragment, LatLng position) {
                 return new MarkerOptions()
-                        .position(position)
-                        .alpha(0.75f)
-                        .icon(defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
+                    .position(position)
+                    .alpha(0.75f)
+                    .draggable(true)
+                    .snippet(position.latitude + ", " + position.longitude)
+                    .icon(defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
             }
         });
         marlo.setActivity(this);
@@ -125,21 +126,20 @@ public class MapsActivity extends AppCompatActivity {
         }
     }
 
-
-    public static class CustomMarloFragment extends PolygonMarloFragment{
+    public static class CustomMarloFragment extends PolygonMarloFragment {
 
         private MapsActivity activity;
 
-        void setActivity(MapsActivity activity){
+        void setActivity(MapsActivity activity) {
             this.activity = activity;
         }
 
         @Override
         protected void onPolygonChanged(List<Polygon> polygons, Coordinate focusCoord) {
             int count = 0;
-            for (Polygon poly : polygons){
+            for (Polygon poly : polygons) {
                 count += poly.getBoundary().size();
-                for (Polygon hole : poly.getAllHoles()){
+                for (Polygon hole : poly.getAllHoles()) {
                     count += hole.getBoundary().size();
                 }
             }

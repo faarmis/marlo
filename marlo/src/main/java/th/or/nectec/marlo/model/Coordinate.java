@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 NECTEC
+ * Copyright (c) 2017 NECTEC
  *   National Electronics and Computer Technology Center, Thailand
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,25 +27,51 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 public class Coordinate implements Parcelable {
+    public static final Parcelable.Creator<Coordinate> CREATOR =
+            new Parcelable.Creator<Coordinate>() {
+                @Override
+                public Coordinate createFromParcel(Parcel source) {
+                    return new Coordinate(source);
+                }
+
+                @Override
+                public Coordinate[] newArray(int size) {
+                    return new Coordinate[size];
+                }
+            };
     private double latitude;
     private double longitude;
+
+    public Coordinate(LatLng latLng) {
+        this(latLng.latitude, latLng.longitude);
+    }
 
     public Coordinate(double latitude, double longitude) {
         setLatitude(latitude);
         setLongitude(longitude);
     }
 
-    public Coordinate(LatLng latLng) {
-        this(latLng.latitude, latLng.longitude);
+    public Coordinate(Coordinate coordinate) {
+        this(coordinate.getLatitude(), coordinate.getLongitude());
     }
 
-    public Coordinate(Coordinate coordinate){
-        this(coordinate.getLatitude(), coordinate.getLongitude());
+    //Parcelable
+    private Coordinate(Parcel in) {
+        this(in.readDouble(), in.readDouble());
     }
 
     public static Coordinate fromMarker(Marker marker) {
         LatLng position = marker.getPosition();
         return new Coordinate(position.latitude, position.longitude);
+    }
+
+    public static Coordinate fromGeoJson(String coordinate) {
+        try {
+            JSONArray array = new JSONArray(coordinate);
+            return new Coordinate(array.getDouble(1), array.getDouble(0));
+        } catch (JSONException json) {
+            throw new RuntimeException(json);
+        }
     }
 
     public double getLatitude() {
@@ -68,24 +94,17 @@ public class Coordinate implements Parcelable {
         this.longitude = longitude;
     }
 
-    public LatLng toLatLng(){ return new LatLng(latitude, longitude); }
+    public LatLng toLatLng() {
+        return new LatLng(latitude, longitude);
+    }
 
-    public JSONArray toGeoJson(){
+    public JSONArray toGeoJson() {
         try {
             JSONArray jsonArray = new JSONArray();
             jsonArray.put(0, longitude);
             jsonArray.put(1, latitude);
             return jsonArray;
-        }catch (JSONException json){
-            throw new RuntimeException(json);
-        }
-    }
-
-    public static Coordinate fromGeoJson(String coordinate) {
-        try{
-            JSONArray array = new JSONArray(coordinate);
-            return new Coordinate(array.getDouble(1), array.getDouble(0));
-        }catch (JSONException json){
+        } catch (JSONException json) {
             throw new RuntimeException(json);
         }
     }
@@ -113,27 +132,10 @@ public class Coordinate implements Parcelable {
     @Override
     public String toString() {
         return "Location{"
-            + "latitude=" + latitude
-            + ", longitude=" + longitude
-            + '}';
+                + "latitude=" + latitude
+                + ", longitude=" + longitude
+                + '}';
     }
-
-    //Parcelable
-    private Coordinate(Parcel in) {
-        this(in.readDouble(), in.readDouble());
-    }
-
-    public static final Parcelable.Creator<Coordinate> CREATOR = new Parcelable.Creator<Coordinate>() {
-        @Override
-        public Coordinate createFromParcel(Parcel source) {
-            return new Coordinate(source);
-        }
-
-        @Override
-        public Coordinate[] newArray(int size) {
-            return new Coordinate[size];
-        }
-    };
 
     @Override
     public int describeContents() {
