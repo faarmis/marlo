@@ -16,6 +16,7 @@
   ~ limitations under the License.
   -->
 
-<resources>
-    <string name="marlo">Marlo</string>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <string name="marlo" tools:ignore="UnusedResources">Marlo</string>
 </resources>

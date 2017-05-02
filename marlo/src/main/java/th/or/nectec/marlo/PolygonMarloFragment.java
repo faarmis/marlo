@@ -203,6 +203,7 @@ public class PolygonMarloFragment extends MarloFragment {
       controller.restore(restoreData);
       shouldAnimateToRestorePolygon = true;
       tempRestoreData = null;
+        onPolygonChanged(controller.getPolygons(), controller.getFocusPolygon().getLastCoordinate());
       return;
     }
     tempRestoreData = restoreData;
@@ -213,6 +214,7 @@ public class PolygonMarloFragment extends MarloFragment {
       controller.restore(restoreData);
       shouldAnimateToRestorePolygon = true;
       tmpRestoreDataList = null;
+        onPolygonChanged(controller.getPolygons(), controller.getFocusPolygon().getLastCoordinate());
       return;
     }
     tmpRestoreDataList = restoreData;
