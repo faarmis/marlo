@@ -68,7 +68,7 @@ public class PolygonMarloFragment extends MarloFragment {
         super.setMarkerOptionFactory(markerOptionFactory);
     }
 
-  public void setPassiveMakerOptionFactory(MarkerOptionFactory passiveMarkerOptFactory) {
+    public void setPassiveMakerOptionFactory(MarkerOptionFactory passiveMarkerOptFactory) {
         this.passiveMarkOptFactory = passiveMarkerOptFactory;
     }
 
@@ -84,7 +84,7 @@ public class PolygonMarloFragment extends MarloFragment {
     @Override
     public void onResume() {
         super.onResume();
-      if (shouldAnimateToRestorePolygon) {
+        if (shouldAnimateToRestorePolygon) {
             animateToPolygons();
             shouldAnimateToRestorePolygon = false;
         }
@@ -96,7 +96,7 @@ public class PolygonMarloFragment extends MarloFragment {
         LatLngBounds.Builder builder = new LatLngBounds.Builder();
         boolean added = false;
         for (Polygon focusPolygon : polygons) {
-          for (Coordinate coordinate : focusPolygon.getBoundary()) {
+            for (Coordinate coordinate : focusPolygon.getBoundary()) {
                 builder.include(coordinate.toLatLng());
                 added = true;
             }
@@ -105,24 +105,24 @@ public class PolygonMarloFragment extends MarloFragment {
             googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), padding));
     }
 
-  public void useDefaultToolsMenu() {
+    public void useDefaultToolsMenu() {
         ViewUtils.addPolygonToolsMenu(this);
     }
 
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.marlo_hole) {
-          try {
-            controller.newHole();
-          } catch (IllegalStateException expected) {
-            onNotReadyToNewHole();
-          }
+            try {
+                controller.newHole();
+            } catch (IllegalStateException expected) {
+                onNotReadyToNewHole();
+            }
         } else if (view.getId() == R.id.marlo_boundary) {
-          try {
-            controller.startNewPolygon();
-          } catch (IllegalStateException expected) {
-            onNotReadyToNewPolygon();
-          }
+            try {
+                controller.startNewPolygon();
+            } catch (IllegalStateException expected) {
+                onNotReadyToNewPolygon();
+            }
         } else if (view.getId() == R.id.marlo_undo) {
             undo();
         } else {
@@ -138,17 +138,17 @@ public class PolygonMarloFragment extends MarloFragment {
         //For subclass to implement
     }
 
-  @Override
-  public boolean undo() {
-    boolean undo = controller.undo();
-    if (undo) {
-      onPolygonChanged(controller.getPolygons(),
-          controller.getFocusPolygon().getLastCoordinate());
+    @Override
+    public boolean undo() {
+        boolean undo = controller.undo();
+        if (undo) {
+            onPolygonChanged(controller.getPolygons(),
+                    controller.getFocusPolygon().getLastCoordinate());
+        }
+        return undo;
     }
-    return undo;
-  }
 
-  protected void onPolygonChanged(List<Polygon> polygons, Coordinate focusCoordinate) {
+    protected void onPolygonChanged(List<Polygon> polygons, Coordinate focusCoordinate) {
         //For subclass to implement
     }
 
@@ -160,69 +160,69 @@ public class PolygonMarloFragment extends MarloFragment {
         if (tempRestoreData != null) {
             setRestoreData(tempRestoreData);
         }
-      if (tmpRestoreDataList != null) {
-        setRestoreData(tmpRestoreDataList);
-      }
-
-      googleMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
-
-        Coordinate oldCoord;
-
-        @Override
-        public void onMarkerDragStart(Marker marker) {
-          oldCoord = (Coordinate) marker.getTag();
-          System.out.println("drag at " + oldCoord.toString());
-          Polygon focusPolygon = controller.getFocusPolygon();
-          for (Coordinate coord : focusPolygon.getBoundary()) {
-            System.out.print(coord.toString());
-          }
+        if (tmpRestoreDataList != null) {
+            setRestoreData(tmpRestoreDataList);
         }
 
-        @Override
-        public void onMarkerDrag(Marker marker) {
+        googleMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
 
+            Coordinate oldCoord;
+
+            @Override
+            public void onMarkerDragStart(Marker marker) {
+                oldCoord = (Coordinate) marker.getTag();
+                System.out.println("drag at " + oldCoord.toString());
+                Polygon focusPolygon = controller.getFocusPolygon();
+                for (Coordinate coord : focusPolygon.getBoundary()) {
+                    System.out.print(coord.toString());
+                }
+            }
+
+            @Override
+            public void onMarkerDrag(Marker marker) {
+
+            }
+
+            @Override
+            public void onMarkerDragEnd(Marker marker) {
+                Coordinate newCoord = Coordinate.fromMarker(marker);
+                controller.backup();
+                try {
+                    controller.replaceWith(oldCoord, newCoord);
+                    onPolygonChanged(controller.getPolygons(), newCoord);
+                } catch (HoleInvalidException holeOutOfBound) {
+                    controller.rollback();
+                    onMarkInvalidHole(controller.getPolygons(), marker.getPosition());
+                }
+            }
+        });
+    }
+
+    public void setRestoreData(Polygon restoreData) {
+        if (googleMap != null) {
+            controller.restore(restoreData);
+            shouldAnimateToRestorePolygon = true;
+            tempRestoreData = null;
+            onPolygonChanged(controller.getPolygons(), controller.getFocusPolygon().getLastCoordinate());
+            return;
         }
+        tempRestoreData = restoreData;
+    }
 
-        @Override
-        public void onMarkerDragEnd(Marker marker) {
-          Coordinate newCoord = Coordinate.fromMarker(marker);
-          controller.backup();
-          try {
-            controller.replaceWith(oldCoord, newCoord);
-            onPolygonChanged(controller.getPolygons(), newCoord);
-          } catch (HoleInvalidException holeOutOfBound) {
-            controller.rollback();
-            onMarkInvalidHole(controller.getPolygons(), marker.getPosition());
-          }
+    public void setRestoreData(List<Polygon> restoreData) {
+        if (googleMap != null) {
+            controller.restore(restoreData);
+            shouldAnimateToRestorePolygon = true;
+            tmpRestoreDataList = null;
+            onPolygonChanged(controller.getPolygons(), controller.getFocusPolygon().getLastCoordinate());
+            return;
         }
-      });
+        tmpRestoreDataList = restoreData;
     }
 
-  public void setRestoreData(Polygon restoreData) {
-    if (googleMap != null) {
-      controller.restore(restoreData);
-      shouldAnimateToRestorePolygon = true;
-      tempRestoreData = null;
-        onPolygonChanged(controller.getPolygons(), controller.getFocusPolygon().getLastCoordinate());
-      return;
+    protected void onMarkInvalidHole(List<Polygon> polygons, LatLng markPoint) {
+        //For subclass to implement
     }
-    tempRestoreData = restoreData;
-  }
-
-  public void setRestoreData(List<Polygon> restoreData) {
-    if (googleMap != null) {
-      controller.restore(restoreData);
-      shouldAnimateToRestorePolygon = true;
-      tmpRestoreDataList = null;
-        onPolygonChanged(controller.getPolygons(), controller.getFocusPolygon().getLastCoordinate());
-      return;
-    }
-    tmpRestoreDataList = restoreData;
-  }
-
-  protected void onMarkInvalidHole(List<Polygon> polygons, LatLng markPoint) {
-    //For subclass to implement
-  }
 
     @Override
     public void mark(LatLng markPoint) {
@@ -254,37 +254,37 @@ public class PolygonMarloFragment extends MarloFragment {
             updateIconToLastMarker(passiveMarkOptFactory);
 
             LatLng markPoint = coordinate.toLatLng();
-          Marker marker =
-              googleMap.addMarker(markOptFactory.build(PolygonMarloFragment.this, markPoint));
-          marker.setTag(coordinate);
+            Marker marker =
+                    googleMap.addMarker(markOptFactory.build(PolygonMarloFragment.this, markPoint));
+            marker.setTag(coordinate);
             PolygonData activePolygon = getActivePolygonData();
             activePolygon.addMarker(marker);
-          PolygonDrawUtils.draw(googleMap, activePolygon,
-              polyOptFactory.build(PolygonMarloFragment.this));
+            PolygonDrawUtils.draw(googleMap, activePolygon,
+                    polyOptFactory.build(PolygonMarloFragment.this));
         }
 
-      private void updateIconToLastMarker(MarkerOptionFactory optionFactory) {
-        MarkerOptions option = optionFactory.build(PolygonMarloFragment.this, new LatLng(1, 1));
-        Marker lastMarker = getActivePolygonData().getLastMarker();
-        if (lastMarker != null) {
-          updateByOption(lastMarker, option);
-        } else if (multiPolygon.size() > 1) {
-          PolygonData topEmptyPolygon = multiPolygon.pop();
-          updateByOption(multiPolygon.peek().getLastMarker(), option);
-          multiPolygon.push(topEmptyPolygon);
+        private void updateIconToLastMarker(MarkerOptionFactory optionFactory) {
+            MarkerOptions option = optionFactory.build(PolygonMarloFragment.this, new LatLng(1, 1));
+            Marker lastMarker = getActivePolygonData().getLastMarker();
+            if (lastMarker != null) {
+                updateByOption(lastMarker, option);
+            } else if (multiPolygon.size() > 1) {
+                PolygonData topEmptyPolygon = multiPolygon.pop();
+                updateByOption(multiPolygon.peek().getLastMarker(), option);
+                multiPolygon.push(topEmptyPolygon);
+            }
         }
-      }
 
-      private PolygonData getActivePolygonData() {
-        return multiPolygon.peek();
-      }
+        private PolygonData getActivePolygonData() {
+            return multiPolygon.peek();
+        }
 
-      private void updateByOption(Marker marker, MarkerOptions options) {
-        marker.setAlpha(options.getAlpha());
-        marker.setAnchor(options.getAnchorU(), options.getAnchorV());
-        marker.setIcon(options.getIcon());
-        marker.setFlat(options.isFlat());
-      }
+        private void updateByOption(Marker marker, MarkerOptions options) {
+            marker.setAlpha(options.getAlpha());
+            marker.setAnchor(options.getAnchorU(), options.getAnchorV());
+            marker.setIcon(options.getIcon());
+            marker.setFlat(options.isFlat());
+        }
 
         @Override
         public void markBoundary(Coordinate coordinate) {
@@ -292,7 +292,7 @@ public class PolygonMarloFragment extends MarloFragment {
 
             LatLng markPoint = coordinate.toLatLng();
             Marker marker = googleMap.addMarker(markOptFactory.build(PolygonMarloFragment.this, markPoint));
-          marker.setTag(coordinate);
+            marker.setTag(coordinate);
             PolygonData activePolygon = getActivePolygonData();
             activePolygon.addMarker(marker);
             PolygonDrawUtils.draw(googleMap, activePolygon, polyOptFactory.build(PolygonMarloFragment.this));
@@ -327,11 +327,11 @@ public class PolygonMarloFragment extends MarloFragment {
                     polyOptFactory.build(PolygonMarloFragment.this));
         }
 
-      @Override
-      public void clear() {
-        googleMap.clear();
-        multiPolygon.clear();
-        multiPolygon.push(new PolygonData());
+        @Override
+        public void clear() {
+            googleMap.clear();
+            multiPolygon.clear();
+            multiPolygon.push(new PolygonData());
         }
     }
 }

@@ -23,7 +23,7 @@ import android.support.annotation.RawRes;
 
 final class SoundUtility {
 
-  private SoundUtility() {}
+    private SoundUtility() {}
 
     public static void play(Context context, @RawRes int mediaRawId) {
         MediaPlayer soundEffect = MediaPlayer.create(context, mediaRawId);

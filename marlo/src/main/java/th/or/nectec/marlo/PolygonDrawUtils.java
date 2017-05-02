@@ -30,7 +30,7 @@ import th.or.nectec.marlo.model.PolygonData;
 
 final class PolygonDrawUtils {
 
-  private PolygonDrawUtils() {}
+    private PolygonDrawUtils() {}
 
     public static void draw(GoogleMap map, PolygonData data, PolygonOptions polygon) {
         drawBoundary(polygon, data);
