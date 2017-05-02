@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 NECTEC
+ * Copyright (c) 2017 NECTEC
  *   National Electronics and Computer Technology Center, Thailand
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -57,11 +57,13 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
         }
     };
 
+    private PlayLocationService locationService;
     private boolean myLocationEnable;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        locationService = new PlayLocationService(getContext());
         getMapAsync(this);
 
         ViewUtils.addViewFinder(this);
@@ -72,14 +74,14 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
     public void onStart() {
         super.onStart();
         if (myLocationEnable) {
-            PlayLocationService.getInstance(getContext()).connect();
+            locationService.connect();
         }
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        PlayLocationService.getInstance(getContext()).disconnect();
+        locationService.disconnect();
     }
 
     @RequiresPermission(anyOf = {
@@ -90,7 +92,7 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
         if (googleMap != null) {
             googleMap.setMyLocationEnabled(true);
         }
-        PlayLocationService.getInstance(getContext()).connect();
+        locationService.connect();
         updateMyLocationVisibility();
     }
 
@@ -141,7 +143,7 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
     public abstract void mark(LatLng markPoint);
 
     private void moveToMyLocation() {
-        Location lastKnowLocation = PlayLocationService.getInstance(getContext()).getLastKnowLocation();
+        Location lastKnowLocation = locationService.getLastKnowLocation();
         if (lastKnowLocation != null) {
             LatLng latLng = new LatLng(lastKnowLocation.getLatitude(), lastKnowLocation.getLongitude());
             googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16), 1000, null);

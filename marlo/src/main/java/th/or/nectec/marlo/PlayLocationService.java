@@ -30,24 +30,12 @@ import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
 import com.google.android.gms.location.LocationServices;
 
-public final class PlayLocationService implements OnConnectionFailedListener, ConnectionCallbacks {
-
-    private static PlayLocationService instance = new PlayLocationService();
+final class PlayLocationService implements OnConnectionFailedListener, ConnectionCallbacks {
 
     private Context context;
     private GoogleApiClient locationApiClient;
 
-    private PlayLocationService() {
-    }
-
-    public static PlayLocationService getInstance(Context context) {
-        instance.setContext(context);
-        return instance;
-    }
-
-    private void setContext(Context context) {
-        if (this.context != null)
-            return;
+    PlayLocationService(Context context) {
         this.context = context;
         this.locationApiClient = new GoogleApiClient.Builder(context)
                 .addApi(LocationServices.API)
