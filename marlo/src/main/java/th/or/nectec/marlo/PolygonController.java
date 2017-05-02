@@ -155,7 +155,6 @@ public class PolygonController {
 
     public void backup() {
         backupPolygon = clone(polygons);
-        //redrawPolygon(backupPolygon); // Require this!, dont understand why.
     }
 
     private List<Polygon> clone(List<Polygon> polygons) {
@@ -169,7 +168,6 @@ public class PolygonController {
     public void replaceWith(Coordinate oldCoord, Coordinate newCoord) {
         boolean replaced = false;
         List<Polygon> newPoly = clone(polygons);
-        System.out.println("size =" + newPoly.size());
         for (Polygon poly : newPoly) {
             replaced |= replaceWith(poly, oldCoord, newCoord);
             for (Polygon hole : poly.getAllHoles()) {
@@ -178,7 +176,6 @@ public class PolygonController {
         }
 
         if (replaced) {
-            System.out.println("redraw size =" + newPoly.size());
             redrawPolygon(newPoly);
         }
     }
@@ -198,7 +195,6 @@ public class PolygonController {
         polygons = new ArrayList<>();
         createPolygonObject();
 
-        System.out.println("redraw size =" + polygonsToDraw.size());
         restore(polygonsToDraw);
     }
 

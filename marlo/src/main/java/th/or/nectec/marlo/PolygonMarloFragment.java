@@ -44,9 +44,9 @@ public class PolygonMarloFragment extends MarloFragment {
     private PolygonOptionFactory polyOptFactory;
     private PolygonController controller = new PolygonController();
     private int padding = 100;
-  private Polygon tempRestoreData;
-  private List<Polygon> tmpRestoreDataList;
-  private boolean shouldAnimateToRestorePolygon;
+    private Polygon tempRestoreData;
+    private List<Polygon> tmpRestoreDataList;
+    private boolean shouldAnimateToRestorePolygon;
 
     public PolygonMarloFragment() {
         super();
