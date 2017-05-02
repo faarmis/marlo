@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (c) 2016 NECTEC
+  ~ Copyright (c) 2017 NECTEC
   ~   National Electronics and Computer Technology Center, Thailand
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,11 +18,11 @@
 
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:state_checked="true"
-        android:drawable="@drawable/satelite" />
+        android:drawable="@drawable/map_satelite"
+        android:state_checked="true"/>
 
     <item
-        android:state_checked="false"
-        android:drawable="@drawable/normalmap"/>
+        android:drawable="@drawable/map_normal"
+        android:state_checked="false"/>
 
 </selector>
