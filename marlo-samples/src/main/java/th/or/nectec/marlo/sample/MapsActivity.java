@@ -71,8 +71,9 @@ public class MapsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_maps);
+        setContentView(R.layout.multi_polygon_tool);
         markerCount = (TextView) findViewById(R.id.marker_count);
+
 
         marlo = (CustomMarloFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         marlo.setPolygonOptionFactory(new PolygonOptionFactory() {

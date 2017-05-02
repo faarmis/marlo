@@ -17,11 +17,6 @@
   -->
 
 <resources>
-    <dimen name="marlo_view_finder_size">120dp</dimen>
-    <dimen name="marlo_screen_vertical_margin">20dp</dimen>
-    <dimen name="marlo_screen_horizontal_margin">16dp</dimen>
-    <dimen name="marlo_over_google_margin">32dp</dimen>
-    <dimen name="marlo_fab_vertical_margin">16dp</dimen>
-    <dimen name="marlo_fab_horizontal_margin">16dp</dimen>
-    <dimen name="marlo_fab_elevation">6dp</dimen>
+    <!-- No any public resource -->
+    <public name="marlo" type="string"/>
 </resources>

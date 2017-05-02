@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (c) 2016 NECTEC
+  ~ Copyright (c) 2017 NECTEC
   ~   National Electronics and Computer Technology Center, Thailand
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,54 +18,54 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:app="http://schemas.android.com/apk/res-auto"
-              android:orientation="vertical"
-              android:paddingBottom="@dimen/screen_vertical_margin"
-              android:gravity="center"
+              android:layout_width="wrap_content"
               android:layout_height="wrap_content"
-              android:layout_width="wrap_content">
+              android:gravity="center"
+              android:orientation="vertical"
+              android:paddingBottom="@dimen/marlo_screen_vertical_margin">
 
     <android.support.design.widget.FloatingActionButton
-            android:id="@id/marlo_boundary"
-            android:src="@drawable/ic_boundary"
-            android:layout_marginLeft="@dimen/fab_vertical_margin"
-            android:layout_marginRight="@dimen/fab_vertical_margin"
-            android:layout_marginBottom="@dimen/fab_horizontal_margin"
-            app:elevation="@dimen/fab_elevation"
-            app:fabSize="mini"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+        android:id="@id/marlo_boundary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/marlo_fab_horizontal_margin"
+        android:layout_marginLeft="@dimen/marlo_fab_vertical_margin"
+        android:layout_marginRight="@dimen/marlo_fab_vertical_margin"
+        android:src="@drawable/ic_boundary"
+        app:elevation="@dimen/marlo_fab_elevation"
+        app:fabSize="mini"/>
 
     <android.support.design.widget.FloatingActionButton
-            android:id="@id/marlo_hole"
-            android:src="@drawable/ic_hole"
-            android:layout_marginLeft="@dimen/fab_vertical_margin"
-            android:layout_marginRight="@dimen/fab_vertical_margin"
-            android:layout_marginBottom="@dimen/fab_horizontal_margin"
-            app:elevation="@dimen/fab_elevation"
-            app:fabSize="mini"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+        android:id="@id/marlo_hole"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/marlo_fab_horizontal_margin"
+        android:layout_marginLeft="@dimen/marlo_fab_vertical_margin"
+        android:layout_marginRight="@dimen/marlo_fab_vertical_margin"
+        android:src="@drawable/ic_hole"
+        app:elevation="@dimen/marlo_fab_elevation"
+        app:fabSize="mini"/>
 
     <android.support.design.widget.FloatingActionButton
-            android:id="@+id/marlo_undo"
-            android:src="@drawable/ic_undo"
-            android:layout_marginLeft="@dimen/fab_vertical_margin"
-            android:layout_marginRight="@dimen/fab_vertical_margin"
-            android:layout_marginBottom="@dimen/fab_horizontal_margin"
-            app:elevation="@dimen/fab_elevation"
-            app:fabSize="mini"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+        android:id="@+id/marlo_undo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/marlo_fab_horizontal_margin"
+        android:layout_marginLeft="@dimen/marlo_fab_vertical_margin"
+        android:layout_marginRight="@dimen/marlo_fab_vertical_margin"
+        android:src="@drawable/ic_undo"
+        app:elevation="@dimen/marlo_fab_elevation"
+        app:fabSize="mini"/>
 
     <android.support.design.widget.FloatingActionButton
-            android:id="@id/marlo_mark"
-            android:layout_width="wrap_content"
-            android:src="@drawable/ic_mark_location"
-            app:elevation="@dimen/fab_elevation"
-            android:visibility="gone"
-            android:layout_marginLeft="@dimen/fab_vertical_margin"
-            android:layout_marginRight="@dimen/fab_vertical_margin"
-            android:layout_marginBottom="@dimen/fab_horizontal_margin"
-            android:layout_height="wrap_content"/>
+        android:id="@id/marlo_mark"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/marlo_fab_horizontal_margin"
+        android:layout_marginLeft="@dimen/marlo_fab_vertical_margin"
+        android:layout_marginRight="@dimen/marlo_fab_vertical_margin"
+        android:src="@drawable/ic_mark_location"
+        android:visibility="gone"
+        app:elevation="@dimen/marlo_fab_elevation"/>
 
 </LinearLayout>

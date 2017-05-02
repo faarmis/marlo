@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (c) 2016 NECTEC
+  ~ Copyright (c) 2017 NECTEC
   ~   National Electronics and Computer Technology Center, Thailand
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,7 +23,6 @@
     <item name="marlo_hole" type="id"/>
     <item name="marlo_boundary" type="id"/>
     <item name="marlo_gps" type="id"/>
-    <item name="map_toggle" type="id"/>
-    <item name="selector_toggle_button" type="id"/>
+    <item name="marlo_map_toggle" type="id"/>
 
 </resources>

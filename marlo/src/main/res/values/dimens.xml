@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (c) 2016 NECTEC
+  ~ Copyright (c) 2017 NECTEC
   ~   National Electronics and Computer Technology Center, Thailand
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,11 +17,11 @@
   -->
 
 <resources>
-    <dimen name="view_finder_size">100dp</dimen>
-    <dimen name="screen_vertical_margin">12dp</dimen>
-    <dimen name="screen_horizontal_margin">8dp</dimen>
-    <dimen name="over_google_margin">32dp</dimen>
-    <dimen name="fab_vertical_margin">4dp</dimen>
-    <dimen name="fab_horizontal_margin">8dp</dimen>
-    <dimen name="fab_elevation">4dp</dimen>
+    <dimen name="marlo_view_finder_size">100dp</dimen>
+    <dimen name="marlo_screen_vertical_margin">12dp</dimen>
+    <dimen name="marlo_screen_horizontal_margin">8dp</dimen>
+    <dimen name="marlo_over_google_margin">32dp</dimen>
+    <dimen name="marlo_fab_vertical_margin">4dp</dimen>
+    <dimen name="marlo_fab_horizontal_margin">8dp</dimen>
+    <dimen name="marlo_fab_elevation">4dp</dimen>
 </resources>

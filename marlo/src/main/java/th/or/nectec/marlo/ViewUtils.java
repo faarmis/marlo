@@ -50,7 +50,7 @@ final class ViewUtils {
             viewFinder.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
             viewFinder.setOnClickListener(fragment);
             viewFinder.setImageResource(viewFinderDrawableId);
-            int size = fragment.getResources().getDimensionPixelOffset(R.dimen.view_finder_size);
+            int size = fragment.getResources().getDimensionPixelOffset(R.dimen.marlo_view_finder_size);
             LayoutParams layoutParams = new LayoutParams(size, size, Gravity.CENTER);
             rootView.addView(viewFinder, layoutParams);
             return viewFinder;
@@ -85,8 +85,8 @@ final class ViewUtils {
         ViewGroup rootView = (ViewGroup) fragment.getView();
         if (rootView != null) {
             LayoutParams params = new LayoutParams(WRAP_CONTENT, WRAP_CONTENT, Gravity.END);
-            int horizonMargin = fragment.getResources().getDimensionPixelOffset(R.dimen.screen_horizontal_margin);
-            int verticalMargin = fragment.getResources().getDimensionPixelOffset(R.dimen.screen_vertical_margin);
+            int horizonMargin = fragment.getResources().getDimensionPixelOffset(R.dimen.marlo_screen_horizontal_margin);
+            int verticalMargin = fragment.getResources().getDimensionPixelOffset(R.dimen.marlo_screen_vertical_margin);
             params.setMargins(0, verticalMargin, horizonMargin, 0);
             rootView.addView(fab, params);
         }
@@ -94,7 +94,7 @@ final class ViewUtils {
 
     public static CompoundButton addMapTypeButton(MarloFragment fragment) {
         ToggleButton toggleButton = new ToggleButton(fragment.getContext());
-        toggleButton.setId(R.id.map_toggle);
+        toggleButton.setId(R.id.marlo_map_toggle);
         toggleButton.setBackgroundResource(R.drawable.selector_toggle_button);
         toggleButton.setTextOff("");
         toggleButton.setTextOn("");
@@ -108,9 +108,9 @@ final class ViewUtils {
                     fragment.getResources().getDisplayMetrics());
             LayoutParams params = new LayoutParams(px, (int) (px * 0.6), Gravity.START | Gravity.BOTTOM);
             int horizonMargin = fragment.getResources()
-                    .getDimensionPixelOffset(R.dimen.screen_horizontal_margin);
+                    .getDimensionPixelOffset(R.dimen.marlo_screen_horizontal_margin);
             int verticalMargin = fragment.getResources()
-                    .getDimensionPixelOffset(R.dimen.over_google_margin);
+                    .getDimensionPixelOffset(R.dimen.marlo_over_google_margin);
             params.setMargins(horizonMargin, 0, 0, verticalMargin);
             rootView.addView(toggleButton, params);
             return toggleButton;
