@@ -20,8 +20,14 @@ android:
   - extra-android-support
   - extra-android-m2repository
 
+before_script:
+  - echo y | android update sdk --no-ui --filter platform-tool
+
 script:
   - ./gradlew build --stacktrace
+
+after_failure:
+  - cat $HOME/build/nectec-wisru/marlo/marlo/build/reports/lint-results.html
 
 deploy:
   provider: script
