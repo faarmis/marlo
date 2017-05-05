@@ -52,8 +52,8 @@ public class PolygonTest {
         hole.add(new Coordinate(2f, 2f));
 
         polygon.addHoles(hole);
-        String expect = "{ \"type\":\"Polygon\", \"coordinates\":" +
-                "[ [[0,0],[0,3],[3,3],[3,0],[0,0]],[[1,1],[2,1],[2,2],[1,1]] ] }";
+        String expect = "{ \"type\":\"Polygon\", \"coordinates\":"
+                + "[ [[0,0],[0,3],[3,3],[3,0],[0,0]],[[1,1],[2,1],[2,2],[1,1]] ] }";
         JSONAssert.assertEquals(expect, polygon.toGeoJson(), true);
     }
 
@@ -112,8 +112,8 @@ public class PolygonTest {
         polygon.addHoles(hole);
 
         Assert.assertEquals(polygon,
-                Polygon.fromGeoJson("{ \"type\":\"Polygon\", \"coordinates\": " +
-                        "[[ [0,0],[0,3],[3,3],[3,0]],[[1,1],[2,1],[2,2] ]] }"));
+                Polygon.fromGeoJson("{ \"type\":\"Polygon\", \"coordinates\": "
+                        + "[[ [0,0],[0,3],[3,3],[3,0]],[[1,1],[2,1],[2,2] ]] }"));
     }
 
     @Test
@@ -150,9 +150,9 @@ public class PolygonTest {
         poly2.add(40, -180);
 
         List<Polygon> expected = Arrays.asList(poly1, poly2);
-        List<Polygon> actual = Polygon.fromGeoJsonMultiPolygon("{\"type\": \"MultiPolygon\", \"coordinates\": " +
-                "[ [[[180.0, 40.0], [180.0, 50.0], [170.0, 50.0], [170.0, 40.0], [180.0, 40.0]]], " +
-                "[[[-170.0, 40.0], [-170.0, 50.0], [-180.0, 50.0], [-180.0, 40.0], [-170.0, 40.0]]] ] }");
+        List<Polygon> actual = Polygon.fromGeoJsonMultiPolygon("{\"type\": \"MultiPolygon\", \"coordinates\": "
+                + "[ [[[180.0, 40.0], [180.0, 50.0], [170.0, 50.0], [170.0, 40.0], [180.0, 40.0]]], "
+                + "[[[-170.0, 40.0], [-170.0, 50.0], [-180.0, 50.0], [-180.0, 40.0], [-170.0, 40.0]]] ] }");
         Assert.assertEquals(expected, actual);
     }
 }

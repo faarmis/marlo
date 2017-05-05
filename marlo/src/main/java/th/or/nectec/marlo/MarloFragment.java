@@ -83,7 +83,7 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
     /**
      * set true for mute sound effect on mark. default is false
      *
-     * @param mute
+     * @param mute true for mute sound effect default is false
      */
     public void setMute(boolean mute) {
         this.mute = mute;
@@ -95,6 +95,11 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
         locationService.disconnect();
     }
 
+    /**
+     * enable default My Location button
+     *
+     * @throws SecurityException if permission not granted
+     */
     @RequiresPermission(anyOf = {
             Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.ACCESS_FINE_LOCATION})
@@ -120,6 +125,9 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
         return rootView.findViewById(id);
     }
 
+    /**
+     * @param googleMap object of google maps
+     */
     @Override
     public void onMapReady(final GoogleMap googleMap) {
         this.googleMap = googleMap;
@@ -140,7 +148,9 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
     /**
      * Switch map type between Normal and Satellite. This method must after GoogleMap is ready
      */
-    public void toggleMapType() { mapTypeButton.performClick(); }
+    public void toggleMapType() {
+        mapTypeButton.performClick();
+    }
 
     @Override
     public void onClick(View view) {
@@ -173,6 +183,11 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
      */
     public abstract boolean undo();
 
+    /**
+     * see Google's MarkerOption for implement factory
+     *
+     * @param markerOptionFactory factory use to create marker for GoogleMap
+     */
     public void setMarkerOptionFactory(MarkerOptionFactory markerOptionFactory) {
         this.markOptFactory = markerOptionFactory;
     }

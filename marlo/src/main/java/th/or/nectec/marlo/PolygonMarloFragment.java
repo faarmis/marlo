@@ -243,7 +243,7 @@ public class PolygonMarloFragment extends MarloFragment {
         private final Stack<PolygonData> multiPolygon = new Stack<>();
         private final GoogleMap googleMap;
 
-        public GoogleMapPresenter(GoogleMap googleMap) {
+        GoogleMapPresenter(GoogleMap googleMap) {
             this.googleMap = googleMap;
             multiPolygon.push(new PolygonData());
         }

@@ -38,28 +38,22 @@ public class PolygonControllerTest {
         controller.setPresenter(new PolygonController.Presenter() {
 
             @Override
-            public void markHole(Coordinate coordinate) {
-            }
+            public void markHole(Coordinate coordinate) {}
 
             @Override
-            public void markBoundary(Coordinate coordinate) {
-            }
+            public void markBoundary(Coordinate coordinate) {}
 
             @Override
-            public void prepareForNewPolygon() {
-            }
+            public void prepareForNewPolygon() {}
 
             @Override
-            public void prepareForNewHole() {
-            }
+            public void prepareForNewHole() {}
 
             @Override
-            public void removeLastMarker() {
-            }
+            public void removeLastMarker() {}
 
             @Override
-            public void clear() {
-            }
+            public void clear() {}
         });
     }
 
@@ -77,7 +71,6 @@ public class PolygonControllerTest {
         assertEquals(coordinates, controller.getFocusPolygon().getBoundary());
 
     }
-
 
     @Test(expected = IllegalStateException.class)
     public void testChangeToHoleBeforeBoundaryCompleteShouldThrowException() {
@@ -97,7 +90,6 @@ public class PolygonControllerTest {
         controller.mark(new Coordinate(1f, 1f));
         controller.mark(new Coordinate(1f, 2f));
         controller.mark(new Coordinate(2f, 2f));
-
 
         List<Coordinate> expectHole = new ArrayList<>();
         expectHole.add(new Coordinate(1f, 1f));
@@ -184,7 +176,6 @@ public class PolygonControllerTest {
 
     @Test
     public void testNewUndoHoles() throws Exception {
-
 
         controller.mark(new Coordinate(0f, 0f));
         controller.mark(new Coordinate(3f, 0f));
@@ -320,8 +311,8 @@ public class PolygonControllerTest {
 
         List<Polygon> actual = controller.getPolygons();
         assertEquals(2, actual.size());
-        JSONAssert.assertEquals("{ \"type\":\"MultiPolygon\", \"coordinates\":" +
-                        "[ [[[0,0],[0,3],[3,3],[3,0],[0,0]]],[[[1,1],[2,1],[2,2],[1,1]]] ] }",
+        JSONAssert.assertEquals("{ \"type\":\"MultiPolygon\", \"coordinates\":"
+                        + "[ [[[0,0],[0,3],[3,3],[3,0],[0,0]]],[[[1,1],[2,1],[2,2],[1,1]]] ] }",
                 Polygon.toGeoJson(actual), true);
     }
 
@@ -430,6 +421,5 @@ public class PolygonControllerTest {
         expectBound.add(new Coordinate(2f, 1.5f));
         assertEquals(expectBound, controller.getFocusPolygon().getBoundary());
     }
-
 
 }
