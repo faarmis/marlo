@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package th.or.nectec.marlo.model;
+package th.or.nectec.marlo;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -26,16 +26,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
-public class PolygonData {
+class PolygonData {
 
     private final Stack<Marker> boundary = new Stack<>();
     private final Stack<Stack<Marker>> holes = new Stack<>();
     private State currentState = State.BOUNDARY;
     private Polygon polygon;
-
-    public State getCurrentState() {
-        return currentState;
-    }
 
     public void setCurrentState(State currentState) {
         this.currentState = currentState;

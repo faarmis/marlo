@@ -22,15 +22,12 @@ import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.google.android.gms.maps.model.Marker;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Stack;
 
 public class Polygon implements Parcelable {
 
@@ -54,8 +51,8 @@ public class Polygon implements Parcelable {
     }
 
     public Polygon(Polygon polygon) {
-        boundary = polygon.getBoundary();
-        holes = polygon.getAllHoles();
+        boundary = new ArrayList<>(polygon.getBoundary());
+        holes = new ArrayList<>(polygon.getAllHoles());
     }
 
     public Polygon(List<Coordinate> boundary) {
@@ -76,27 +73,6 @@ public class Polygon implements Parcelable {
         for (int hole = 0; hole < holesCount; hole++) {
             this.holes.add((Polygon) in.readValue(Polygon.class.getClassLoader()));
         }
-    }
-
-    public static Polygon fromPolygonData(PolygonData polyData) {
-        List<Coordinate> boundaryCoordinate = new ArrayList<>();
-        Stack<Marker> boundary = polyData.getBoundary();
-        for (Marker marker :
-                boundary) {
-            boundaryCoordinate.add(Coordinate.fromMarker(marker));
-        }
-
-        List<Polygon> holesList = new ArrayList<>();
-        Stack<Stack<Marker>> holes = polyData.getHoles();
-        for (Stack<Marker> hole : holes) {
-            List<Coordinate> holeBoundary = new ArrayList<>();
-            for (Marker marker : hole) {
-                holeBoundary.add(Coordinate.fromMarker(marker));
-            }
-            holesList.add(new Polygon(holeBoundary));
-        }
-
-        return new Polygon(boundaryCoordinate, holesList);
     }
 
     public static JSONArray toGeoJson(List<Polygon> polygons) {

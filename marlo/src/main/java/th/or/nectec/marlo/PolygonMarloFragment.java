@@ -32,7 +32,6 @@ import java.util.Stack;
 
 import th.or.nectec.marlo.model.Coordinate;
 import th.or.nectec.marlo.model.Polygon;
-import th.or.nectec.marlo.model.PolygonData;
 import th.or.nectec.marlo.option.DefaultPolygonMarkerOptionFactory;
 import th.or.nectec.marlo.option.DefaultPolygonOptionFactory;
 import th.or.nectec.marlo.option.MarkerOptionFactory;

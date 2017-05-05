@@ -26,8 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
-import th.or.nectec.marlo.model.PolygonData;
-
 final class PolygonDrawUtils {
 
     private PolygonDrawUtils() {}
