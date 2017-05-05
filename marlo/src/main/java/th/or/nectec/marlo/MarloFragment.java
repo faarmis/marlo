@@ -57,6 +57,7 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
         }
     };
 
+    protected boolean mute = false;
     private PlayLocationService locationService;
     private boolean myLocationEnable;
     private CompoundButton mapTypeButton;
@@ -77,6 +78,15 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
         if (myLocationEnable) {
             locationService.connect();
         }
+    }
+
+    /**
+     * set true for mute sound effect on mark. default is false
+     *
+     * @param mute
+     */
+    public void setMute(boolean mute) {
+        this.mute = mute;
     }
 
     @Override

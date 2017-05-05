@@ -227,7 +227,7 @@ public class PolygonMarloFragment extends MarloFragment {
     public void mark(LatLng markPoint) {
         try {
             controller.mark(new Coordinate(markPoint));
-            SoundUtility.play(getContext(), R.raw.thumpsoundeffect);
+            if (!mute) SoundUtility.play(getContext(), R.raw.thumpsoundeffect);
             onPolygonChanged(controller.getPolygons(), controller.getFocusPolygon().getLastCoordinate());
         } catch (HoleInvalidException expected) {
             onMarkInvalidHole(controller.getPolygons(), markPoint);
