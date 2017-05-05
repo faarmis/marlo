@@ -24,6 +24,8 @@ import android.support.annotation.Nullable;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONTokener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,7 +66,6 @@ public class Polygon implements Parcelable {
         this.holes = holes;
     }
 
-    //Parcelable
     private Polygon(Parcel in) {
         this.boundary = in.createTypedArrayList(Coordinate.CREATOR);
 
@@ -75,22 +76,43 @@ public class Polygon implements Parcelable {
         }
     }
 
-    public static JSONArray toGeoJson(List<Polygon> polygons) {
-        JSONArray multiPoly = new JSONArray();
-        for (Polygon polygon : polygons) {
-            multiPoly.put(polygon.toGeoJson());
-        }
-        return multiPoly;
-    }
 
-    public static Polygon fromGeoJson(@NonNull String coordinates) {
+    /**
+     * @param geojson String of GeoJson as Polygon Geometry object or coordinate
+     * @return Object create from GeoJson
+     */
+    public static Polygon fromGeoJson(@NonNull String geojson) {
         try {
-            return fromGeoJson(new JSONArray(coordinates));
+            JSONTokener tokener = new JSONTokener(geojson);
+            Object json = tokener.nextValue();
+            if (json instanceof JSONObject) {
+                return fromGeoJson((JSONObject) json);
+            } else if (json instanceof JSONArray) {
+                return fromGeoJson((JSONArray) json);
+            } else {
+                throw new RuntimeException("Not support json");
+            }
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
     }
 
+    /**
+     * @param polygon JsonObject as Geometry format of GeoJson spec.
+     * @return Object create from GeoJson
+     */
+    public static Polygon fromGeoJson(@NonNull JSONObject polygon) {
+        try {
+            return fromGeoJson(polygon.getJSONArray("coordinates"));
+        } catch (JSONException error) {
+            throw new RuntimeException(error);
+        }
+    }
+
+    /**
+     * @param coordinates JsonArray of coordinates field in GeoJson's polygon geometry
+     * @return object from GeoJson
+     */
     public static Polygon fromGeoJson(@NonNull JSONArray coordinates) {
         try {
             Polygon returnObj = new Polygon();
@@ -103,21 +125,72 @@ public class Polygon implements Parcelable {
                 if (boundaryIndex != 0) returnObj.addHoles(polygon);
             }
             return returnObj;
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
+        } catch (JSONException error) {
+            throw new RuntimeException(error);
         }
     }
 
-    public static List<Polygon> fromGeoJsonMultiPolygon(String coodinate) {
+    /**
+     * @param geojson String of GeoJson as MultiPolygon Geometry object or coordinates
+     * @return object from GeoJson
+     */
+    public static List<Polygon> fromGeoJsonMultiPolygon(@NonNull String geojson) {
         try {
-            JSONArray array = new JSONArray(coodinate);
+            JSONTokener tokener = new JSONTokener(geojson);
+            Object json = tokener.nextValue();
+            if (json instanceof JSONObject) {
+                return fromGeoJsonMultiPolygon((JSONObject) json);
+            } else if (json instanceof JSONArray) {
+                return fromGeoJsonMultiPolygon((JSONArray) json);
+            } else {
+                throw new RuntimeException("Input not support type");
+            }
+        } catch (JSONException error) {
+            throw new RuntimeException(error);
+        }
+    }
+
+    /**
+     * @param geometry String of GeoJson as MultiPolygon Geometry object or coordinates
+     * @return object from GeoJson
+     */
+    public static List<Polygon> fromGeoJsonMultiPolygon(@NonNull JSONObject geometry) {
+        try {
+            return fromGeoJsonMultiPolygon(geometry.getJSONArray("coordinates"));
+        } catch (JSONException error) {
+            throw new RuntimeException("Not found coordinates filed", error);
+        }
+    }
+
+    /**
+     * @param coordinates GeoJson array of MultiPolygon
+     * @return object from coordinates
+     */
+    public static List<Polygon> fromGeoJsonMultiPolygon(@NonNull JSONArray coordinates) {
+        try {
             List<Polygon> polygons = new ArrayList<>();
-            for (int polygonIndex = 0; polygonIndex < array.length(); polygonIndex++) {
-                polygons.add(Polygon.fromGeoJson(array.getJSONArray(polygonIndex)));
+            for (int polygonIndex = 0; polygonIndex < coordinates.length(); polygonIndex++) {
+                polygons.add(Polygon.fromGeoJson(coordinates.getJSONArray(polygonIndex)));
             }
             return polygons;
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
+        } catch (JSONException error) {
+            throw new RuntimeException(error);
+        }
+    }
+
+    @NonNull
+    public static JSONObject toGeoJson(List<Polygon> multiPolygon) {
+        try {
+            JSONObject geoJson = new JSONObject();
+            geoJson.put("type", "MultiPolygon");
+            JSONArray coordinate = new JSONArray();
+            for (Polygon polygon : multiPolygon) {
+                coordinate.put(polygon.toGeoJsonCoordinates());
+            }
+            geoJson.put("coordinates", coordinate);
+            return geoJson;
+        } catch (JSONException error) {
+            throw new RuntimeException(error);
         }
     }
 
@@ -129,13 +202,29 @@ public class Polygon implements Parcelable {
         return new ArrayList<>(holes);
     }
 
-    public JSONArray toGeoJson() {
-        JSONArray jsonPolygon = new JSONArray();
-        jsonPolygon.put(boundaryToJson());
-        for (Polygon hole : holes) {
-            jsonPolygon.put(hole.boundaryToJson());
+    /**
+     * @return JsonObject in GeoJson's geometry format
+     */
+    public JSONObject toGeoJson() {
+        try {
+            JSONObject geoJson = new JSONObject();
+            geoJson.put("type", "Polygon");
+            JSONArray coordinate = toGeoJsonCoordinates();
+            geoJson.put("coordinates", coordinate);
+            return geoJson;
+        } catch (JSONException error) {
+            throw new RuntimeException(error);
         }
-        return jsonPolygon;
+    }
+
+    @NonNull
+    private JSONArray toGeoJsonCoordinates() {
+        JSONArray coordinate = new JSONArray();
+        coordinate.put(boundaryToJson());
+        for (Polygon hole : holes) {
+            coordinate.put(hole.boundaryToJson());
+        }
+        return coordinate;
     }
 
     @NonNull
@@ -144,11 +233,19 @@ public class Polygon implements Parcelable {
         for (Coordinate point : boundary) {
             jsonBoundary.put(point.toGeoJson());
         }
+        if (!boundary.get(0).equals(boundary.get(boundary.size() - 1)))
+            jsonBoundary.put(boundary.get(0).toGeoJson());
         return jsonBoundary;
     }
 
     public void add(Coordinate coordinate) {
+        if (boundary.size() > 0 && boundary.get(0).equals(coordinate))
+            return; //ignore close position
         boundary.add(coordinate);
+    }
+
+    public void add(double lat, double lng) {
+        add(new Coordinate(lat, lng));
     }
 
     public void addHoles(Polygon coordinates) {
@@ -232,6 +329,4 @@ public class Polygon implements Parcelable {
             dest.writeValue(hole);
         }
     }
-
-
 }

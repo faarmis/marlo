@@ -320,8 +320,9 @@ public class PolygonControllerTest {
 
         List<Polygon> actual = controller.getPolygons();
         assertEquals(2, actual.size());
-        JSONAssert.assertEquals("[[[[0,0],[0,3],[3,3],[3,0]]],[[[1,1],[2,1],[2,2]]]]",
-                Polygon.toGeoJson(actual).toString(), false);
+        JSONAssert.assertEquals("{ \"type\":\"MultiPolygon\", \"coordinates\":" +
+                        "[ [[[0,0],[0,3],[3,3],[3,0],[0,0]]],[[[1,1],[2,1],[2,2],[1,1]]] ] }",
+                Polygon.toGeoJson(actual), true);
     }
 
     @Test(expected = IllegalStateException.class)
