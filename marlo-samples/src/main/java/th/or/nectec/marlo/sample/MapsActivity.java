@@ -24,6 +24,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -71,7 +72,7 @@ public class MapsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.multi_polygon_tool);
+        setContentView(R.layout.activity_maps);
         markerCount = (TextView) findViewById(R.id.marker_count);
 
 
@@ -150,6 +151,12 @@ public class MapsActivity extends AppCompatActivity {
         @Override
         protected void onMarkInvalidHole(List<Polygon> polygons, LatLng markPoint) {
             Toast.makeText(getContext(), "InvalidHole", Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onMapReady(GoogleMap googleMap) {
+            super.onMapReady(googleMap);
+            toggleMapType();
         }
     }
 }
