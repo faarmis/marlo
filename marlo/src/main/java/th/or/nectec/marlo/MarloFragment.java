@@ -59,6 +59,7 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
 
     private PlayLocationService locationService;
     private boolean myLocationEnable;
+    private CompoundButton mapTypeButton;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -122,9 +123,14 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
             if (BuildConfig.DEBUG) Log.e(TAG, "onMapReady", se);
         }
 
-        ViewUtils.addMapTypeButton(this);
+        mapTypeButton = ViewUtils.addMapTypeButton(this);
         updateMyLocationVisibility();
     }
+
+    /**
+     * Switch map type between Normal and Satellite. This method must after GoogleMap is ready
+     */
+    public void toggleMapType() { mapTypeButton.performClick(); }
 
     @Override
     public void onClick(View view) {
