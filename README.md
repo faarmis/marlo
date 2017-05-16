@@ -18,7 +18,7 @@ Add dependencies on app module
 ```groovy
 dependencies {
     ...
-    compile 'th.or.nectec.android:marlo:0.2'
+    compile 'th.or.nectec.android:marlo:+' //Change `+` to lastest stable version is Recommended
     ...
 }
 ```
