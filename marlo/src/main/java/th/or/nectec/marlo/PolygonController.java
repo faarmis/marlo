@@ -17,6 +17,8 @@
 
 package th.or.nectec.marlo;
 
+import android.support.annotation.Nullable;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -169,24 +171,14 @@ public class PolygonController {
         boolean replaced = false;
         List<Polygon> newPoly = clone(polygons);
         for (Polygon poly : newPoly) {
-            replaced |= replaceWith(poly, oldCoord, newCoord);
-            for (Polygon hole : poly.getAllHoles()) {
-                replaced |= replaceWith(hole, oldCoord, newCoord);
+            if (poly.replace(oldCoord, newCoord)) {
+                replaced = true;
+                break;
             }
         }
-
         if (replaced) {
             redrawPolygon(newPoly);
         }
-    }
-
-    private boolean replaceWith(Polygon poly, Coordinate oldCoord, Coordinate newCoord) {
-        int coordPosition = poly.getBoundary().indexOf(oldCoord);
-        if (coordPosition > -1) {
-            poly.getBoundary().set(coordPosition, newCoord);
-            return true;
-        }
-        return false;
     }
 
     private void redrawPolygon(List<Polygon> polygonsToDraw) {
@@ -208,6 +200,16 @@ public class PolygonController {
         redrawPolygon(backupPolygon);
         backupPolygon = null;
     }
+
+    @Nullable
+    Polygon findPolygonByCoordinate(Coordinate coord) {
+        for (Polygon poly : polygons) {
+            if (poly.isCoordinateExist(coord))
+                return poly;
+        }
+        return null;
+    }
+
 
     interface Presenter {
 

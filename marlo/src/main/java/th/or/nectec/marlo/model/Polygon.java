@@ -22,6 +22,8 @@ import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.google.android.gms.maps.model.PolygonOptions;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,7 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class Polygon implements Parcelable {
+public class Polygon implements Parcelable, Cloneable {
 
     public static final Parcelable.Creator<Polygon> CREATOR = new Parcelable.Creator<Polygon>() {
         @Override
@@ -75,7 +77,6 @@ public class Polygon implements Parcelable {
             this.holes.add((Polygon) in.readValue(Polygon.class.getClassLoader()));
         }
     }
-
 
     /**
      * @param geojson String of GeoJson as Polygon Geometry object or coordinate
@@ -194,6 +195,22 @@ public class Polygon implements Parcelable {
         }
     }
 
+    /**
+     * @param coord
+     * @return
+     */
+    public boolean isCoordinateExist(Coordinate coord) {
+        for (Coordinate point : boundary) {
+            if (point.equals(coord))
+                return true;
+            for (Polygon hole : holes) {
+                if (hole.isCoordinateExist(coord))
+                    return true;
+            }
+        }
+        return false;
+    }
+
     public List<Coordinate> getBoundary() {
         return boundary;
     }
@@ -215,6 +232,18 @@ public class Polygon implements Parcelable {
         } catch (JSONException error) {
             throw new RuntimeException(error);
         }
+    }
+
+    public PolygonOptions toPolygonOptions() {
+        return toPolygonOptions(new PolygonOptions());
+    }
+
+    public PolygonOptions toPolygonOptions(PolygonOptions options) {
+        options.addAll(Coordinate.toLatLngs(boundary));
+        for (Polygon hold : holes) {
+            options.addHole(Coordinate.toLatLngs(hold.boundary));
+        }
+        return options;
     }
 
     @NonNull
@@ -328,5 +357,27 @@ public class Polygon implements Parcelable {
         for (Polygon hole : this.holes) {
             dest.writeValue(hole);
         }
+    }
+
+    @Override
+    public Object clone() {
+        try {
+            return super.clone();
+        } catch (CloneNotSupportedException runtime) {
+            throw new RuntimeException(runtime);
+        }
+    }
+
+    public boolean replace(Coordinate oldCoord, Coordinate newCoord) {
+        int coordPosition = boundary.indexOf(oldCoord);
+        if (coordPosition > -1) {
+            boundary.set(coordPosition, newCoord);
+            return true;
+        }
+        for (Polygon hole : holes) {
+            if (hole.replace(oldCoord, newCoord))
+                return true;
+        }
+        return false;
     }
 }
