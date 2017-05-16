@@ -328,7 +328,18 @@ public class PolygonMarloFragment extends MarloFragment {
 
         @Override
         public void clear() {
-            googleMap.clear();
+            for (PolygonData data : multiPolygon) {
+                data.getDrawPolygon().remove();
+
+                for (Marker marker : data.getBoundary()) {
+                    marker.remove();
+                }
+                for (List<Marker> hole : data.getHoles()) {
+                    for (Marker holeMarker : hole) {
+                        holeMarker.remove();
+                    }
+                }
+            }
             multiPolygon.clear();
             multiPolygon.push(new PolygonData());
         }
