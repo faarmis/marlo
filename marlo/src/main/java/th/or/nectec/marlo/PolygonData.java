@@ -69,6 +69,9 @@ class PolygonData {
             if (lastHoles.isEmpty()) {
                 holes.pop();
             }
+            if (holes.isEmpty()) {
+                currentState = State.BOUNDARY;
+            }
             return true;
         } else if (!boundary.isEmpty()) {
             currentState = State.BOUNDARY;
