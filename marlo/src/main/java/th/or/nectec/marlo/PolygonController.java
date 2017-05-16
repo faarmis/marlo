@@ -110,6 +110,10 @@ public class PolygonController {
         if (polygons.size() == 1 && focusPolygon.isEmpty())
             return false;
 
+        if (backupPolygon != null) {
+            rollback();
+            return true;
+        }
         if (focusPolygon.haveHole()) {
             Polygon lastHole = focusPolygon.getLastHole();
             lastHole.pop();
@@ -209,7 +213,6 @@ public class PolygonController {
         }
         return null;
     }
-
 
     interface Presenter {
 
