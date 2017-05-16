@@ -190,15 +190,18 @@ public class PolygonController {
     }
 
     private void redrawPolygon(List<Polygon> polygonsToDraw) {
+        clear();
+        restore(polygonsToDraw);
+    }
+
+    public void clear() {
         presenter.clear();
 
         polygons = new ArrayList<>();
         createPolygonObject();
-
-        restore(polygonsToDraw);
     }
 
-    public void rollback() {
+    void rollback() {
         if (backupPolygon == null)
             throw new IllegalStateException("must call backup before.");
 
