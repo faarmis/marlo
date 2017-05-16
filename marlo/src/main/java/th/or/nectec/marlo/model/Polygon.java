@@ -33,7 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class Polygon implements Parcelable, Cloneable {
+public class Polygon implements Parcelable {
 
     public static final Parcelable.Creator<Polygon> CREATOR = new Parcelable.Creator<Polygon>() {
         @Override
@@ -55,8 +55,11 @@ public class Polygon implements Parcelable, Cloneable {
     }
 
     public Polygon(Polygon polygon) {
-        boundary = new ArrayList<>(polygon.getBoundary());
-        holes = new ArrayList<>(polygon.getAllHoles());
+        boundary = new ArrayList<>(Coordinate.clones(polygon.getBoundary()));
+        holes = new ArrayList<>();
+        for (Polygon hole : polygon.getAllHoles()) {
+            holes.add(new Polygon(hole));
+        }
     }
 
     public Polygon(List<Coordinate> boundary) {
@@ -356,15 +359,6 @@ public class Polygon implements Parcelable, Cloneable {
         dest.writeInt(this.holes.size());
         for (Polygon hole : this.holes) {
             dest.writeValue(hole);
-        }
-    }
-
-    @Override
-    public Object clone() {
-        try {
-            return super.clone();
-        } catch (CloneNotSupportedException runtime) {
-            throw new RuntimeException(runtime);
         }
     }
 

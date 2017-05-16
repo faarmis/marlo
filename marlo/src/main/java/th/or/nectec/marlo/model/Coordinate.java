@@ -85,6 +85,14 @@ public class Coordinate implements Parcelable {
         return latLngList;
     }
 
+    public static List<Coordinate> clones(List<Coordinate> blueprint) {
+        List<Coordinate> coords = new ArrayList<>();
+        for (Coordinate coordinate : blueprint) {
+            coords.add(new Coordinate(coordinate));
+        }
+        return coords;
+    }
+
     public double getLatitude() {
         return latitude;
     }

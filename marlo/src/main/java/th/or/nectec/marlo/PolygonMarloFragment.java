@@ -17,15 +17,18 @@
 
 package th.or.nectec.marlo;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.JointType;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolygonOptions;
 
 import java.util.List;
 import java.util.Stack;
@@ -152,7 +155,7 @@ public class PolygonMarloFragment extends MarloFragment {
     }
 
     @Override
-    public void onMapReady(GoogleMap googleMap) {
+    public void onMapReady(final GoogleMap googleMap) {
         super.onMapReady(googleMap);
         controller.setPresenter(new GoogleMapPresenter(googleMap));
 
@@ -167,25 +170,52 @@ public class PolygonMarloFragment extends MarloFragment {
 
             Coordinate oldCoord;
 
+            Coordinate previewFocusCoord;
+            Polygon previewPolygon;
+            com.google.android.gms.maps.model.Polygon previewGooglePolygon;
+
             @Override
             public void onMarkerDragStart(Marker marker) {
+                controller.backup();
                 oldCoord = (Coordinate) marker.getTag();
-                System.out.println("drag at " + oldCoord.toString());
-                Polygon focusPolygon = controller.getFocusPolygon();
-                for (Coordinate coord : focusPolygon.getBoundary()) {
-                    System.out.print(coord.toString());
-                }
+
+                previewFocusCoord = new Coordinate(oldCoord);
+                previewPolygon = new Polygon(controller.findPolygonByCoordinate(oldCoord));
+                previewGooglePolygon = null;
+
+
             }
 
             @Override
             public void onMarkerDrag(Marker marker) {
+                if (previewGooglePolygon != null)
+                    previewGooglePolygon.remove();
+                Coordinate changedCoord = Coordinate.fromMarker(marker);
+                previewPolygon.replace(previewFocusCoord, changedCoord);
+                previewFocusCoord = changedCoord;
 
+                PolygonOptions template = previewTemplate();
+                previewGooglePolygon = googleMap.addPolygon(previewPolygon.toPolygonOptions(template));
+                onPreviewPolygonUpdated(previewPolygon);
+            }
+
+            private PolygonOptions previewTemplate() {
+                PolygonOptions template = polyOptFactory.build(PolygonMarloFragment.this);
+                template.strokeJointType(JointType.ROUND);
+
+                template.fillColor(blend(35, template.getFillColor()));
+                template.strokeColor(blend(80, template.getStrokeColor()));
+                return template;
+            }
+
+            private int blend(int alpha, int color) {
+                return Color.argb(alpha, Color.red(color), Color.blue(color), Color.red(color));
             }
 
             @Override
             public void onMarkerDragEnd(Marker marker) {
+                previewGooglePolygon.remove();
                 Coordinate newCoord = Coordinate.fromMarker(marker);
-                controller.backup();
                 try {
                     controller.replaceWith(oldCoord, newCoord);
                     onPolygonChanged(controller.getPolygons(), newCoord);
@@ -195,6 +225,10 @@ public class PolygonMarloFragment extends MarloFragment {
                 }
             }
         });
+    }
+
+    private void onPreviewPolygonUpdated(Polygon previewPolygon) {
+        //For subclass to implement
     }
 
     public void setRestoreData(Polygon restoreData) {
