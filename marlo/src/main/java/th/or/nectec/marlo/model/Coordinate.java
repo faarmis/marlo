@@ -26,6 +26,9 @@ import com.google.android.gms.maps.model.Marker;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Coordinate implements Parcelable {
     public static final Parcelable.Creator<Coordinate> CREATOR =
             new Parcelable.Creator<Coordinate>() {
@@ -72,6 +75,14 @@ public class Coordinate implements Parcelable {
         } catch (JSONException json) {
             throw new RuntimeException(json);
         }
+    }
+
+    public static List<LatLng> toLatLngs(Iterable<Coordinate> coordinates) {
+        List<LatLng> latLngList = new ArrayList<>();
+        for (Coordinate coord : coordinates) {
+            latLngList.add(coord.toLatLng());
+        }
+        return latLngList;
     }
 
     public double getLatitude() {
@@ -147,6 +158,5 @@ public class Coordinate implements Parcelable {
         dest.writeDouble(this.latitude);
         dest.writeDouble(this.longitude);
     }
-
 
 }
