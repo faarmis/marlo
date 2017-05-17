@@ -158,6 +158,9 @@ public class PolygonMarloFragment extends MarloFragment {
     public void onMapReady(final GoogleMap googleMap) {
         super.onMapReady(googleMap);
         controller.setPresenter(new GoogleMapPresenter(googleMap));
+        googleMap.setOnMarkerDragListener(new OnPolygonMarkerDragListener(googleMap));
+
+        onMarloMapReady();
 
         if (tempRestoreData != null) {
             setRestoreData(tempRestoreData);
@@ -165,11 +168,13 @@ public class PolygonMarloFragment extends MarloFragment {
         if (tmpRestoreDataList != null) {
             setRestoreData(tmpRestoreDataList);
         }
-
-        googleMap.setOnMarkerDragListener(new OnPolygonMarkerDragListener(googleMap));
     }
 
-    private void onPreviewPolygonUpdated(Polygon previewPolygon) {
+    protected void onMarloMapReady() {
+        //For subclass to implement
+    }
+
+    protected void onPreviewPolygonUpdated(Polygon previewPolygon) {
         //For subclass to implement
     }
 
@@ -329,7 +334,7 @@ public class PolygonMarloFragment extends MarloFragment {
         Polygon previewPolygon;
         com.google.android.gms.maps.model.Polygon previewGooglePolygon;
 
-        public OnPolygonMarkerDragListener(GoogleMap googleMap) {
+        OnPolygonMarkerDragListener(GoogleMap googleMap) {
             this.googleMap = googleMap;
         }
 
@@ -351,8 +356,7 @@ public class PolygonMarloFragment extends MarloFragment {
             previewPolygon.replace(previewFocusCoord, changedCoord);
             previewFocusCoord = changedCoord;
 
-            PolygonOptions template = previewTemplate();
-            previewGooglePolygon = googleMap.addPolygon(previewPolygon.toPolygonOptions(template));
+            previewGooglePolygon = googleMap.addPolygon(previewPolygon.toPolygonOptions(previewTemplate()));
             onPreviewPolygonUpdated(previewPolygon);
         }
 
