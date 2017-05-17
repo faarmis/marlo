@@ -166,65 +166,7 @@ public class PolygonMarloFragment extends MarloFragment {
             setRestoreData(tmpRestoreDataList);
         }
 
-        googleMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
-
-            Coordinate oldCoord;
-
-            Coordinate previewFocusCoord;
-            Polygon previewPolygon;
-            com.google.android.gms.maps.model.Polygon previewGooglePolygon;
-
-            @Override
-            public void onMarkerDragStart(Marker marker) {
-                controller.backup();
-                oldCoord = (Coordinate) marker.getTag();
-
-                previewFocusCoord = new Coordinate(oldCoord);
-                previewPolygon = new Polygon(controller.findPolygonByCoordinate(oldCoord));
-                previewGooglePolygon = null;
-
-
-            }
-
-            @Override
-            public void onMarkerDrag(Marker marker) {
-                if (previewGooglePolygon != null)
-                    previewGooglePolygon.remove();
-                Coordinate changedCoord = Coordinate.fromMarker(marker);
-                previewPolygon.replace(previewFocusCoord, changedCoord);
-                previewFocusCoord = changedCoord;
-
-                PolygonOptions template = previewTemplate();
-                previewGooglePolygon = googleMap.addPolygon(previewPolygon.toPolygonOptions(template));
-                onPreviewPolygonUpdated(previewPolygon);
-            }
-
-            private PolygonOptions previewTemplate() {
-                PolygonOptions template = polyOptFactory.build(PolygonMarloFragment.this);
-                template.strokeJointType(JointType.ROUND);
-
-                template.fillColor(blend(35, template.getFillColor()));
-                template.strokeColor(blend(80, template.getStrokeColor()));
-                return template;
-            }
-
-            private int blend(int alpha, int color) {
-                return Color.argb(alpha, Color.red(color), Color.blue(color), Color.red(color));
-            }
-
-            @Override
-            public void onMarkerDragEnd(Marker marker) {
-                previewGooglePolygon.remove();
-                Coordinate newCoord = Coordinate.fromMarker(marker);
-                try {
-                    controller.replaceWith(oldCoord, newCoord);
-                    onPolygonChanged(controller.getPolygons(), newCoord);
-                } catch (HoleInvalidException holeOutOfBound) {
-                    controller.rollback();
-                    onMarkInvalidHole(controller.getPolygons(), marker.getPosition());
-                }
-            }
-        });
+        googleMap.setOnMarkerDragListener(new OnPolygonMarkerDragListener(googleMap));
     }
 
     private void onPreviewPolygonUpdated(Polygon previewPolygon) {
@@ -376,6 +318,68 @@ public class PolygonMarloFragment extends MarloFragment {
             }
             multiPolygon.clear();
             multiPolygon.push(new PolygonData());
+        }
+    }
+
+    private class OnPolygonMarkerDragListener implements GoogleMap.OnMarkerDragListener {
+
+        private final GoogleMap googleMap;
+        Coordinate oldCoord;
+        Coordinate previewFocusCoord;
+        Polygon previewPolygon;
+        com.google.android.gms.maps.model.Polygon previewGooglePolygon;
+
+        public OnPolygonMarkerDragListener(GoogleMap googleMap) {
+            this.googleMap = googleMap;
+        }
+
+        @Override
+        public void onMarkerDragStart(Marker marker) {
+            controller.backup();
+            oldCoord = (Coordinate) marker.getTag();
+
+            previewFocusCoord = new Coordinate(oldCoord);
+            previewPolygon = new Polygon(controller.findPolygonByCoordinate(oldCoord));
+            previewGooglePolygon = null;
+        }
+
+        @Override
+        public void onMarkerDrag(Marker marker) {
+            if (previewGooglePolygon != null)
+                previewGooglePolygon.remove();
+            Coordinate changedCoord = Coordinate.fromMarker(marker);
+            previewPolygon.replace(previewFocusCoord, changedCoord);
+            previewFocusCoord = changedCoord;
+
+            PolygonOptions template = previewTemplate();
+            previewGooglePolygon = googleMap.addPolygon(previewPolygon.toPolygonOptions(template));
+            onPreviewPolygonUpdated(previewPolygon);
+        }
+
+        private PolygonOptions previewTemplate() {
+            PolygonOptions template = polyOptFactory.build(PolygonMarloFragment.this);
+            template.strokeJointType(JointType.ROUND);
+
+            template.fillColor(blend(35, template.getFillColor()));
+            template.strokeColor(blend(80, template.getStrokeColor()));
+            return template;
+        }
+
+        private int blend(int alpha, int color) {
+            return Color.argb(alpha, Color.red(color), Color.blue(color), Color.red(color));
+        }
+
+        @Override
+        public void onMarkerDragEnd(Marker marker) {
+            previewGooglePolygon.remove();
+            Coordinate newCoord = Coordinate.fromMarker(marker);
+            try {
+                controller.replaceWith(oldCoord, newCoord);
+                onPolygonChanged(controller.getPolygons(), newCoord);
+            } catch (HoleInvalidException holeOutOfBound) {
+                controller.rollback();
+                onMarkInvalidHole(controller.getPolygons(), marker.getPosition());
+            }
         }
     }
 }
