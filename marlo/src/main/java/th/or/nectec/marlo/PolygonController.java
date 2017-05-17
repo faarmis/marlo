@@ -17,9 +17,12 @@
 
 package th.or.nectec.marlo;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.List;
 
 import th.or.nectec.marlo.model.Coordinate;
@@ -27,27 +30,18 @@ import th.or.nectec.marlo.model.Polygon;
 
 public class PolygonController {
 
-    private List<Polygon> polygons;
-    private Polygon focusPolygon;
+    private Deque<List<Polygon>> backupStack = new ArrayDeque<>();
+    private List<Polygon> polygons = new ArrayList<>();
     private PointInHoleValidator pointInBoundaryValidator = new PolygonUtils();
-
     private Presenter presenter;
-    private List<Polygon> backupPolygon;
 
     public PolygonController() {
-        this(new ArrayList<Polygon>());
-    }
-
-    public PolygonController(List<Polygon> polygons) {
-        this.polygons = polygons;
-        if (polygons.size() > 0) focusPolygon = polygons.get(polygons.size() - 1);
-        else createPolygonObject();
+        createPolygonObject();
     }
 
     private void createPolygonObject() {
         Polygon newPolygon = new Polygon();
         polygons.add(newPolygon);
-        focusPolygon = newPolygon;
     }
 
     public void setPresenter(Presenter presenter) {
@@ -55,8 +49,16 @@ public class PolygonController {
     }
 
     public void mark(Coordinate coordinate) {
+        mark(coordinate, true);
+    }
+
+    private void mark(Coordinate coordinate, boolean external) {
+        Polygon focusPolygon = getFocusPolygon();
         if (coordinate.equals(focusPolygon.getLastCoordinate()))
             return;
+
+        if (external)
+            backup();
 
         if (focusPolygon.haveHole()) {
             validateHolePoint(coordinate);
@@ -69,6 +71,7 @@ public class PolygonController {
     }
 
     public void startNewPolygon() {
+        Polygon focusPolygon = getFocusPolygon();
         if (!focusPolygon.isValid())
             throw new IllegalStateException("Should finish last Polygon before create new one");
         if (focusPolygon.haveHole()) {
@@ -81,15 +84,16 @@ public class PolygonController {
     }
 
     private void validateHolePoint(Coordinate coordinate) {
-        if (!pointInBoundaryValidator.inBoundary(focusPolygon, coordinate))
+        if (!pointInBoundaryValidator.inBoundary(getFocusPolygon(), coordinate))
             throw new HoleInvalidException();
     }
 
     public Polygon getFocusPolygon() {
-        return focusPolygon;
+        return polygons.get(polygons.size() - 1);
     }
 
     public void newHole() {
+        Polygon focusPolygon = getFocusPolygon();
         if (!focusPolygon.isValid())
             throw new IllegalStateException("Must be valid polygon before add hole");
         if (focusPolygon.haveHole()) {
@@ -97,7 +101,6 @@ public class PolygonController {
                 throw new IllegalStateException("Last hole should finish before add new hole");
             }
         }
-
         focusPolygon.addHoles(new Polygon());
         presenter.prepareForNewHole();
     }
@@ -107,23 +110,29 @@ public class PolygonController {
     }
 
     public boolean undo() {
+        Polygon focusPolygon = getFocusPolygon();
         if (polygons.size() == 1 && focusPolygon.isEmpty())
             return false;
 
-        if (backupPolygon != null) {
+        if (!backupStack.isEmpty()) {
             rollback();
             return true;
         }
+
+        return secondaryUndo(focusPolygon);
+    }
+
+    private boolean secondaryUndo(Polygon focusPolygon) {
         if (focusPolygon.haveHole()) {
             Polygon lastHole = focusPolygon.getLastHole();
             lastHole.pop();
-            if (lastHole.isEmpty())
+            if (lastHole.isEmpty()) {
                 focusPolygon.removeHole(lastHole);
+            }
         } else if (!focusPolygon.isEmpty()) {
             focusPolygon.pop();
             if (focusPolygon.isEmpty() && polygons.size() > 1) {
                 polygons.remove(polygons.size() - 1);
-                focusPolygon = polygons.get(polygons.size() - 1);
             }
         }
         presenter.removeLastMarker();
@@ -133,15 +142,15 @@ public class PolygonController {
     public void restore(List<Polygon> polygons) {
         for (int i = 0; i < polygons.size(); i++) {
             restore(polygons.get(i));
-            if (i != polygons.size() - 1)
+            if (i != polygons.size() - 1 && !polygons.get(i + 1).isEmpty())
                 startNewPolygon();
         }
     }
 
-    public void restore(Polygon polygon) {
+    public void restore(@NonNull Polygon polygon) {
         removeLastPointIfSameAsStart(polygon);
         for (Coordinate point : polygon.getBoundary()) {
-            mark(new Coordinate(point));
+            mark(new Coordinate(point), false);
         }
         for (Polygon hole : polygon.getAllHoles()) {
             removeLastPointIfSameAsStart(hole);
@@ -151,6 +160,8 @@ public class PolygonController {
     }
 
     private void removeLastPointIfSameAsStart(Polygon polygon) {
+        if (polygon.isEmpty())
+            return;
         List<Coordinate> boundary = polygon.getBoundary();
         Coordinate startPoint = boundary.get(0);
         Coordinate lastPoint = boundary.get(boundary.size() - 1);
@@ -160,13 +171,16 @@ public class PolygonController {
     }
 
     public void backup() {
-        backupPolygon = clone(polygons);
+        if (polygons.isEmpty() || polygons.get(0).isEmpty())
+            return;
+
+        backupStack.push(clone(polygons));
     }
 
     private List<Polygon> clone(List<Polygon> polygons) {
         List<Polygon> clone = new ArrayList<>();
         for (Polygon poly : polygons) {
-            clone.add(Polygon.fromGeoJson(poly.toGeoJson()));
+            clone.add(new Polygon(poly));
         }
         return clone;
     }
@@ -198,11 +212,9 @@ public class PolygonController {
     }
 
     void rollback() {
-        if (backupPolygon == null)
+        if (backupStack.isEmpty())
             throw new IllegalStateException("must call backup before.");
-
-        redrawPolygon(backupPolygon);
-        backupPolygon = null;
+        redrawPolygon(backupStack.poll());
     }
 
     @Nullable

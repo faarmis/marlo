@@ -253,7 +253,6 @@ public class PolygonControllerTest {
         List<Coordinate> expectBound = new ArrayList<>();
         expectBound.add(new Coordinate(0f, 0f));
         expectBound.add(new Coordinate(3f, 0f));
-        expectBound.add(new Coordinate(3f, 3f));
         expectBound.add(new Coordinate(0f, 3f));
         assertEquals(expectBound, controller.getFocusPolygon().getBoundary());
     }

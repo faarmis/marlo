@@ -56,11 +56,6 @@ public class PolygonMarloFragment extends MarloFragment {
         polyOptFactory = new DefaultPolygonOptionFactory();
     }
 
-    public static PolygonMarloFragment newInstance() {
-        PolygonMarloFragment fragment = new PolygonMarloFragment();
-        return fragment;
-    }
-
     public void setPolygonOptionFactory(PolygonOptionFactory polygonOptionFactory) {
         this.polyOptFactory = polygonOptionFactory;
     }
@@ -375,7 +370,9 @@ public class PolygonMarloFragment extends MarloFragment {
 
         @Override
         public void onMarkerDragEnd(Marker marker) {
-            previewGooglePolygon.remove();
+            if (previewPolygon != null) //sometime null because of slow ui process
+                previewGooglePolygon.remove();
+
             Coordinate newCoord = Coordinate.fromMarker(marker);
             try {
                 controller.replaceWith(oldCoord, newCoord);
