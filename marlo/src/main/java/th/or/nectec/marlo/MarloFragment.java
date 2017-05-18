@@ -17,7 +17,7 @@
 
 package th.or.nectec.marlo;
 
-import android.Manifest;
+import android.content.Context;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
@@ -39,6 +39,11 @@ import com.google.android.gms.maps.model.LatLng;
 import th.or.nectec.marlo.option.DefaultMarkerOptionFactory;
 import th.or.nectec.marlo.option.MarkerOptionFactory;
 
+import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+import static android.content.pm.PackageManager.PERMISSION_GRANTED;
+import static android.support.v4.content.ContextCompat.checkSelfPermission;
+
 /**
  * Base fragment of Marlo Project, Contain common process such as Setup map, Add common ui component
  * and Enable my location feature
@@ -46,6 +51,12 @@ import th.or.nectec.marlo.option.MarkerOptionFactory;
 public abstract class MarloFragment extends SupportMapFragment implements OnMapReadyCallback, OnClickListener {
 
     private static final String TAG = "MarloFragment";
+
+    /**
+     * Request code on for request location setting when can't get last knowLocation
+     * after call moveToMyLocation. Activity can handle result of user action by onActivityResult()
+     */
+    public static final int REQUEST_LOCATION_SETTINGS = 10512;
 
     protected MarkerOptionFactory markOptFactory = new DefaultMarkerOptionFactory();
     protected GoogleMap googleMap;
@@ -96,19 +107,37 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
     }
 
     /**
-     * enable default My Location button
+     * enable myLocation feature to use moveToMyLocation.
+     * If need built-in myLocationButton use enableMyLocationButton() instead.
      *
      * @throws SecurityException if permission not granted
      */
     @RequiresPermission(anyOf = {
-            Manifest.permission.ACCESS_COARSE_LOCATION,
-            Manifest.permission.ACCESS_FINE_LOCATION})
-    public void enableMyLocationButton() throws SecurityException {
+            ACCESS_COARSE_LOCATION,
+            ACCESS_FINE_LOCATION})
+    public void enableMyLocation() throws SecurityException {
         myLocationEnable = true;
         if (googleMap != null) {
             googleMap.setMyLocationEnabled(true);
         }
         locationService.connect();
+    }
+
+    /**
+     * enable default My Location button with myLocation feature
+     *
+     * @throws SecurityException if permission not granted
+     */
+    @RequiresPermission(anyOf = {
+            ACCESS_COARSE_LOCATION,
+            ACCESS_FINE_LOCATION})
+    public void enableMyLocationButton() {
+        Context context = getContext();
+        if (checkSelfPermission(context, ACCESS_FINE_LOCATION) != PERMISSION_GRANTED
+                && checkSelfPermission(context, ACCESS_COARSE_LOCATION) != PERMISSION_GRANTED) {
+            throw new IllegalStateException("Location permission must be granted");
+        }
+        enableMyLocation();
         updateMyLocationVisibility();
     }
 
@@ -168,11 +197,21 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
      */
     public abstract void mark(LatLng markPoint);
 
-    private void moveToMyLocation() {
+    /**
+     * animate to current location. if can't get last know location it will automatically prompt
+     * user to change setting
+     *
+     * @exception IllegalStateException if call before enableMyLocation() or enableMyLocationButton()
+     */
+    public void moveToMyLocation() {
+        if (!myLocationEnable)
+            throw new IllegalStateException("Must enable myLocation feature before");
         Location lastKnowLocation = locationService.getLastKnowLocation();
         if (lastKnowLocation != null) {
             LatLng latLng = new LatLng(lastKnowLocation.getLatitude(), lastKnowLocation.getLongitude());
             googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16), 1000, null);
+        } else {
+            locationService.requestLocationSetting(getActivity(), REQUEST_LOCATION_SETTINGS);
         }
     }
 

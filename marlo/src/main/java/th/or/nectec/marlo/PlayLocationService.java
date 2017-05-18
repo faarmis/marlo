@@ -17,7 +17,9 @@
 
 package th.or.nectec.marlo;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.IntentSender;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -28,7 +30,15 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResult;
+import com.google.android.gms.location.LocationSettingsStates;
+import com.google.android.gms.location.LocationSettingsStatusCodes;
 
 final class PlayLocationService implements OnConnectionFailedListener, ConnectionCallbacks {
 
@@ -79,5 +89,42 @@ final class PlayLocationService implements OnConnectionFailedListener, Connectio
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         Toast.makeText(context, "ไม่สามารถเชื่อมต่อ Google Play Services ได้", Toast.LENGTH_LONG).show();
+    }
+
+    public void requestLocationSetting(final Activity activity,
+                                       final LocationRequest request,
+                                       final int requestCode) {
+        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
+                .addLocationRequest(request);
+        PendingResult<LocationSettingsResult> result =
+                LocationServices.SettingsApi.checkLocationSettings(locationApiClient,
+                        builder.build());
+        result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
+            @Override
+            public void onResult(@NonNull LocationSettingsResult result) {
+                final Status status = result.getStatus();
+                final LocationSettingsStates state = result.getLocationSettingsStates();
+                switch (status.getStatusCode()) {
+                    case LocationSettingsStatusCodes.SUCCESS:
+                        break;
+                    case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                        try {
+                            status.startResolutionForResult(activity, requestCode);
+                        } catch (IntentSender.SendIntentException error) {
+                            // Ignore the error.
+                        }
+                        break;
+                }
+            }
+        });
+    }
+
+    public void requestLocationSetting(final Activity activity, int requestCode) {
+        LocationRequest defaultRequest = new LocationRequest();
+        defaultRequest.setInterval(10000);
+        defaultRequest.setFastestInterval(5000);
+        defaultRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+
+        requestLocationSetting(activity, defaultRequest, requestCode);
     }
 }
