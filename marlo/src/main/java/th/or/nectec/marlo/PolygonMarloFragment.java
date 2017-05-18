@@ -305,19 +305,23 @@ public class PolygonMarloFragment extends MarloFragment {
         @Override
         public void clear() {
             for (PolygonData data : multiPolygon) {
-                data.getDrawPolygon().remove();
+                if (data.isEmpty())
+                    continue;
 
-                for (Marker marker : data.getBoundary()) {
-                    marker.remove();
-                }
+                data.getDrawPolygon().remove();
+                removeMarker(data.getBoundary());
                 for (List<Marker> hole : data.getHoles()) {
-                    for (Marker holeMarker : hole) {
-                        holeMarker.remove();
-                    }
+                    removeMarker(hole);
                 }
             }
             multiPolygon.clear();
             multiPolygon.push(new PolygonData());
+        }
+
+        private void removeMarker(Iterable<Marker> markers) {
+            for (Marker marker : markers) {
+                marker.remove();
+            }
         }
     }
 
