@@ -300,18 +300,8 @@ public class Polygon implements Parcelable {
         return holes.size();
     }
 
-    /**
-     * @return last non empty holes, If all hole is empty return first holes instead.
-     * @exception IndexOutOfBoundsException if polygon doesn't have any hole
-     */
     public Polygon getLastHole() {
-        int lastHoleIndex = holes.size() - 1;
-        while (lastHoleIndex > 0) {
-            Polygon lastHole = holes.get(lastHoleIndex--);
-            if (!lastHole.isEmpty())
-                return lastHole;
-        }
-        return holes.get(0);
+        return holes.get(holes.size() - 1);
     }
 
     public boolean haveHole() {
