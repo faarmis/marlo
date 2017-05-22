@@ -374,7 +374,7 @@ public class PolygonMarloFragment extends MarloFragment {
 
         @Override
         public void onMarkerDragEnd(Marker marker) {
-            if (previewPolygon != null) //sometime null because of slow ui process
+            if (previewPolygon != null && previewGooglePolygon != null) //sometime null because of slow ui process
                 previewGooglePolygon.remove();
 
             Coordinate newCoord = Coordinate.fromMarker(marker);
