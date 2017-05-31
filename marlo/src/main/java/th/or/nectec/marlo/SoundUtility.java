@@ -27,6 +27,8 @@ final class SoundUtility {
 
     public static void play(Context context, @RawRes int mediaRawId) {
         MediaPlayer soundEffect = MediaPlayer.create(context, mediaRawId);
-        soundEffect.start();
+        if (soundEffect != null) { //WTF, It should never be null!
+            soundEffect.start();
+        }
     }
 }
