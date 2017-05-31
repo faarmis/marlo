@@ -254,6 +254,8 @@ public class Polygon implements Parcelable {
         JSONArray coordinate = new JSONArray();
         coordinate.put(boundaryToJson());
         for (Polygon hole : holes) {
+            if (hole.isEmpty() || !hole.isValid())
+                continue;
             coordinate.put(hole.boundaryToJson());
         }
         return coordinate;
