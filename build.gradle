@@ -43,7 +43,7 @@ allprojects {
 }
 
 ext {
-    githubRepo = 'nectec-wisru/marlo'
+    githubRepo = 'nectec-opensource/marlo'
 
     javaSourceCompatibility = JavaVersion.VERSION_1_7
     javaTargetCompatibility = JavaVersion.VERSION_1_7
@@ -54,7 +54,7 @@ ext {
     buildToolsVersion = "25.0.2"
 
     supportLibVersion = "25.3.1"
-    playServicesVersion = "10.2.4"
+    playServicesVersion = "11.0.4"
     androidMapUtilsVersion = "0.5"
 
     junitVersion = "4.12"
