@@ -27,7 +27,7 @@ script:
   - ./gradlew build --stacktrace
 
 after_failure:
-  - cat $HOME/build/nectec-wisru/marlo/marlo/build/reports/lint-results.html
+  - cat $HOME/build/nectec-opensource/marlo/marlo/build/reports/lint-results.html
 
 deploy:
   provider: script
