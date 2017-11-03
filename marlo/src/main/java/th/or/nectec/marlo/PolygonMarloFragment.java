@@ -344,7 +344,15 @@ public class PolygonMarloFragment extends MarloFragment {
 
             previewFocusCoord = new Coordinate(oldCoord);
             previewPolygon = new Polygon(controller.findPolygonByCoordinate(oldCoord));
+            removeEmptyHole(previewPolygon);
             previewGooglePolygon = null;
+        }
+
+        private void removeEmptyHole(Polygon polygon) {
+            List<Polygon> holes = polygon.getAllHoles();
+            for (Polygon hole : holes) {
+                if (hole.isEmpty()) polygon.removeHole(hole);
+            }
         }
 
         @Override
