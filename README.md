@@ -5,6 +5,8 @@
 
 Create awesome android application with mark location feature on google's map
 
+![Marlo Screenshot][screenshot]
+
 ## Download
 
 make sure add JCenter to build script's repositories
@@ -67,3 +69,4 @@ check for config of those tools at [Java Quality Config](https://github.com/Blaz
 
 [![NECTEC](http://www.nectec.or.th/themes/nectec/img/logo.png)](https://www.nectec.or.th)
 
+[screenshot]: https://github.com/nectec-opensource/marlo/blob/master/asset/screenshot.webp?raw=true "screenshot" 
