@@ -22,7 +22,7 @@ Add dependencies on app module
 ```groovy
 dependencies {
     ...
-    compile 'th.or.nectec.android:marlo:+' //Change `+` to lastest stable version is Recommended
+    compile 'th.or.nectec.android:marlo:+' //Change `+` to latest stable version is Recommended
     ...
 }
 ```
@@ -69,4 +69,4 @@ check for config of those tools at [Java Quality Config](https://github.com/Blaz
 
 [![NECTEC](http://www.nectec.or.th/themes/nectec/img/logo.png)](https://www.nectec.or.th)
 
-[screenshot]: https://github.com/nectec-opensource/marlo/blob/master/asset/screenshot.webp?raw=true "screenshot" 
+[screenshot]: https://github.com/nectec-opensource/marlo/blob/master/asset/screenshot.webp?raw=true "screenshot"

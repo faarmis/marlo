@@ -27,14 +27,8 @@ group = rootProject.group
 version = rootProject.version
 description = rootProject.description
 
-repositories {
-    jcenter()
-    maven { url "https://jitpack.io" }
-}
-
 android {
-    compileSdkVersion rootProject.compileSdkVersion
-    buildToolsVersion rootProject.buildToolsVersion
+    compileSdkVersion rootProject.targetSdkVersion
 
     defaultConfig {
         minSdkVersion rootProject.minSdkVersion
@@ -48,8 +42,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility rootProject.javaSourceCompatibility
-        targetCompatibility rootProject.javaTargetCompatibility
+        sourceCompatibility rootProject.javaVersion
+        targetCompatibility rootProject.javaVersion
     }
 
     buildTypes {

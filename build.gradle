@@ -31,7 +31,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.3'
+        classpath 'com.android.tools.build:gradle:3.0.1'
         classpath "org.stoyicker.android-check:plugin:2.188"
     }
 }
@@ -39,22 +39,21 @@ buildscript {
 allprojects {
     repositories {
         jcenter()
+        google()
+        maven { url "https://jitpack.io" }
     }
 }
 
 ext {
     githubRepo = 'nectec-opensource/marlo'
 
-    javaSourceCompatibility = JavaVersion.VERSION_1_7
-    javaTargetCompatibility = JavaVersion.VERSION_1_7
+    javaVersion = JavaVersion.VERSION_1_7
 
     minSdkVersion = 19
-    targetSdkVersion = 25
-    compileSdkVersion = 25
-    buildToolsVersion = "25.0.2"
+    targetSdkVersion = 27
 
-    supportLibVersion = "25.3.1"
-    playServicesVersion = "11.0.4"
+    supportLibVersion = "27.0.2"
+    playServicesVersion = "11.6.2"
     androidMapUtilsVersion = "0.5"
 
     junitVersion = "4.12"

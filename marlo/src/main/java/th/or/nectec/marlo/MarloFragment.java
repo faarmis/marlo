@@ -21,6 +21,7 @@ import android.content.Context;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
+import android.support.annotation.NonNull;
 import android.support.annotation.RequiresPermission;
 import android.util.Log;
 import android.view.View;
@@ -29,12 +30,16 @@ import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 
 import th.or.nectec.marlo.option.DefaultMarkerOptionFactory;
 import th.or.nectec.marlo.option.MarkerOptionFactory;
@@ -69,27 +74,18 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
     };
 
     protected boolean mute = false;
-    private PlayLocationService locationService;
     private boolean myLocationEnable;
     private CompoundButton mapTypeButton;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        locationService = new PlayLocationService(getContext());
         getMapAsync(this);
 
         ViewUtils.addViewFinder(this);
         ViewUtils.addMyLocationButton(this);
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        if (myLocationEnable) {
-            locationService.connect();
-        }
-    }
 
     /**
      * set true for mute sound effect on mark. default is false
@@ -98,12 +94,6 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
      */
     public void setMute(boolean mute) {
         this.mute = mute;
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        locationService.disconnect();
     }
 
     /**
@@ -120,7 +110,6 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
         if (googleMap != null) {
             googleMap.setMyLocationEnabled(true);
         }
-        locationService.connect();
     }
 
     /**
@@ -201,18 +190,27 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
      * animate to current location. if can't get last know location it will automatically prompt
      * user to change setting
      *
-     * @exception IllegalStateException if call before enableMyLocation() or enableMyLocationButton()
+     * @throws IllegalStateException if call before enableMyLocation() or enableMyLocationButton()
      */
     public void moveToMyLocation() {
         if (!myLocationEnable)
             throw new IllegalStateException("Must enable myLocation feature before");
-        Location lastKnowLocation = locationService.getLastKnowLocation();
-        if (lastKnowLocation != null) {
-            LatLng latLng = new LatLng(lastKnowLocation.getLatitude(), lastKnowLocation.getLongitude());
-            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16), 1000, null);
-        } else {
-            locationService.requestLocationSetting(getActivity(), REQUEST_LOCATION_SETTINGS);
+
+        if (checkSelfPermission(getContext(), ACCESS_FINE_LOCATION) != PERMISSION_GRANTED
+                && checkSelfPermission(getContext(), ACCESS_COARSE_LOCATION) != PERMISSION_GRANTED) {
+            throw new IllegalStateException("Location permission must be granted");
         }
+        FusedLocationProviderClient client = LocationServices.getFusedLocationProviderClient(getContext());
+        client.getLastLocation().addOnCompleteListener(new OnCompleteListener<Location>() {
+            @Override
+            public void onComplete(@NonNull Task<Location> task) {
+                Location lastKnowLocation = task.getResult();
+                if (lastKnowLocation != null) {
+                    LatLng latLng = new LatLng(lastKnowLocation.getLatitude(), lastKnowLocation.getLongitude());
+                    googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16), 1000, null);
+                }
+            }
+        });
     }
 
     /**
