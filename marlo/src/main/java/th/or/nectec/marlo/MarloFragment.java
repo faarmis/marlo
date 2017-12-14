@@ -17,11 +17,10 @@
 
 package th.or.nectec.marlo;
 
-import android.content.Context;
+import android.annotation.SuppressLint;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
-import android.support.annotation.NonNull;
 import android.support.annotation.RequiresPermission;
 import android.util.Log;
 import android.view.View;
@@ -30,24 +29,18 @@ import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 
 import th.or.nectec.marlo.option.DefaultMarkerOptionFactory;
 import th.or.nectec.marlo.option.MarkerOptionFactory;
 
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
-import static android.content.pm.PackageManager.PERMISSION_GRANTED;
-import static android.support.v4.content.ContextCompat.checkSelfPermission;
 
 /**
  * Base fragment of Marlo Project, Contain common process such as Setup map, Add common ui component
@@ -56,12 +49,6 @@ import static android.support.v4.content.ContextCompat.checkSelfPermission;
 public abstract class MarloFragment extends SupportMapFragment implements OnMapReadyCallback, OnClickListener {
 
     private static final String TAG = "MarloFragment";
-
-    /**
-     * Request code on for request location setting when can't get last knowLocation
-     * after call moveToMyLocation. Activity can handle result of user action by onActivityResult()
-     */
-    public static final int REQUEST_LOCATION_SETTINGS = 10512;
 
     protected MarkerOptionFactory markOptFactory = new DefaultMarkerOptionFactory();
     protected GoogleMap googleMap;
@@ -117,15 +104,11 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
      *
      * @throws SecurityException if permission not granted
      */
+    @SuppressLint("MissingPermission")
     @RequiresPermission(anyOf = {
             ACCESS_COARSE_LOCATION,
             ACCESS_FINE_LOCATION})
     public void enableMyLocationButton() {
-        Context context = getContext();
-        if (checkSelfPermission(context, ACCESS_FINE_LOCATION) != PERMISSION_GRANTED
-                && checkSelfPermission(context, ACCESS_COARSE_LOCATION) != PERMISSION_GRANTED) {
-            throw new IllegalStateException("Location permission must be granted");
-        }
         enableMyLocation();
         updateMyLocationVisibility();
     }
@@ -170,6 +153,8 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
         mapTypeButton.performClick();
     }
 
+
+    @SuppressLint("MissingPermission")
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.marlo_view_finder || view.getId() == R.id.marlo_mark) {
@@ -192,21 +177,20 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
      *
      * @throws IllegalStateException if call before enableMyLocation() or enableMyLocationButton()
      */
+    @SuppressLint("MissingPermission")
+    @RequiresPermission(anyOf = {
+            ACCESS_COARSE_LOCATION,
+            ACCESS_FINE_LOCATION})
     public void moveToMyLocation() {
         if (!myLocationEnable)
             throw new IllegalStateException("Must enable myLocation feature before");
 
-        if (checkSelfPermission(getContext(), ACCESS_FINE_LOCATION) != PERMISSION_GRANTED
-                && checkSelfPermission(getContext(), ACCESS_COARSE_LOCATION) != PERMISSION_GRANTED) {
-            throw new IllegalStateException("Location permission must be granted");
-        }
-        FusedLocationProviderClient client = LocationServices.getFusedLocationProviderClient(getContext());
-        client.getLastLocation().addOnCompleteListener(new OnCompleteListener<Location>() {
+        PlayLocationService service = new PlayLocationService(getActivity());
+        service.getLastKnownLocation(new PlayLocationService.OnReceivedLocation() {
             @Override
-            public void onComplete(@NonNull Task<Location> task) {
-                Location lastKnowLocation = task.getResult();
-                if (lastKnowLocation != null) {
-                    LatLng latLng = new LatLng(lastKnowLocation.getLatitude(), lastKnowLocation.getLongitude());
+            public void onReceived(Location location) {
+                if (location != null) {
+                    LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
                     googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16), 1000, null);
                 }
             }
