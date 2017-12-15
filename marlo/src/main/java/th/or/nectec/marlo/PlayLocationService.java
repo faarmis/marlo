@@ -6,7 +6,6 @@ import android.content.IntentSender;
 import android.location.Location;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresPermission;
-import android.widget.Toast;
 
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -73,7 +72,6 @@ public class PlayLocationService {
             @SuppressLint("MissingPermission")
             @Override
             public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
-                Toast.makeText(context, "onSuccess", Toast.LENGTH_SHORT).show();
                 getLastKnownLocation(onReceivedLocation);
             }
         });
