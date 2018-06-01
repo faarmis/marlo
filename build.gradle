@@ -32,7 +32,7 @@ buildscript {
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.1'
+        classpath 'com.android.tools.build:gradle:3.1.2'
         classpath "org.stoyicker.android-check:plugin:2.188"
     }
 }
@@ -53,8 +53,8 @@ ext {
     minSdkVersion = 19
     targetSdkVersion = 27
 
-    supportLibVersion = "27.0.2"
-    playServicesVersion = "11.6.2"
+    supportLibVersion = "27.1.1"
+    playServicesVersion = "15.0.1"
     androidMapUtilsVersion = "0.5"
 
     junitVersion = "4.12"
