@@ -78,7 +78,7 @@ final class ViewUtils {
         FloatingActionButton fab = new FloatingActionButton(fragment.getContext());
         fab.setSize(FloatingActionButton.SIZE_MINI);
         fab.setId(R.id.marlo_gps);
-        fab.setImageResource(R.drawable.ic_gps);
+        fab.setImageResource(R.drawable.ic_gps_fixed_white_24dp);
         fab.setOnClickListener(fragment);
         fab.setVisibility(View.GONE);
 
