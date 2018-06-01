@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package th.or.nectec.marlo;
+package th.or.nectec.marlo.exception;
 
 public class PolygonInvalidException extends RuntimeException {
 }

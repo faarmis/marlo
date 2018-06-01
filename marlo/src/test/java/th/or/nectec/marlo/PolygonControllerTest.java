@@ -24,6 +24,7 @@ import org.skyscreamer.jsonassert.JSONAssert;
 import java.util.ArrayList;
 import java.util.List;
 
+import th.or.nectec.marlo.exception.HoleInvalidException;
 import th.or.nectec.marlo.model.Coordinate;
 import th.or.nectec.marlo.model.Polygon;
 
