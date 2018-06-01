@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="marloFab">
+        <item name="android:layout_marginBottom">@dimen/marlo_fab_horizontal_margin</item>
+        <item name="android:layout_marginLeft">@dimen/marlo_fab_vertical_margin</item>
+        <item name="android:layout_marginRight">@dimen/marlo_fab_vertical_margin</item>
+        <item name="fabSize">mini</item>
+        <item name="elevation">@dimen/marlo_fab_elevation</item>
+    </style>
+
+</resources>
