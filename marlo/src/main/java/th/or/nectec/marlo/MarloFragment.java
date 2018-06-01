@@ -66,6 +66,8 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
 
     protected View viewFinder;
     protected View myLocation;
+    protected int paddingTop;
+    protected int paddingBottom;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -135,6 +137,7 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
     @Override
     public void onMapReady(final GoogleMap googleMap) {
         this.googleMap = googleMap;
+        googleMap.setPadding(0, paddingTop, 0, paddingBottom);
         UiSettings uiSettings = googleMap.getUiSettings();
         uiSettings.setZoomControlsEnabled(false);
         uiSettings.setMyLocationButtonEnabled(false);
@@ -221,4 +224,11 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
         this.markOptFactory = markerOptionFactory;
     }
 
+    public void paddingTop(int padding) {
+        paddingTop = padding;
+    }
+
+    public void paddingBottom(int padding) {
+        paddingBottom = padding;
+    }
 }

@@ -74,9 +74,14 @@ public class PolygonMarloFragment extends MarloFragment {
         return controller;
     }
 
+    boolean isUseDefaultTools = false;
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        if (isUseDefaultTools) {
+            ViewUtils.addPolygonToolsMenu(this);
+        }
     }
 
     @Override
@@ -104,7 +109,7 @@ public class PolygonMarloFragment extends MarloFragment {
     }
 
     public void useDefaultToolsMenu() {
-        ViewUtils.addPolygonToolsMenu(this);
+        isUseDefaultTools = true;
     }
 
     @Override

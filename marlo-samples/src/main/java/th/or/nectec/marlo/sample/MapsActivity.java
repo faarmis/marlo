@@ -78,6 +78,8 @@ public class MapsActivity extends AppCompatActivity {
 
 
         marlo = (CustomMarloFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+//        marlo.paddingTop(dip(60));
+//        marlo.paddingBottom(dip(48));
         marlo.setPolygonOptionFactory(new PolygonOptionFactory() {
             @Override
             public PolygonOptions build(PolygonMarloFragment fragment) {
@@ -112,6 +114,7 @@ public class MapsActivity extends AppCompatActivity {
         marlo.setActivity(this);
         marlo.setRestoreData(Polygon.fromGeoJson(RESTORE_DATA));
         marlo.useDefaultToolsMenu();
+
 
         new TedPermission(this)
                 .setPermissionListener(permissionlistener)

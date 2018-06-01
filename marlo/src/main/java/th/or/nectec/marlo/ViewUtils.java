@@ -52,6 +52,7 @@ final class ViewUtils {
             viewFinder.setImageResource(viewFinderDrawableId);
             int size = fragment.getResources().getDimensionPixelOffset(R.dimen.marlo_view_finder_size);
             LayoutParams layoutParams = new LayoutParams(size, size, Gravity.CENTER);
+            layoutParams.setMargins(0, fragment.paddingTop, 0, fragment.paddingBottom);
             rootView.addView(viewFinder, layoutParams);
             return viewFinder;
         }
@@ -70,6 +71,7 @@ final class ViewUtils {
         ViewGroup rootView = (ViewGroup) fragment.getView();
         if (rootView != null) {
             LayoutParams params = new LayoutParams(WRAP_CONTENT, WRAP_CONTENT, Gravity.BOTTOM | Gravity.END);
+            params.bottomMargin = fragment.paddingBottom;
             rootView.addView(tools, params);
         }
     }
@@ -95,7 +97,7 @@ final class ViewUtils {
             LayoutParams params = new LayoutParams(WRAP_CONTENT, WRAP_CONTENT, Gravity.END);
             int horizonMargin = fragment.getResources().getDimensionPixelOffset(R.dimen.marlo_screen_horizontal_margin);
             int verticalMargin = fragment.getResources().getDimensionPixelOffset(R.dimen.marlo_screen_vertical_margin);
-            params.setMargins(0, verticalMargin, horizonMargin, 0);
+            params.setMargins(0, verticalMargin + fragment.paddingTop, horizonMargin, 0);
             rootView.addView(fab, params);
         }
         return fab;
@@ -120,7 +122,7 @@ final class ViewUtils {
                     .getDimensionPixelOffset(R.dimen.marlo_screen_horizontal_margin);
             int verticalMargin = fragment.getResources()
                     .getDimensionPixelOffset(R.dimen.marlo_over_google_margin);
-            params.setMargins(horizonMargin, 0, 0, verticalMargin);
+            params.setMargins(horizonMargin, 0, 0, verticalMargin + fragment.paddingBottom);
             rootView.addView(toggleButton, params);
             return toggleButton;
         }
