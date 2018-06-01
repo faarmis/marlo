@@ -17,15 +17,26 @@
 
 package th.or.nectec.marlo.sample;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 
-public class MultiMarkerActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_multi_marker);
+        setContentView(R.layout.activity_main);
+    }
+
+
+    public void onPolygonClick(View view) {
+        startActivity(new Intent(this, PolygonActivity.class));
+    }
+
+    public void onMultiPointClick(View view) {
+        startActivity(new Intent(this, MultiPointActivity.class));
     }
 }

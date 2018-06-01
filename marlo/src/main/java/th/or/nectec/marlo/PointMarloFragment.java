@@ -29,13 +29,20 @@ import java.util.Stack;
 
 import th.or.nectec.marlo.model.Coordinate;
 
-public class MultiMarkerMarloFragment extends MarloFragment {
+public class PointMarloFragment extends MarloFragment {
 
     private final Stack<Marker> markers = new Stack<>();
+
+    private int maxPoint = 1;
+
+    public void setMaxPoint(int maxPoint) {
+        this.maxPoint = maxPoint;
+    }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        markers.setSize(maxPoint);
         ViewUtils.addPolygonToolsMenu(this);
         findViewBy(R.id.marlo_hole).setVisibility(View.GONE);
         findViewBy(R.id.marlo_boundary).setVisibility(View.GONE);

@@ -21,7 +21,7 @@
     <dimen name="marlo_screen_vertical_margin">12dp</dimen>
     <dimen name="marlo_screen_horizontal_margin">8dp</dimen>
     <dimen name="marlo_over_google_margin">32dp</dimen>
-    <dimen name="marlo_fab_vertical_margin">4dp</dimen>
+    <dimen name="marlo_fab_vertical_margin">8dp</dimen>
     <dimen name="marlo_fab_horizontal_margin">8dp</dimen>
     <dimen name="marlo_fab_elevation">4dp</dimen>
 </resources>

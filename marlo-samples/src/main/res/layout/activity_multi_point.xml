@@ -15,11 +15,13 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
-<fragment xmlns:android="http://schemas.android.com/apk/res/android"
-          xmlns:tools="http://schemas.android.com/tools"
-          android:layout_width="match_parent"
-          android:layout_height="match_parent"
-          android:id="@+id/map"
-          tools:context=".MapsActivity"
-          android:name="th.or.nectec.marlo.MultiMarkerMarloFragment"/>
+    <fragment
+        android:id="@+id/map"
+        android:name="th.or.nectec.marlo.PointMarloFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".PolygonActivity" />
+</merge>

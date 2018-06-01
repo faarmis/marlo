@@ -17,5 +17,8 @@
 
 <resources>
     <string name="app_name">Marlo</string>
-    <string name="title_activity_maps">Map</string>
+
+    <string name="title_main_acitivty">Marlo</string>
+    <string name="title_polygon_activity">Polygon</string>
+    <string name="title_multi_point_activity">Multi Point</string>
 </resources>

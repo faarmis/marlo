@@ -45,7 +45,7 @@ import th.or.nectec.marlo.option.PolygonOptionFactory;
 
 import static com.google.android.gms.maps.model.BitmapDescriptorFactory.defaultMarker;
 
-public class MapsActivity extends AppCompatActivity {
+public class PolygonActivity extends AppCompatActivity {
 
     public static final String RESTORE_DATA = "[\n" +
             "      [ [100.0, 0.0], [101.0, 0.0], [101.0, 1.0], [100.0, 1.0], [100.0, 0.0] ],\n" +
@@ -59,27 +59,26 @@ public class MapsActivity extends AppCompatActivity {
             try {
                 marlo.enableMyLocationButton();
             } catch (SecurityException security) {
-                Toast.makeText(MapsActivity.this, "Not have permission to enable MyLocation button",
+                Toast.makeText(PolygonActivity.this, "Not have permission to enable MyLocation button",
                         Toast.LENGTH_SHORT).show();
             }
         }
 
         @Override
         public void onPermissionDenied(ArrayList<String> deniedPermissions) {
-            Toast.makeText(MapsActivity.this, "MyLocation disable!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(PolygonActivity.this, "MyLocation disable!", Toast.LENGTH_SHORT).show();
         }
     };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_maps);
+        setContentView(R.layout.activity_polygon);
         markerCount = (TextView) findViewById(R.id.marker_count);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
         marlo = (CustomMarloFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-//        marlo.paddingTop(dip(60));
-//        marlo.paddingBottom(dip(48));
         marlo.setPolygonOptionFactory(new PolygonOptionFactory() {
             @Override
             public PolygonOptions build(PolygonMarloFragment fragment) {
@@ -144,9 +143,9 @@ public class MapsActivity extends AppCompatActivity {
 
     public static class CustomMarloFragment extends PolygonMarloFragment {
 
-        private MapsActivity activity;
+        private PolygonActivity activity;
 
-        void setActivity(MapsActivity activity) {
+        void setActivity(PolygonActivity activity) {
             this.activity = activity;
         }
 

@@ -20,10 +20,10 @@
 
     <fragment
         android:id="@+id/map"
-        android:name="th.or.nectec.marlo.sample.MapsActivity$CustomMarloFragment"
+        android:name="th.or.nectec.marlo.sample.PolygonActivity$CustomMarloFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".MapsActivity" />
+        tools:context=".PolygonActivity" />
     <TextView
         android:id="@+id/marker_count"
         android:layout_width="match_parent"
