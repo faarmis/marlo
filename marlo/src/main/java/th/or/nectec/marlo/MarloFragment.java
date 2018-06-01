@@ -64,13 +64,16 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
     private boolean myLocationEnable;
     private CompoundButton mapTypeButton;
 
+    protected View viewFinder;
+    protected View myLocation;
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         getMapAsync(this);
 
-        ViewUtils.addViewFinder(this);
-        ViewUtils.addMyLocationButton(this);
+        viewFinder = ViewUtils.addViewFinder(this);
+        myLocation = ViewUtils.addMyLocationButton(this);
     }
 
 
@@ -196,6 +199,11 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
             }
         });
     }
+
+    public abstract void hideToolsMenu();
+
+    public abstract void showToolsMenu();
+
 
     /**
      * execute undo process of fragment

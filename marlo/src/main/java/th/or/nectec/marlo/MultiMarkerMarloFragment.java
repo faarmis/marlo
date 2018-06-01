@@ -52,9 +52,21 @@ public class MultiMarkerMarloFragment extends MarloFragment {
 
     @Override
     public void mark(LatLng markPoint) {
-        SoundUtility.play(getContext(), R.raw.thumpsoundeffect);
+        if (!mute) SoundUtility.play(getContext(), R.raw.thumpsoundeffect);
         Marker marker = googleMap.addMarker(markOptFactory.build(this, markPoint));
         markers.push(marker);
+    }
+
+    @Override
+    public void hideToolsMenu() {
+        findViewBy(R.id.marlo_mark).setVisibility(View.GONE);
+        findViewBy(R.id.marlo_undo).setVisibility(View.GONE);
+    }
+
+    @Override
+    public void showToolsMenu() {
+        findViewBy(R.id.marlo_mark).setVisibility(View.VISIBLE);
+        findViewBy(R.id.marlo_undo).setVisibility(View.VISIBLE);
     }
 
     public boolean undo() {

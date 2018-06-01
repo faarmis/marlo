@@ -201,6 +201,20 @@ public class PolygonMarloFragment extends MarloFragment {
     }
 
     @Override
+    public void showToolsMenu() {
+        viewFinder.setVisibility(View.VISIBLE);
+        myLocation.setVisibility(View.VISIBLE);
+        ViewUtils.setPolygonToolsMenuVisibility(this, View.VISIBLE);
+    }
+
+    @Override
+    public void hideToolsMenu() {
+        viewFinder.setVisibility(View.GONE);
+        myLocation.setVisibility(View.GONE);
+        ViewUtils.setPolygonToolsMenuVisibility(this, View.GONE);
+    }
+
+    @Override
     public void mark(LatLng markPoint) {
         try {
             controller.mark(new Coordinate(markPoint));

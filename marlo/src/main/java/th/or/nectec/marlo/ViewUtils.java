@@ -37,8 +37,8 @@ final class ViewUtils {
 
     private ViewUtils() {}
 
-    public static void addViewFinder(MarloFragment fragment) {
-        addViewFinder(fragment, R.drawable.view_finder);
+    public static View addViewFinder(MarloFragment fragment) {
+        return addViewFinder(fragment, R.drawable.view_finder);
     }
 
     public static View addViewFinder(MarloFragment fragment, @DrawableRes int viewFinderDrawableId) {
@@ -74,7 +74,15 @@ final class ViewUtils {
         }
     }
 
-    public static void addMyLocationButton(MarloFragment fragment) {
+    public static void setPolygonToolsMenuVisibility(MarloFragment fragment, int visibility) {
+        View view = fragment.getView();
+        view.findViewById(R.id.marlo_undo).setVisibility(visibility);
+        view.findViewById(R.id.marlo_mark).setVisibility(visibility);
+        view.findViewById(R.id.marlo_hole).setVisibility(visibility);
+        view.findViewById(R.id.marlo_boundary).setVisibility(visibility);
+    }
+
+    public static View addMyLocationButton(MarloFragment fragment) {
         FloatingActionButton fab = new FloatingActionButton(fragment.getContext());
         fab.setSize(FloatingActionButton.SIZE_MINI);
         fab.setId(R.id.marlo_gps);
@@ -90,6 +98,7 @@ final class ViewUtils {
             params.setMargins(0, verticalMargin, horizonMargin, 0);
             rootView.addView(fab, params);
         }
+        return fab;
     }
 
     public static CompoundButton addMapTypeButton(MarloFragment fragment) {

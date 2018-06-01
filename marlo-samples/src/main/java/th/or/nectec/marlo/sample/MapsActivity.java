@@ -21,6 +21,7 @@ import android.Manifest;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -126,6 +127,16 @@ public class MapsActivity extends AppCompatActivity {
         if (!marlo.undo()) {
             super.onBackPressed();
         }
+    }
+
+    boolean isShowTools = true;
+
+    public void toggleTools(View view) {
+        if (isShowTools)
+            marlo.hideToolsMenu();
+        else
+            marlo.showToolsMenu();
+        isShowTools = !isShowTools;
     }
 
     public static class CustomMarloFragment extends PolygonMarloFragment {
