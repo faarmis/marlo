@@ -78,7 +78,6 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
         myLocation = ViewUtils.addMyLocationButton(this);
     }
 
-
     /**
      * set true for mute sound effect on mark. default is false
      *
@@ -224,11 +223,11 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
         this.markOptFactory = markerOptionFactory;
     }
 
-    public void paddingTop(int padding) {
+    public void setPaddingTop(int padding) {
         paddingTop = padding;
     }
 
-    public void paddingBottom(int padding) {
+    public void setPaddingBottom(int padding) {
         paddingBottom = padding;
     }
 }

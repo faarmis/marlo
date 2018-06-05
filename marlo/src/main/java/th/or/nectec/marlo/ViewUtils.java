@@ -38,31 +38,31 @@ final class ViewUtils {
     private ViewUtils() {}
 
     public static View addViewFinder(MarloFragment fragment) {
-        return addViewFinder(fragment, R.drawable.view_finder);
+        return addViewFinder(fragment, R.drawable.marlo_view_finder);
     }
 
     public static View addViewFinder(MarloFragment fragment, @DrawableRes int viewFinderDrawableId) {
+        ImageButton viewFinder = new ImageButton(fragment.getContext());
+        viewFinder.setId(R.id.marlo_view_finder);
+        viewFinder.setBackgroundColor(Color.TRANSPARENT);
+        viewFinder.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+        viewFinder.setOnClickListener(fragment);
+        viewFinder.setImageResource(viewFinderDrawableId);
+
         ViewGroup rootView = (ViewGroup) fragment.getView();
         if (rootView != null) {
-            ImageButton viewFinder = new ImageButton(fragment.getContext());
-            viewFinder.setId(R.id.marlo_view_finder);
-            viewFinder.setBackgroundColor(Color.TRANSPARENT);
-            viewFinder.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-            viewFinder.setOnClickListener(fragment);
-            viewFinder.setImageResource(viewFinderDrawableId);
             int size = fragment.getResources().getDimensionPixelOffset(R.dimen.marlo_view_finder_size);
-            LayoutParams layoutParams = new LayoutParams(size, size, Gravity.CENTER);
-            layoutParams.setMargins(0, fragment.paddingTop, 0, fragment.paddingBottom);
-            rootView.addView(viewFinder, layoutParams);
-            return viewFinder;
+            LayoutParams params = new LayoutParams(size, size, Gravity.CENTER);
+            params.setMargins(0, fragment.paddingTop, 0, fragment.paddingBottom);
+            rootView.addView(viewFinder, params);
         }
-        return null;
+        return viewFinder;
     }
 
 
     @SuppressLint("InflateParams")
-    public static void addPolygonToolsMenu(MarloFragment fragment) {
-        View tools = fragment.getActivity().getLayoutInflater().inflate(R.layout.multi_polygon_tool, null);
+    public static View addPolygonToolsMenu(MarloFragment fragment) {
+        View tools = fragment.getActivity().getLayoutInflater().inflate(R.layout.marlo_tools, null);
         tools.findViewById(R.id.marlo_undo).setOnClickListener(fragment);
         tools.findViewById(R.id.marlo_mark).setOnClickListener(fragment);
         tools.findViewById(R.id.marlo_hole).setOnClickListener(fragment);
@@ -74,6 +74,7 @@ final class ViewUtils {
             params.bottomMargin = fragment.paddingBottom;
             rootView.addView(tools, params);
         }
+        return tools;
     }
 
     public static void setPolygonToolsMenuVisibility(MarloFragment fragment, int visibility) {
@@ -85,10 +86,8 @@ final class ViewUtils {
     }
 
     public static View addMyLocationButton(MarloFragment fragment) {
-        FloatingActionButton fab = new FloatingActionButton(fragment.getContext());
-        fab.setSize(FloatingActionButton.SIZE_MINI);
-        fab.setId(R.id.marlo_gps);
-        fab.setImageResource(R.drawable.ic_gps_fixed_white_24dp);
+        View layout = fragment.getActivity().getLayoutInflater().inflate(R.layout.marlo_my_location, null);
+        FloatingActionButton fab = layout.findViewById(R.id.marlo_gps);
         fab.setOnClickListener(fragment);
         fab.setVisibility(View.GONE);
 
@@ -98,7 +97,7 @@ final class ViewUtils {
             int horizonMargin = fragment.getResources().getDimensionPixelOffset(R.dimen.marlo_screen_horizontal_margin);
             int verticalMargin = fragment.getResources().getDimensionPixelOffset(R.dimen.marlo_screen_vertical_margin);
             params.setMargins(0, verticalMargin + fragment.paddingTop, horizonMargin, 0);
-            rootView.addView(fab, params);
+            rootView.addView(layout, params);
         }
         return fab;
     }
@@ -106,7 +105,7 @@ final class ViewUtils {
     public static CompoundButton addMapTypeButton(MarloFragment fragment) {
         ToggleButton toggleButton = new ToggleButton(fragment.getContext());
         toggleButton.setId(R.id.marlo_map_toggle);
-        toggleButton.setBackgroundResource(R.drawable.selector_toggle_button);
+        toggleButton.setBackgroundResource(R.drawable.marlo_maps_toggles_button);
         toggleButton.setTextOff("");
         toggleButton.setTextOn("");
         toggleButton.setChecked(true);
@@ -124,9 +123,8 @@ final class ViewUtils {
                     .getDimensionPixelOffset(R.dimen.marlo_over_google_margin);
             params.setMargins(horizonMargin, 0, 0, verticalMargin + fragment.paddingBottom);
             rootView.addView(toggleButton, params);
-            return toggleButton;
         }
-        return null;
+        return toggleButton;
     }
 
 }

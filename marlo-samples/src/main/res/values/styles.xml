@@ -15,7 +15,7 @@
   ~ limitations under the License.
   -->
 
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light">
@@ -23,6 +23,11 @@
         <item name="colorPrimary">#ff5f5d</item>
         <item name="colorPrimaryDark">#ff4545</item>
         <item name="colorAccent">#30c9ff</item>
+    </style>
+
+    <style name="marloFab.tools">
+        <item name="android:backgroundTint" tools:targetApi="lollipop">#000000</item>
+        <item name="backgroundTint">#000000</item>
     </style>
 
 </resources>

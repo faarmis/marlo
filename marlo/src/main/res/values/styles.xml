@@ -11,4 +11,6 @@
         <item name="elevation">@dimen/marlo_fab_elevation</item>
     </style>
 
+    <style name="marloFab.tools" />
+
 </resources>

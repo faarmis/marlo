@@ -24,28 +24,28 @@
 
     <android.support.design.widget.FloatingActionButton
         android:id="@id/marlo_boundary"
-        style="@style/marloFab"
+        style="@style/marloFab.tools"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_polygon_white_24dp" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@id/marlo_hole"
-        style="@style/marloFab"
+        style="@style/marloFab.tools"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_content_cut_white_24dp" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/marlo_undo"
-        style="@style/marloFab"
+        style="@style/marloFab.tools"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_undo_white_24dp" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@id/marlo_mark"
-        style="@style/marloFab"
+        style="@style/marloFab.tools"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_location_on_white_24dp"
