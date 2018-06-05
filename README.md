@@ -3,9 +3,19 @@
 [![Build Status](https://travis-ci.org/nectec-opensource/marlo.svg?branch=master)](https://travis-ci.org/nectec-opensource/marlo)
 [![Download](https://api.bintray.com/packages/nectec-wisru/maven/Marlo/images/download.svg)](https://bintray.com/nectec-wisru/maven/Marlo/_latestVersion)
 
-Create awesome android application with mark location feature on google's map
+Create awesome android application with mark location feature on google's map by lazy
 
 ![Marlo Screenshot][screenshot]
+
+## Feautre
+- `PolygonMarloFragment` for create Polygon geometry
+- `PointMarloFragment` for mark one to multi point geometry
+- Swicth between maps and satellite mode
+- Mark with sound effect (you can also mute it)
+- Support data flow with GeoJson or Marlo's model
+- Build-in drawing tools that can styles as you want also can padding top or Bottom
+- Handle Location Permission and Enable Location feature if not
+- `MarloFragment` is open for extension 
 
 ## Download
 
