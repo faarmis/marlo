@@ -38,13 +38,25 @@ public class PointMarloFragment extends MarloFragment {
 
     public void setMaxPoint(int maxPoint) {
         this.maxPoint = maxPoint;
+        Deque<Marker> markers = new ArrayDeque<>(maxPoint);
+        boolean full = false;
+        for (Marker marker : this.markers) {
+            if (!full) {
+                markers.push(marker);
+                if (markers.size() == maxPoint) {
+                    full = true;
+                }
+            } else {
+                marker.remove();
+            }
+        }
+        this.markers = markers;
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        markers = new ArrayDeque<>(maxPoint);
 
         ViewUtils.addPolygonToolsMenu(this);
         findViewBy(R.id.marlo_hole).setVisibility(View.GONE);
