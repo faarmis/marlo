@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
-import th.or.nectec.marlo.model.Coordinate;
+import th.or.nectec.marlo.model.MarloCoord;
 
 public class PointMarloFragment extends MarloFragment {
 
@@ -84,10 +84,10 @@ public class PointMarloFragment extends MarloFragment {
         return false;
     }
 
-    public List<Coordinate> getCoordinates() {
-        ArrayList<Coordinate> coordinates = new ArrayList<>();
+    public List<MarloCoord> getCoordinates() {
+        ArrayList<MarloCoord> coordinates = new ArrayList<>();
         for (Marker marker : markers) {
-            coordinates.add(Coordinate.fromMarker(marker));
+            coordinates.add(MarloCoord.fromMarker(marker));
         }
         return coordinates;
     }

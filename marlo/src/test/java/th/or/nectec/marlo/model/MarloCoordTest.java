@@ -28,7 +28,7 @@ import org.skyscreamer.jsonassert.JSONAssert;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
-public class CoordinateTest {
+public class MarloCoordTest {
 
     private static final double DELTA = 0.000001; //6 decimal, 10cm accuracy
     private static final double LAT = 14.078606;
@@ -36,12 +36,12 @@ public class CoordinateTest {
 
     @Rule
     public final ExpectedException exception = ExpectedException.none();
-    private final Coordinate location = new Coordinate(LAT, LONG);
+    private final MarloCoord location = new MarloCoord(LAT, LONG);
 
     @Test
     public void createByLatLng() throws Exception {
-        Coordinate coordinate = new Coordinate(LAT, LONG);
-        Coordinate coordinateFromLatLng = new Coordinate(new LatLng(LAT, LONG));
+        MarloCoord coordinate = new MarloCoord(LAT, LONG);
+        MarloCoord coordinateFromLatLng = new MarloCoord(new LatLng(LAT, LONG));
 
         assertEquals(coordinate, coordinateFromLatLng);
     }
@@ -58,43 +58,43 @@ public class CoordinateTest {
 
     @Test
     public void coordinateWithDifferentLatitudeMustNotEquals() {
-        Coordinate anotherLocation = new Coordinate(15.078606, LONG);
+        MarloCoord anotherLocation = new MarloCoord(15.078606, LONG);
 
         assertNotEquals(location, anotherLocation);
     }
 
     @Test
     public void coordinateWithDifferentLongitudeMustNotEquals() {
-        Coordinate anotherLocation = new Coordinate(LAT, 179.603120);
+        MarloCoord anotherLocation = new MarloCoord(LAT, 179.603120);
 
         assertNotEquals(location, anotherLocation);
     }
 
     @Test
     public void coordinateTheSameLatitudeLongitudeMustEquals() {
-        Coordinate sameLocation = new Coordinate(LAT, LONG);
+        MarloCoord sameLocation = new MarloCoord(LAT, LONG);
 
         assertEquals(location, sameLocation);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testOutOfRangeLatitude() throws Exception {
-        new Coordinate(-90.1, 0);
+        new MarloCoord(-90.1, 0);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testOutOfRangeLongitude() throws Exception {
-        new Coordinate(0, 180.1f);
+        new MarloCoord(0, 180.1f);
     }
 
     @Test
     public void toGeoJson() throws Exception {
-        JSONAssert.assertEquals("[ 100.60312, 14.078606 ]", new Coordinate(LAT, LONG).toGeoJson(), false);
+        JSONAssert.assertEquals("[ 100.60312, 14.078606 ]", new MarloCoord(LAT, LONG).toGeoJson(), false);
     }
 
     @Test
     public void fromGeoJson() throws Exception {
-        Assert.assertEquals(new Coordinate(LAT, LONG), Coordinate.fromGeoJson("[ 100.60312, 14.078606 ]"));
+        Assert.assertEquals(new MarloCoord(LAT, LONG), MarloCoord.fromGeoJson("[ 100.60312, 14.078606 ]"));
 
     }
 }

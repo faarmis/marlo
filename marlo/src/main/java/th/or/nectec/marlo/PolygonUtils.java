@@ -19,14 +19,14 @@ package th.or.nectec.marlo;
 
 import java.util.List;
 
-import th.or.nectec.marlo.model.Coordinate;
+import th.or.nectec.marlo.model.MarloCoord;
 import th.or.nectec.marlo.model.Polygon;
 
 final class PolygonUtils implements PointInHoleValidator {
 
     @Override
-    public boolean inBoundary(Polygon polygon, Coordinate coordinate) {
-        List<Coordinate> boundary = polygon.getBoundary();
+    public boolean inBoundary(Polygon polygon, MarloCoord coordinate) {
+        List<MarloCoord> boundary = polygon.getBoundary();
 
         int nvert = boundary.size();
         boolean isInBound = false;

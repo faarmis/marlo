@@ -34,7 +34,7 @@ import java.util.List;
 import java.util.Stack;
 
 import th.or.nectec.marlo.exception.HoleInvalidException;
-import th.or.nectec.marlo.model.Coordinate;
+import th.or.nectec.marlo.model.MarloCoord;
 import th.or.nectec.marlo.model.Polygon;
 import th.or.nectec.marlo.option.DefaultPolygonMarkerOptionFactory;
 import th.or.nectec.marlo.option.DefaultPolygonOptionFactory;
@@ -99,7 +99,7 @@ public class PolygonMarloFragment extends MarloFragment {
         LatLngBounds.Builder builder = new LatLngBounds.Builder();
         boolean added = false;
         for (Polygon focusPolygon : polygons) {
-            for (Coordinate coordinate : focusPolygon.getBoundary()) {
+            for (MarloCoord coordinate : focusPolygon.getBoundary()) {
                 builder.include(coordinate.toLatLng());
                 added = true;
             }
@@ -151,7 +151,7 @@ public class PolygonMarloFragment extends MarloFragment {
         return undo;
     }
 
-    protected void onPolygonChanged(List<Polygon> polygons, Coordinate focusCoordinate) {
+    protected void onPolygonChanged(List<Polygon> polygons, MarloCoord focusCoordinate) {
         //For subclass to implement
     }
 
@@ -222,7 +222,7 @@ public class PolygonMarloFragment extends MarloFragment {
     @Override
     public void mark(LatLng markPoint) {
         try {
-            controller.mark(new Coordinate(markPoint));
+            controller.mark(new MarloCoord(markPoint));
             if (!mute) SoundUtility.play(getContext(), R.raw.thumpsoundeffect);
             onPolygonChanged(controller.getPolygons(), controller.getFocusPolygon().getLastCoordinate());
         } catch (HoleInvalidException expected) {
@@ -245,7 +245,7 @@ public class PolygonMarloFragment extends MarloFragment {
         }
 
         @Override
-        public void markHole(Coordinate coordinate) {
+        public void markHole(MarloCoord coordinate) {
             updateIconToLastMarker(passiveMarkOptFactory);
 
             LatLng markPoint = coordinate.toLatLng();
@@ -282,7 +282,7 @@ public class PolygonMarloFragment extends MarloFragment {
         }
 
         @Override
-        public void markBoundary(Coordinate coordinate) {
+        public void markBoundary(MarloCoord coordinate) {
             updateIconToLastMarker(passiveMarkOptFactory);
 
             LatLng markPoint = coordinate.toLatLng();
@@ -348,8 +348,8 @@ public class PolygonMarloFragment extends MarloFragment {
     private class OnPolygonMarkerDragListener implements GoogleMap.OnMarkerDragListener {
 
         private final GoogleMap googleMap;
-        Coordinate oldCoord;
-        Coordinate previewFocusCoord;
+        MarloCoord oldCoord;
+        MarloCoord previewFocusCoord;
         Polygon previewPolygon;
         com.google.android.gms.maps.model.Polygon previewGooglePolygon;
 
@@ -360,9 +360,9 @@ public class PolygonMarloFragment extends MarloFragment {
         @Override
         public void onMarkerDragStart(Marker marker) {
             controller.backup();
-            oldCoord = (Coordinate) marker.getTag();
+            oldCoord = (MarloCoord) marker.getTag();
 
-            previewFocusCoord = new Coordinate(oldCoord);
+            previewFocusCoord = new MarloCoord(oldCoord);
             previewPolygon = new Polygon(controller.findPolygonByCoordinate(oldCoord));
             removeEmptyHole(previewPolygon);
             previewGooglePolygon = null;
@@ -382,7 +382,7 @@ public class PolygonMarloFragment extends MarloFragment {
 
             if (previewGooglePolygon != null)
                 previewGooglePolygon.remove();
-            Coordinate changedCoord = Coordinate.fromMarker(marker);
+            MarloCoord changedCoord = MarloCoord.fromMarker(marker);
             previewPolygon.replace(previewFocusCoord, changedCoord);
             previewFocusCoord = changedCoord;
 
@@ -408,7 +408,7 @@ public class PolygonMarloFragment extends MarloFragment {
             if (previewPolygon != null && previewGooglePolygon != null) //sometime null because of slow ui process
                 previewGooglePolygon.remove();
 
-            Coordinate newCoord = Coordinate.fromMarker(marker);
+            MarloCoord newCoord = MarloCoord.fromMarker(marker);
             try {
                 controller.replaceWith(oldCoord, newCoord);
                 onPolygonChanged(controller.getPolygons(), newCoord);

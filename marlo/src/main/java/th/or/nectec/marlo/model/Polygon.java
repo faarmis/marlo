@@ -46,7 +46,7 @@ public class Polygon implements Parcelable {
             return new Polygon[size];
         }
     };
-    private final List<Coordinate> boundary;
+    private final List<MarloCoord> boundary;
     private final List<Polygon> holes;
 
     public Polygon() {
@@ -55,24 +55,24 @@ public class Polygon implements Parcelable {
     }
 
     public Polygon(Polygon polygon) {
-        boundary = new ArrayList<>(Coordinate.clones(polygon.getBoundary()));
+        boundary = new ArrayList<>(MarloCoord.clones(polygon.getBoundary()));
         holes = new ArrayList<>();
         for (Polygon hole : polygon.getAllHoles()) {
             holes.add(new Polygon(hole));
         }
     }
 
-    public Polygon(List<Coordinate> boundary) {
+    public Polygon(List<MarloCoord> boundary) {
         this(boundary, new ArrayList<Polygon>());
     }
 
-    public Polygon(List<Coordinate> boundary, List<Polygon> holes) {
+    public Polygon(List<MarloCoord> boundary, List<Polygon> holes) {
         this.boundary = boundary;
         this.holes = holes;
     }
 
     private Polygon(Parcel in) {
-        this.boundary = in.createTypedArrayList(Coordinate.CREATOR);
+        this.boundary = in.createTypedArrayList(MarloCoord.CREATOR);
 
         int holesCount = in.readInt();
         this.holes = new ArrayList<>();
@@ -124,7 +124,7 @@ public class Polygon implements Parcelable {
                 Polygon polygon = boundaryIndex == 0 ? returnObj : new Polygon();
                 JSONArray boundary = coordinates.getJSONArray(boundaryIndex);
                 for (int coordIndex = 0; coordIndex < boundary.length(); coordIndex++) {
-                    polygon.add(Coordinate.fromGeoJson(boundary.get(coordIndex).toString()));
+                    polygon.add(MarloCoord.fromGeoJson(boundary.get(coordIndex).toString()));
                 }
                 if (boundaryIndex != 0) returnObj.addHoles(polygon);
             }
@@ -202,8 +202,8 @@ public class Polygon implements Parcelable {
      * @param coord
      * @return
      */
-    public boolean isCoordinateExist(Coordinate coord) {
-        for (Coordinate point : boundary) {
+    public boolean isCoordinateExist(MarloCoord coord) {
+        for (MarloCoord point : boundary) {
             if (point.equals(coord))
                 return true;
             for (Polygon hole : holes) {
@@ -214,7 +214,7 @@ public class Polygon implements Parcelable {
         return false;
     }
 
-    public List<Coordinate> getBoundary() {
+    public List<MarloCoord> getBoundary() {
         return boundary;
     }
 
@@ -242,9 +242,9 @@ public class Polygon implements Parcelable {
     }
 
     public PolygonOptions toPolygonOptions(PolygonOptions options) {
-        options.addAll(Coordinate.toLatLngs(boundary));
+        options.addAll(MarloCoord.toLatLngs(boundary));
         for (Polygon hold : holes) {
-            options.addHole(Coordinate.toLatLngs(hold.boundary));
+            options.addHole(MarloCoord.toLatLngs(hold.boundary));
         }
         return options;
     }
@@ -264,7 +264,7 @@ public class Polygon implements Parcelable {
     @NonNull
     private JSONArray boundaryToJson() {
         JSONArray jsonBoundary = new JSONArray();
-        for (Coordinate point : boundary) {
+        for (MarloCoord point : boundary) {
             jsonBoundary.put(point.toGeoJson());
         }
         if (!boundary.get(0).equals(boundary.get(boundary.size() - 1)))
@@ -272,14 +272,14 @@ public class Polygon implements Parcelable {
         return jsonBoundary;
     }
 
-    public void add(Coordinate coordinate) {
+    public void add(MarloCoord coordinate) {
         if (boundary.size() > 0 && boundary.get(0).equals(coordinate))
             return; //ignore close position
         boundary.add(coordinate);
     }
 
     public void add(double lat, double lng) {
-        add(new Coordinate(lat, lng));
+        add(new MarloCoord(lat, lng));
     }
 
     public void addHoles(Polygon coordinates) {
@@ -311,22 +311,22 @@ public class Polygon implements Parcelable {
     }
 
     @Nullable
-    public Coordinate getLastCoordinate() {
+    public MarloCoord getLastCoordinate() {
         if (haveHole()) {
-            Coordinate coord;
+            MarloCoord coord;
             if ((coord = getLastHole().getLastCoordinate()) != null)
                 return coord;
         }
 
         if (!isEmpty()) {
-            Coordinate peek = boundary.get(boundary.size() - 1);
-            return new Coordinate(peek.getLatitude(), peek.getLongitude());
+            MarloCoord peek = boundary.get(boundary.size() - 1);
+            return new MarloCoord(peek.getLatitude(), peek.getLongitude());
         } else {
             return null;
         }
     }
 
-    public Coordinate pop() {
+    public MarloCoord pop() {
         if (!boundary.isEmpty()) {
             return boundary.remove(boundary.size() - 1);
         }
@@ -366,7 +366,7 @@ public class Polygon implements Parcelable {
         }
     }
 
-    public boolean replace(Coordinate oldCoord, Coordinate newCoord) {
+    public boolean replace(MarloCoord oldCoord, MarloCoord newCoord) {
         int coordPosition = boundary.indexOf(oldCoord);
         if (coordPosition > -1) {
             boundary.set(coordPosition, newCoord);

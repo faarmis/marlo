@@ -38,7 +38,7 @@ import java.util.List;
 
 import th.or.nectec.marlo.MarloFragment;
 import th.or.nectec.marlo.PolygonMarloFragment;
-import th.or.nectec.marlo.model.Coordinate;
+import th.or.nectec.marlo.model.MarloCoord;
 import th.or.nectec.marlo.model.Polygon;
 import th.or.nectec.marlo.option.MarkerOptionFactory;
 import th.or.nectec.marlo.option.PolygonOptionFactory;
@@ -150,7 +150,7 @@ public class PolygonActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPolygonChanged(List<Polygon> polygons, Coordinate focusCoord) {
+        protected void onPolygonChanged(List<Polygon> polygons, MarloCoord focusCoord) {
             int count = 0;
             for (Polygon poly : polygons) {
                 count += poly.getBoundary().size();

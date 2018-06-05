@@ -30,9 +30,9 @@ public class PolygonTest {
     @Test
     public void toJson() throws Exception {
         Polygon polygon = new Polygon();
-        polygon.add(new Coordinate(1f, 1f));
-        polygon.add(new Coordinate(1f, 2f));
-        polygon.add(new Coordinate(2f, 2f));
+        polygon.add(new MarloCoord(1f, 1f));
+        polygon.add(new MarloCoord(1f, 2f));
+        polygon.add(new MarloCoord(2f, 2f));
 
         String expect = "{ \"type\":\"Polygon\", \"coordinates\":[[[1,1],[2,1],[2,2],[1,1]]] }";
         JSONAssert.assertEquals(expect, polygon.toGeoJson().toString(), false);
@@ -41,15 +41,15 @@ public class PolygonTest {
     @Test
     public void toJsonWithHole() throws Exception {
         Polygon polygon = new Polygon();
-        polygon.add(new Coordinate(0f, 0f));
-        polygon.add(new Coordinate(3f, 0f));
-        polygon.add(new Coordinate(3f, 3f));
-        polygon.add(new Coordinate(0f, 3f));
+        polygon.add(new MarloCoord(0f, 0f));
+        polygon.add(new MarloCoord(3f, 0f));
+        polygon.add(new MarloCoord(3f, 3f));
+        polygon.add(new MarloCoord(0f, 3f));
 
         Polygon hole = new Polygon();
-        hole.add(new Coordinate(1f, 1f));
-        hole.add(new Coordinate(1f, 2f));
-        hole.add(new Coordinate(2f, 2f));
+        hole.add(new MarloCoord(1f, 1f));
+        hole.add(new MarloCoord(1f, 2f));
+        hole.add(new MarloCoord(2f, 2f));
 
         polygon.addHoles(hole);
         String expect = "{ \"type\":\"Polygon\", \"coordinates\":"
@@ -60,9 +60,9 @@ public class PolygonTest {
     @Test
     public void fromGeoJsonCoordinates() throws Exception {
         Polygon polygon = new Polygon();
-        polygon.add(new Coordinate(1f, 1f));
-        polygon.add(new Coordinate(1f, 2f));
-        polygon.add(new Coordinate(2f, 2f));
+        polygon.add(new MarloCoord(1f, 1f));
+        polygon.add(new MarloCoord(1f, 2f));
+        polygon.add(new MarloCoord(2f, 2f));
 
         String expect = "[[[1,1],[2,1],[2,2]]]";
         Assert.assertEquals(polygon, Polygon.fromGeoJson(expect));
@@ -71,9 +71,9 @@ public class PolygonTest {
     @Test
     public void fromGeoJsonObject() throws Exception {
         Polygon polygon = new Polygon();
-        polygon.add(new Coordinate(1f, 1f));
-        polygon.add(new Coordinate(1f, 2f));
-        polygon.add(new Coordinate(2f, 2f));
+        polygon.add(new MarloCoord(1f, 1f));
+        polygon.add(new MarloCoord(1f, 2f));
+        polygon.add(new MarloCoord(2f, 2f));
 
         String expect = "{ \"type\":\"Polygon\", \"coordinates\":[[[1,1],[2,1],[2,2]]] }";
         Assert.assertEquals(polygon, Polygon.fromGeoJson(expect));
@@ -82,15 +82,15 @@ public class PolygonTest {
     @Test
     public void fromGeoJsonCoordinatesWithHole() throws Exception {
         Polygon polygon = new Polygon();
-        polygon.add(new Coordinate(0f, 0f));
-        polygon.add(new Coordinate(3f, 0f));
-        polygon.add(new Coordinate(3f, 3f));
-        polygon.add(new Coordinate(0f, 3f));
+        polygon.add(new MarloCoord(0f, 0f));
+        polygon.add(new MarloCoord(3f, 0f));
+        polygon.add(new MarloCoord(3f, 3f));
+        polygon.add(new MarloCoord(0f, 3f));
 
         Polygon hole = new Polygon();
-        hole.add(new Coordinate(1f, 1f));
-        hole.add(new Coordinate(1f, 2f));
-        hole.add(new Coordinate(2f, 2f));
+        hole.add(new MarloCoord(1f, 1f));
+        hole.add(new MarloCoord(1f, 2f));
+        hole.add(new MarloCoord(2f, 2f));
         polygon.addHoles(hole);
 
         Assert.assertEquals(polygon,
@@ -100,15 +100,15 @@ public class PolygonTest {
     @Test
     public void fromGeoJsonObjectWithHole() throws Exception {
         Polygon polygon = new Polygon();
-        polygon.add(new Coordinate(0f, 0f));
-        polygon.add(new Coordinate(3f, 0f));
-        polygon.add(new Coordinate(3f, 3f));
-        polygon.add(new Coordinate(0f, 3f));
+        polygon.add(new MarloCoord(0f, 0f));
+        polygon.add(new MarloCoord(3f, 0f));
+        polygon.add(new MarloCoord(3f, 3f));
+        polygon.add(new MarloCoord(0f, 3f));
 
         Polygon hole = new Polygon();
-        hole.add(new Coordinate(1f, 1f));
-        hole.add(new Coordinate(1f, 2f));
-        hole.add(new Coordinate(2f, 2f));
+        hole.add(new MarloCoord(1f, 1f));
+        hole.add(new MarloCoord(1f, 2f));
+        hole.add(new MarloCoord(2f, 2f));
         polygon.addHoles(hole);
 
         Assert.assertEquals(polygon,
@@ -119,15 +119,15 @@ public class PolygonTest {
     @Test
     public void fromMultiPolyGeoJson() throws Exception {
         Polygon polygon = new Polygon();
-        polygon.add(new Coordinate(0f, 0f));
-        polygon.add(new Coordinate(3f, 0f));
-        polygon.add(new Coordinate(3f, 3f));
-        polygon.add(new Coordinate(0f, 3f));
+        polygon.add(new MarloCoord(0f, 0f));
+        polygon.add(new MarloCoord(3f, 0f));
+        polygon.add(new MarloCoord(3f, 3f));
+        polygon.add(new MarloCoord(0f, 3f));
 
         Polygon hole = new Polygon();
-        hole.add(new Coordinate(1f, 1f));
-        hole.add(new Coordinate(1f, 2f));
-        hole.add(new Coordinate(2f, 2f));
+        hole.add(new MarloCoord(1f, 1f));
+        hole.add(new MarloCoord(1f, 2f));
+        hole.add(new MarloCoord(2f, 2f));
         polygon.addHoles(hole);
 
 

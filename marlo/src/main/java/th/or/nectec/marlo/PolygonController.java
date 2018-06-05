@@ -26,7 +26,7 @@ import java.util.Deque;
 import java.util.List;
 
 import th.or.nectec.marlo.exception.HoleInvalidException;
-import th.or.nectec.marlo.model.Coordinate;
+import th.or.nectec.marlo.model.MarloCoord;
 import th.or.nectec.marlo.model.Polygon;
 
 public class PolygonController {
@@ -49,11 +49,11 @@ public class PolygonController {
         this.presenter = presenter;
     }
 
-    public void mark(Coordinate coordinate) {
+    public void mark(MarloCoord coordinate) {
         mark(coordinate, true);
     }
 
-    private void mark(Coordinate coordinate, boolean external) {
+    private void mark(MarloCoord coordinate, boolean external) {
         Polygon focusPolygon = getFocusPolygon();
         if (coordinate.equals(focusPolygon.getLastCoordinate()))
             return;
@@ -84,7 +84,7 @@ public class PolygonController {
         presenter.prepareForNewPolygon();
     }
 
-    private void validateHolePoint(Coordinate coordinate) {
+    private void validateHolePoint(MarloCoord coordinate) {
         if (!pointInBoundaryValidator.inBoundary(getFocusPolygon(), coordinate))
             throw new HoleInvalidException();
     }
@@ -150,8 +150,8 @@ public class PolygonController {
 
     public void restore(@NonNull Polygon polygon) {
         removeLastPointIfSameAsStart(polygon);
-        for (Coordinate point : polygon.getBoundary()) {
-            mark(new Coordinate(point), false);
+        for (MarloCoord point : polygon.getBoundary()) {
+            mark(new MarloCoord(point), false);
         }
         for (Polygon hole : polygon.getAllHoles()) {
             removeLastPointIfSameAsStart(hole);
@@ -163,9 +163,9 @@ public class PolygonController {
     private void removeLastPointIfSameAsStart(Polygon polygon) {
         if (polygon.isEmpty())
             return;
-        List<Coordinate> boundary = polygon.getBoundary();
-        Coordinate startPoint = boundary.get(0);
-        Coordinate lastPoint = boundary.get(boundary.size() - 1);
+        List<MarloCoord> boundary = polygon.getBoundary();
+        MarloCoord startPoint = boundary.get(0);
+        MarloCoord lastPoint = boundary.get(boundary.size() - 1);
         if (boundary.size() > 2 && startPoint.equals(lastPoint)) {
             boundary.remove(boundary.size() - 1);
         }
@@ -186,7 +186,7 @@ public class PolygonController {
         return clone;
     }
 
-    public void replaceWith(Coordinate oldCoord, Coordinate newCoord) {
+    public void replaceWith(MarloCoord oldCoord, MarloCoord newCoord) {
         boolean replaced = false;
         List<Polygon> newPoly = clone(polygons);
         for (Polygon poly : newPoly) {
@@ -219,7 +219,7 @@ public class PolygonController {
     }
 
     @Nullable
-    Polygon findPolygonByCoordinate(Coordinate coord) {
+    Polygon findPolygonByCoordinate(MarloCoord coord) {
         for (Polygon poly : polygons) {
             if (poly.isCoordinateExist(coord))
                 return poly;
@@ -229,9 +229,9 @@ public class PolygonController {
 
     interface Presenter {
 
-        void markHole(Coordinate coordinate);
+        void markHole(MarloCoord coordinate);
 
-        void markBoundary(Coordinate coordinate);
+        void markBoundary(MarloCoord coordinate);
 
         void prepareForNewPolygon();
 

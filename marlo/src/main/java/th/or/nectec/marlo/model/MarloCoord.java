@@ -29,66 +29,66 @@ import org.json.JSONException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Coordinate implements Parcelable {
-    public static final Parcelable.Creator<Coordinate> CREATOR =
-            new Parcelable.Creator<Coordinate>() {
+public class MarloCoord implements Parcelable {
+    public static final Parcelable.Creator<MarloCoord> CREATOR =
+            new Parcelable.Creator<MarloCoord>() {
                 @Override
-                public Coordinate createFromParcel(Parcel source) {
-                    return new Coordinate(source);
+                public MarloCoord createFromParcel(Parcel source) {
+                    return new MarloCoord(source);
                 }
 
                 @Override
-                public Coordinate[] newArray(int size) {
-                    return new Coordinate[size];
+                public MarloCoord[] newArray(int size) {
+                    return new MarloCoord[size];
                 }
             };
     private double latitude;
     private double longitude;
 
-    public Coordinate(LatLng latLng) {
+    public MarloCoord(LatLng latLng) {
         this(latLng.latitude, latLng.longitude);
     }
 
-    public Coordinate(double latitude, double longitude) {
+    public MarloCoord(double latitude, double longitude) {
         setLatitude(latitude);
         setLongitude(longitude);
     }
 
-    public Coordinate(Coordinate coordinate) {
+    public MarloCoord(MarloCoord coordinate) {
         this(coordinate.getLatitude(), coordinate.getLongitude());
     }
 
     //Parcelable
-    private Coordinate(Parcel in) {
+    private MarloCoord(Parcel in) {
         this(in.readDouble(), in.readDouble());
     }
 
-    public static Coordinate fromMarker(Marker marker) {
+    public static MarloCoord fromMarker(Marker marker) {
         LatLng position = marker.getPosition();
-        return new Coordinate(position.latitude, position.longitude);
+        return new MarloCoord(position.latitude, position.longitude);
     }
 
-    public static Coordinate fromGeoJson(String coordinate) {
+    public static MarloCoord fromGeoJson(String coordinate) {
         try {
             JSONArray array = new JSONArray(coordinate);
-            return new Coordinate(array.getDouble(1), array.getDouble(0));
+            return new MarloCoord(array.getDouble(1), array.getDouble(0));
         } catch (JSONException json) {
             throw new RuntimeException(json);
         }
     }
 
-    public static List<LatLng> toLatLngs(Iterable<Coordinate> coordinates) {
+    public static List<LatLng> toLatLngs(Iterable<MarloCoord> coordinates) {
         List<LatLng> latLngList = new ArrayList<>();
-        for (Coordinate coord : coordinates) {
+        for (MarloCoord coord : coordinates) {
             latLngList.add(coord.toLatLng());
         }
         return latLngList;
     }
 
-    public static List<Coordinate> clones(List<Coordinate> blueprint) {
-        List<Coordinate> coords = new ArrayList<>();
-        for (Coordinate coordinate : blueprint) {
-            coords.add(new Coordinate(coordinate));
+    public static List<MarloCoord> clones(List<MarloCoord> blueprint) {
+        List<MarloCoord> coords = new ArrayList<>();
+        for (MarloCoord coordinate : blueprint) {
+            coords.add(new MarloCoord(coordinate));
         }
         return coords;
     }
@@ -132,7 +132,7 @@ public class Coordinate implements Parcelable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Coordinate location = (Coordinate) o;
+        MarloCoord location = (MarloCoord) o;
         return Double.compare(location.latitude, latitude) == 0
                 && Double.compare(location.longitude, longitude) == 0;
     }

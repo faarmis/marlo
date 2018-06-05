@@ -20,7 +20,7 @@ package th.or.nectec.marlo;
 import org.junit.Before;
 import org.junit.Test;
 
-import th.or.nectec.marlo.model.Coordinate;
+import th.or.nectec.marlo.model.MarloCoord;
 import th.or.nectec.marlo.model.Polygon;
 
 import static org.junit.Assert.assertEquals;
@@ -34,11 +34,11 @@ public class PolygonControllerRestoreTest {
     public void setUp() throws Exception {
         controller.setPresenter(new PolygonController.Presenter() {
             @Override
-            public void markHole(Coordinate coordinate) {
+            public void markHole(MarloCoord coordinate) {
             }
 
             @Override
-            public void markBoundary(Coordinate coordinate) {
+            public void markBoundary(MarloCoord coordinate) {
             }
 
             @Override
@@ -62,10 +62,10 @@ public class PolygonControllerRestoreTest {
     @Test
     public void testRestorePolygon() throws Exception {
         Polygon polygon = new Polygon();
-        polygon.add(new Coordinate(0f, 0f));
-        polygon.add(new Coordinate(3f, 0f));
-        polygon.add(new Coordinate(3f, 3f));
-        polygon.add(new Coordinate(0f, 3f));
+        polygon.add(new MarloCoord(0f, 0f));
+        polygon.add(new MarloCoord(3f, 0f));
+        polygon.add(new MarloCoord(3f, 3f));
+        polygon.add(new MarloCoord(0f, 3f));
 
         controller.restore(polygon);
 
@@ -75,16 +75,16 @@ public class PolygonControllerRestoreTest {
     @Test
     public void testRestorePolygonWithHole() throws Exception {
         Polygon polygon = new Polygon();
-        polygon.add(new Coordinate(0f, 0f));
-        polygon.add(new Coordinate(3f, 0f));
-        polygon.add(new Coordinate(3f, 3f));
-        polygon.add(new Coordinate(0f, 3f));
+        polygon.add(new MarloCoord(0f, 0f));
+        polygon.add(new MarloCoord(3f, 0f));
+        polygon.add(new MarloCoord(3f, 3f));
+        polygon.add(new MarloCoord(0f, 3f));
 
         Polygon hole = new Polygon();
-        hole.add(new Coordinate(2f, 2f));
-        hole.add(new Coordinate(2f, 3f));
-        hole.add(new Coordinate(1f, 2f));
-        hole.add(new Coordinate(1f, 1f));
+        hole.add(new MarloCoord(2f, 2f));
+        hole.add(new MarloCoord(2f, 3f));
+        hole.add(new MarloCoord(1f, 2f));
+        hole.add(new MarloCoord(1f, 1f));
         polygon.addHoles(hole);
 
         controller.restore(polygon);
@@ -96,13 +96,13 @@ public class PolygonControllerRestoreTest {
     @Test
     public void polygonInControllerNotSameInstanceWithRestorePolygon() throws Exception {
         Polygon polygon = new Polygon();
-        polygon.add(new Coordinate(0f, 0f));
-        polygon.add(new Coordinate(3f, 0f));
-        polygon.add(new Coordinate(3f, 3f));
-        polygon.add(new Coordinate(0f, 3f));
+        polygon.add(new MarloCoord(0f, 0f));
+        polygon.add(new MarloCoord(3f, 0f));
+        polygon.add(new MarloCoord(3f, 3f));
+        polygon.add(new MarloCoord(0f, 3f));
 
         controller.restore(polygon);
-        polygon.add(new Coordinate(0f, 1.5f));
+        polygon.add(new MarloCoord(0f, 1.5f));
 
         assertTrue(polygon != controller.getFocusPolygon());
         assertNotEquals(polygon, controller.getFocusPolygon());
