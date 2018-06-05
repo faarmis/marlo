@@ -23,15 +23,16 @@ import android.view.View;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.List;
-import java.util.Stack;
 
 import th.or.nectec.marlo.model.MarloCoord;
 
 public class PointMarloFragment extends MarloFragment {
 
-    private final Stack<Marker> markers = new Stack<>();
+    private Deque<Marker> markers = new ArrayDeque<>();
 
     private int maxPoint = 1;
 
@@ -42,7 +43,9 @@ public class PointMarloFragment extends MarloFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        markers.setSize(maxPoint);
+
+        markers = new ArrayDeque<>(maxPoint);
+
         ViewUtils.addPolygonToolsMenu(this);
         findViewBy(R.id.marlo_hole).setVisibility(View.GONE);
         findViewBy(R.id.marlo_boundary).setVisibility(View.GONE);
@@ -60,6 +63,7 @@ public class PointMarloFragment extends MarloFragment {
     @Override
     public void mark(LatLng markPoint) {
         if (!mute) SoundUtility.play(getContext(), R.raw.thumpsoundeffect);
+        if (markers.size() == maxPoint) markers.removeLast().remove();
         Marker marker = googleMap.addMarker(markOptFactory.build(this, markPoint));
         markers.push(marker);
     }
@@ -77,7 +81,7 @@ public class PointMarloFragment extends MarloFragment {
     }
 
     public boolean undo() {
-        if (!markers.empty()) {
+        if (!markers.isEmpty()) {
             markers.pop().remove();
             return true;
         }

@@ -206,6 +206,9 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
 
     public abstract void showToolsMenu();
 
+    public View findViewById(@IdRes int id) {
+        return getView().findViewById(id);
+    }
 
     /**
      * execute undo process of fragment

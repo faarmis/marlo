@@ -32,6 +32,6 @@ public class MultiPointActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         PointMarloFragment marlo = (PointMarloFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-        marlo.setMaxPoint(30);
+        marlo.setMaxPoint(5);
     }
 }
