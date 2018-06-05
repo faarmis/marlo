@@ -57,7 +57,6 @@ public class PointMarloFragment extends MarloFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-
         ViewUtils.addPolygonToolsMenu(this);
         findViewBy(R.id.marlo_hole).setVisibility(View.GONE);
         findViewBy(R.id.marlo_boundary).setVisibility(View.GONE);
