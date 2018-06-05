@@ -33,59 +33,59 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class Polygon implements Parcelable {
+public class MarloPolygon implements Parcelable {
 
-    public static final Parcelable.Creator<Polygon> CREATOR = new Parcelable.Creator<Polygon>() {
+    public static final Parcelable.Creator<MarloPolygon> CREATOR = new Parcelable.Creator<MarloPolygon>() {
         @Override
-        public Polygon createFromParcel(Parcel source) {
-            return new Polygon(source);
+        public MarloPolygon createFromParcel(Parcel source) {
+            return new MarloPolygon(source);
         }
 
         @Override
-        public Polygon[] newArray(int size) {
-            return new Polygon[size];
+        public MarloPolygon[] newArray(int size) {
+            return new MarloPolygon[size];
         }
     };
     private final List<MarloCoord> boundary;
-    private final List<Polygon> holes;
+    private final List<MarloPolygon> holes;
 
-    public Polygon() {
+    public MarloPolygon() {
         boundary = new ArrayList<>();
         holes = new ArrayList<>();
     }
 
-    public Polygon(Polygon polygon) {
+    public MarloPolygon(MarloPolygon polygon) {
         boundary = new ArrayList<>(MarloCoord.clones(polygon.getBoundary()));
         holes = new ArrayList<>();
-        for (Polygon hole : polygon.getAllHoles()) {
-            holes.add(new Polygon(hole));
+        for (MarloPolygon hole : polygon.getAllHoles()) {
+            holes.add(new MarloPolygon(hole));
         }
     }
 
-    public Polygon(List<MarloCoord> boundary) {
-        this(boundary, new ArrayList<Polygon>());
+    public MarloPolygon(List<MarloCoord> boundary) {
+        this(boundary, new ArrayList<MarloPolygon>());
     }
 
-    public Polygon(List<MarloCoord> boundary, List<Polygon> holes) {
+    public MarloPolygon(List<MarloCoord> boundary, List<MarloPolygon> holes) {
         this.boundary = boundary;
         this.holes = holes;
     }
 
-    private Polygon(Parcel in) {
+    private MarloPolygon(Parcel in) {
         this.boundary = in.createTypedArrayList(MarloCoord.CREATOR);
 
         int holesCount = in.readInt();
         this.holes = new ArrayList<>();
         for (int hole = 0; hole < holesCount; hole++) {
-            this.holes.add((Polygon) in.readValue(Polygon.class.getClassLoader()));
+            this.holes.add((MarloPolygon) in.readValue(MarloPolygon.class.getClassLoader()));
         }
     }
 
     /**
-     * @param geojson String of GeoJson as Polygon Geometry object or coordinate
+     * @param geojson String of GeoJson as MarloPolygon Geometry object or coordinate
      * @return Object create from GeoJson
      */
-    public static Polygon fromGeoJson(@NonNull String geojson) {
+    public static MarloPolygon fromGeoJson(@NonNull String geojson) {
         try {
             JSONTokener tokener = new JSONTokener(geojson);
             Object json = tokener.nextValue();
@@ -105,7 +105,7 @@ public class Polygon implements Parcelable {
      * @param polygon JsonObject as Geometry format of GeoJson spec.
      * @return Object create from GeoJson
      */
-    public static Polygon fromGeoJson(@NonNull JSONObject polygon) {
+    public static MarloPolygon fromGeoJson(@NonNull JSONObject polygon) {
         try {
             return fromGeoJson(polygon.getJSONArray("coordinates"));
         } catch (JSONException error) {
@@ -117,11 +117,11 @@ public class Polygon implements Parcelable {
      * @param coordinates JsonArray of coordinates field in GeoJson's polygon geometry
      * @return object from GeoJson
      */
-    public static Polygon fromGeoJson(@NonNull JSONArray coordinates) {
+    public static MarloPolygon fromGeoJson(@NonNull JSONArray coordinates) {
         try {
-            Polygon returnObj = new Polygon();
+            MarloPolygon returnObj = new MarloPolygon();
             for (int boundaryIndex = 0; boundaryIndex < coordinates.length(); boundaryIndex++) {
-                Polygon polygon = boundaryIndex == 0 ? returnObj : new Polygon();
+                MarloPolygon polygon = boundaryIndex == 0 ? returnObj : new MarloPolygon();
                 JSONArray boundary = coordinates.getJSONArray(boundaryIndex);
                 for (int coordIndex = 0; coordIndex < boundary.length(); coordIndex++) {
                     polygon.add(MarloCoord.fromGeoJson(boundary.get(coordIndex).toString()));
@@ -138,7 +138,7 @@ public class Polygon implements Parcelable {
      * @param geojson String of GeoJson as MultiPolygon Geometry object or coordinates
      * @return object from GeoJson
      */
-    public static List<Polygon> fromGeoJsonMultiPolygon(@NonNull String geojson) {
+    public static List<MarloPolygon> fromGeoJsonMultiPolygon(@NonNull String geojson) {
         try {
             JSONTokener tokener = new JSONTokener(geojson);
             Object json = tokener.nextValue();
@@ -158,7 +158,7 @@ public class Polygon implements Parcelable {
      * @param geometry String of GeoJson as MultiPolygon Geometry object or coordinates
      * @return object from GeoJson
      */
-    public static List<Polygon> fromGeoJsonMultiPolygon(@NonNull JSONObject geometry) {
+    public static List<MarloPolygon> fromGeoJsonMultiPolygon(@NonNull JSONObject geometry) {
         try {
             return fromGeoJsonMultiPolygon(geometry.getJSONArray("coordinates"));
         } catch (JSONException error) {
@@ -170,11 +170,11 @@ public class Polygon implements Parcelable {
      * @param coordinates GeoJson array of MultiPolygon
      * @return object from coordinates
      */
-    public static List<Polygon> fromGeoJsonMultiPolygon(@NonNull JSONArray coordinates) {
+    public static List<MarloPolygon> fromGeoJsonMultiPolygon(@NonNull JSONArray coordinates) {
         try {
-            List<Polygon> polygons = new ArrayList<>();
+            List<MarloPolygon> polygons = new ArrayList<>();
             for (int polygonIndex = 0; polygonIndex < coordinates.length(); polygonIndex++) {
-                polygons.add(Polygon.fromGeoJson(coordinates.getJSONArray(polygonIndex)));
+                polygons.add(MarloPolygon.fromGeoJson(coordinates.getJSONArray(polygonIndex)));
             }
             return polygons;
         } catch (JSONException error) {
@@ -183,12 +183,12 @@ public class Polygon implements Parcelable {
     }
 
     @NonNull
-    public static JSONObject toGeoJson(List<Polygon> multiPolygon) {
+    public static JSONObject toGeoJson(List<MarloPolygon> multiPolygon) {
         try {
             JSONObject geoJson = new JSONObject();
             geoJson.put("type", "MultiPolygon");
             JSONArray coordinate = new JSONArray();
-            for (Polygon polygon : multiPolygon) {
+            for (MarloPolygon polygon : multiPolygon) {
                 coordinate.put(polygon.toGeoJsonCoordinates());
             }
             geoJson.put("coordinates", coordinate);
@@ -206,7 +206,7 @@ public class Polygon implements Parcelable {
         for (MarloCoord point : boundary) {
             if (point.equals(coord))
                 return true;
-            for (Polygon hole : holes) {
+            for (MarloPolygon hole : holes) {
                 if (hole.isCoordinateExist(coord))
                     return true;
             }
@@ -218,7 +218,7 @@ public class Polygon implements Parcelable {
         return boundary;
     }
 
-    public List<Polygon> getAllHoles() {
+    public List<MarloPolygon> getAllHoles() {
         return new ArrayList<>(holes);
     }
 
@@ -228,7 +228,7 @@ public class Polygon implements Parcelable {
     public JSONObject toGeoJson() {
         try {
             JSONObject geoJson = new JSONObject();
-            geoJson.put("type", "Polygon");
+            geoJson.put("type", "MarloPolygon");
             JSONArray coordinate = toGeoJsonCoordinates();
             geoJson.put("coordinates", coordinate);
             return geoJson;
@@ -243,7 +243,7 @@ public class Polygon implements Parcelable {
 
     public PolygonOptions toPolygonOptions(PolygonOptions options) {
         options.addAll(MarloCoord.toLatLngs(boundary));
-        for (Polygon hold : holes) {
+        for (MarloPolygon hold : holes) {
             options.addHole(MarloCoord.toLatLngs(hold.boundary));
         }
         return options;
@@ -253,7 +253,7 @@ public class Polygon implements Parcelable {
     private JSONArray toGeoJsonCoordinates() {
         JSONArray coordinate = new JSONArray();
         coordinate.put(boundaryToJson());
-        for (Polygon hole : holes) {
+        for (MarloPolygon hole : holes) {
             if (hole.isEmpty() || !hole.isValid())
                 continue;
             coordinate.put(hole.boundaryToJson());
@@ -282,11 +282,11 @@ public class Polygon implements Parcelable {
         add(new MarloCoord(lat, lng));
     }
 
-    public void addHoles(Polygon coordinates) {
+    public void addHoles(MarloPolygon coordinates) {
         holes.add(coordinates);
     }
 
-    public Polygon getHole(int holeIndex) {
+    public MarloPolygon getHole(int holeIndex) {
         return holes.get(holeIndex);
     }
 
@@ -302,7 +302,7 @@ public class Polygon implements Parcelable {
         return holes.size();
     }
 
-    public Polygon getLastHole() {
+    public MarloPolygon getLastHole() {
         return holes.get(holes.size() - 1);
     }
 
@@ -333,7 +333,7 @@ public class Polygon implements Parcelable {
         return null;
     }
 
-    public void removeHole(Polygon hole) {
+    public void removeHole(MarloPolygon hole) {
         holes.remove(hole);
     }
 
@@ -341,7 +341,7 @@ public class Polygon implements Parcelable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Polygon polygon = (Polygon) o;
+        MarloPolygon polygon = (MarloPolygon) o;
         return Objects.equals(boundary, polygon.boundary)
                 && Objects.equals(holes, polygon.holes);
     }
@@ -361,7 +361,7 @@ public class Polygon implements Parcelable {
         dest.writeTypedList(this.boundary);
 
         dest.writeInt(this.holes.size());
-        for (Polygon hole : this.holes) {
+        for (MarloPolygon hole : this.holes) {
             dest.writeValue(hole);
         }
     }
@@ -372,7 +372,7 @@ public class Polygon implements Parcelable {
             boundary.set(coordPosition, newCoord);
             return true;
         }
-        for (Polygon hole : holes) {
+        for (MarloPolygon hole : holes) {
             if (hole.replace(oldCoord, newCoord))
                 return true;
         }

@@ -35,7 +35,7 @@ import java.util.Stack;
 
 import th.or.nectec.marlo.exception.HoleInvalidException;
 import th.or.nectec.marlo.model.MarloCoord;
-import th.or.nectec.marlo.model.Polygon;
+import th.or.nectec.marlo.model.MarloPolygon;
 import th.or.nectec.marlo.option.DefaultPolygonMarkerOptionFactory;
 import th.or.nectec.marlo.option.DefaultPolygonOptionFactory;
 import th.or.nectec.marlo.option.MarkerOptionFactory;
@@ -47,8 +47,8 @@ public class PolygonMarloFragment extends MarloFragment {
     private PolygonOptionFactory polyOptFactory;
     private PolygonController controller = new PolygonController();
     private int padding = 100;
-    private Polygon tempRestoreData;
-    private List<Polygon> tmpRestoreDataList;
+    private MarloPolygon tempRestoreData;
+    private List<MarloPolygon> tmpRestoreDataList;
     private boolean shouldAnimateToRestorePolygon;
 
     public PolygonMarloFragment() {
@@ -94,11 +94,11 @@ public class PolygonMarloFragment extends MarloFragment {
     }
 
     public void animateToPolygons() {
-        List<Polygon> polygons = controller.getPolygons();
+        List<MarloPolygon> polygons = controller.getPolygons();
 
         LatLngBounds.Builder builder = new LatLngBounds.Builder();
         boolean added = false;
-        for (Polygon focusPolygon : polygons) {
+        for (MarloPolygon focusPolygon : polygons) {
             for (MarloCoord coordinate : focusPolygon.getBoundary()) {
                 builder.include(coordinate.toLatLng());
                 added = true;
@@ -151,7 +151,7 @@ public class PolygonMarloFragment extends MarloFragment {
         return undo;
     }
 
-    protected void onPolygonChanged(List<Polygon> polygons, MarloCoord focusCoordinate) {
+    protected void onPolygonChanged(List<MarloPolygon> polygons, MarloCoord focusCoordinate) {
         //For subclass to implement
     }
 
@@ -175,11 +175,11 @@ public class PolygonMarloFragment extends MarloFragment {
         //For subclass to implement
     }
 
-    protected void onPreviewPolygonUpdated(Polygon previewPolygon) {
+    protected void onPreviewPolygonUpdated(MarloPolygon previewPolygon) {
         //For subclass to implement
     }
 
-    public void setRestoreData(Polygon restoreData) {
+    public void setRestoreData(MarloPolygon restoreData) {
         if (googleMap != null) {
             controller.restore(restoreData);
             shouldAnimateToRestorePolygon = true;
@@ -190,7 +190,7 @@ public class PolygonMarloFragment extends MarloFragment {
         tempRestoreData = restoreData;
     }
 
-    public void setRestoreData(List<Polygon> restoreData) {
+    public void setRestoreData(List<MarloPolygon> restoreData) {
         if (googleMap != null) {
             controller.restore(restoreData);
             shouldAnimateToRestorePolygon = true;
@@ -201,7 +201,7 @@ public class PolygonMarloFragment extends MarloFragment {
         tmpRestoreDataList = restoreData;
     }
 
-    protected void onMarkInvalidHole(List<Polygon> polygons, LatLng markPoint) {
+    protected void onMarkInvalidHole(List<MarloPolygon> polygons, LatLng markPoint) {
         //For subclass to implement
     }
 
@@ -230,7 +230,7 @@ public class PolygonMarloFragment extends MarloFragment {
         }
     }
 
-    public List<Polygon> getPolygons() {
+    public List<MarloPolygon> getPolygons() {
         return controller.getPolygons();
     }
 
@@ -350,7 +350,7 @@ public class PolygonMarloFragment extends MarloFragment {
         private final GoogleMap googleMap;
         MarloCoord oldCoord;
         MarloCoord previewFocusCoord;
-        Polygon previewPolygon;
+        MarloPolygon previewPolygon;
         com.google.android.gms.maps.model.Polygon previewGooglePolygon;
 
         OnPolygonMarkerDragListener(GoogleMap googleMap) {
@@ -363,14 +363,14 @@ public class PolygonMarloFragment extends MarloFragment {
             oldCoord = (MarloCoord) marker.getTag();
 
             previewFocusCoord = new MarloCoord(oldCoord);
-            previewPolygon = new Polygon(controller.findPolygonByCoordinate(oldCoord));
+            previewPolygon = new MarloPolygon(controller.findPolygonByCoordinate(oldCoord));
             removeEmptyHole(previewPolygon);
             previewGooglePolygon = null;
         }
 
-        private void removeEmptyHole(Polygon polygon) {
-            List<Polygon> holes = polygon.getAllHoles();
-            for (Polygon hole : holes) {
+        private void removeEmptyHole(MarloPolygon polygon) {
+            List<MarloPolygon> holes = polygon.getAllHoles();
+            for (MarloPolygon hole : holes) {
                 if (hole.isEmpty()) polygon.removeHole(hole);
             }
         }

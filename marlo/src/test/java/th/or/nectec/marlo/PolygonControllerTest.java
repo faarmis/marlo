@@ -26,7 +26,7 @@ import java.util.List;
 
 import th.or.nectec.marlo.exception.HoleInvalidException;
 import th.or.nectec.marlo.model.MarloCoord;
-import th.or.nectec.marlo.model.Polygon;
+import th.or.nectec.marlo.model.MarloPolygon;
 
 import static org.junit.Assert.assertEquals;
 
@@ -311,11 +311,11 @@ public class PolygonControllerTest {
         controller.mark(new MarloCoord(1f, 2f));
         controller.mark(new MarloCoord(2f, 2f));
 
-        List<Polygon> actual = controller.getPolygons();
+        List<MarloPolygon> actual = controller.getPolygons();
         assertEquals(2, actual.size());
         JSONAssert.assertEquals("{ \"type\":\"MultiPolygon\", \"coordinates\":"
                         + "[ [[[0,0],[0,3],[3,3],[3,0],[0,0]]],[[[1,1],[2,1],[2,2],[1,1]]] ] }",
-                Polygon.toGeoJson(actual), true);
+                MarloPolygon.toGeoJson(actual), true);
     }
 
     @Test(expected = IllegalStateException.class)

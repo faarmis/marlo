@@ -39,7 +39,7 @@ import java.util.List;
 import th.or.nectec.marlo.MarloFragment;
 import th.or.nectec.marlo.PolygonMarloFragment;
 import th.or.nectec.marlo.model.MarloCoord;
-import th.or.nectec.marlo.model.Polygon;
+import th.or.nectec.marlo.model.MarloPolygon;
 import th.or.nectec.marlo.option.MarkerOptionFactory;
 import th.or.nectec.marlo.option.PolygonOptionFactory;
 
@@ -111,7 +111,7 @@ public class PolygonActivity extends AppCompatActivity {
             }
         });
         marlo.setActivity(this);
-        marlo.setRestoreData(Polygon.fromGeoJson(RESTORE_DATA));
+        marlo.setRestoreData(MarloPolygon.fromGeoJson(RESTORE_DATA));
         marlo.useDefaultToolsMenu();
 
 
@@ -150,11 +150,11 @@ public class PolygonActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPolygonChanged(List<Polygon> polygons, MarloCoord focusCoord) {
+        protected void onPolygonChanged(List<MarloPolygon> polygons, MarloCoord focusCoord) {
             int count = 0;
-            for (Polygon poly : polygons) {
+            for (MarloPolygon poly : polygons) {
                 count += poly.getBoundary().size();
-                for (Polygon hole : poly.getAllHoles()) {
+                for (MarloPolygon hole : poly.getAllHoles()) {
                     count += hole.getBoundary().size();
                 }
             }
@@ -162,7 +162,7 @@ public class PolygonActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onMarkInvalidHole(List<Polygon> polygons, LatLng markPoint) {
+        protected void onMarkInvalidHole(List<MarloPolygon> polygons, LatLng markPoint) {
             Toast.makeText(getContext(), "InvalidHole", Toast.LENGTH_SHORT).show();
         }
 

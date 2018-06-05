@@ -24,107 +24,107 @@ import org.skyscreamer.jsonassert.JSONAssert;
 import java.util.Arrays;
 import java.util.List;
 
-public class PolygonTest {
+public class MarloPolygonTest {
 
 
     @Test
     public void toJson() throws Exception {
-        Polygon polygon = new Polygon();
+        MarloPolygon polygon = new MarloPolygon();
         polygon.add(new MarloCoord(1f, 1f));
         polygon.add(new MarloCoord(1f, 2f));
         polygon.add(new MarloCoord(2f, 2f));
 
-        String expect = "{ \"type\":\"Polygon\", \"coordinates\":[[[1,1],[2,1],[2,2],[1,1]]] }";
+        String expect = "{ \"type\":\"MarloPolygon\", \"coordinates\":[[[1,1],[2,1],[2,2],[1,1]]] }";
         JSONAssert.assertEquals(expect, polygon.toGeoJson().toString(), false);
     }
 
     @Test
     public void toJsonWithHole() throws Exception {
-        Polygon polygon = new Polygon();
+        MarloPolygon polygon = new MarloPolygon();
         polygon.add(new MarloCoord(0f, 0f));
         polygon.add(new MarloCoord(3f, 0f));
         polygon.add(new MarloCoord(3f, 3f));
         polygon.add(new MarloCoord(0f, 3f));
 
-        Polygon hole = new Polygon();
+        MarloPolygon hole = new MarloPolygon();
         hole.add(new MarloCoord(1f, 1f));
         hole.add(new MarloCoord(1f, 2f));
         hole.add(new MarloCoord(2f, 2f));
 
         polygon.addHoles(hole);
-        String expect = "{ \"type\":\"Polygon\", \"coordinates\":"
+        String expect = "{ \"type\":\"MarloPolygon\", \"coordinates\":"
                 + "[ [[0,0],[0,3],[3,3],[3,0],[0,0]],[[1,1],[2,1],[2,2],[1,1]] ] }";
         JSONAssert.assertEquals(expect, polygon.toGeoJson(), true);
     }
 
     @Test
     public void fromGeoJsonCoordinates() throws Exception {
-        Polygon polygon = new Polygon();
+        MarloPolygon polygon = new MarloPolygon();
         polygon.add(new MarloCoord(1f, 1f));
         polygon.add(new MarloCoord(1f, 2f));
         polygon.add(new MarloCoord(2f, 2f));
 
         String expect = "[[[1,1],[2,1],[2,2]]]";
-        Assert.assertEquals(polygon, Polygon.fromGeoJson(expect));
+        Assert.assertEquals(polygon, MarloPolygon.fromGeoJson(expect));
     }
 
     @Test
     public void fromGeoJsonObject() throws Exception {
-        Polygon polygon = new Polygon();
+        MarloPolygon polygon = new MarloPolygon();
         polygon.add(new MarloCoord(1f, 1f));
         polygon.add(new MarloCoord(1f, 2f));
         polygon.add(new MarloCoord(2f, 2f));
 
-        String expect = "{ \"type\":\"Polygon\", \"coordinates\":[[[1,1],[2,1],[2,2]]] }";
-        Assert.assertEquals(polygon, Polygon.fromGeoJson(expect));
+        String expect = "{ \"type\":\"MarloPolygon\", \"coordinates\":[[[1,1],[2,1],[2,2]]] }";
+        Assert.assertEquals(polygon, MarloPolygon.fromGeoJson(expect));
     }
 
     @Test
     public void fromGeoJsonCoordinatesWithHole() throws Exception {
-        Polygon polygon = new Polygon();
+        MarloPolygon polygon = new MarloPolygon();
         polygon.add(new MarloCoord(0f, 0f));
         polygon.add(new MarloCoord(3f, 0f));
         polygon.add(new MarloCoord(3f, 3f));
         polygon.add(new MarloCoord(0f, 3f));
 
-        Polygon hole = new Polygon();
+        MarloPolygon hole = new MarloPolygon();
         hole.add(new MarloCoord(1f, 1f));
         hole.add(new MarloCoord(1f, 2f));
         hole.add(new MarloCoord(2f, 2f));
         polygon.addHoles(hole);
 
         Assert.assertEquals(polygon,
-                Polygon.fromGeoJson("[[ [0,0],[0,3],[3,3],[3,0]],[[1,1],[2,1],[2,2] ]]"));
+                MarloPolygon.fromGeoJson("[[ [0,0],[0,3],[3,3],[3,0]],[[1,1],[2,1],[2,2] ]]"));
     }
 
     @Test
     public void fromGeoJsonObjectWithHole() throws Exception {
-        Polygon polygon = new Polygon();
+        MarloPolygon polygon = new MarloPolygon();
         polygon.add(new MarloCoord(0f, 0f));
         polygon.add(new MarloCoord(3f, 0f));
         polygon.add(new MarloCoord(3f, 3f));
         polygon.add(new MarloCoord(0f, 3f));
 
-        Polygon hole = new Polygon();
+        MarloPolygon hole = new MarloPolygon();
         hole.add(new MarloCoord(1f, 1f));
         hole.add(new MarloCoord(1f, 2f));
         hole.add(new MarloCoord(2f, 2f));
         polygon.addHoles(hole);
 
         Assert.assertEquals(polygon,
-                Polygon.fromGeoJson("{ \"type\":\"Polygon\", \"coordinates\": "
+                MarloPolygon.fromGeoJson("{ \"type\":\"MarloPolygon\", \"coordinates\": "
                         + "[[ [0,0],[0,3],[3,3],[3,0]],[[1,1],[2,1],[2,2] ]] }"));
     }
 
     @Test
     public void fromMultiPolyGeoJson() throws Exception {
-        Polygon polygon = new Polygon();
+        MarloPolygon polygon = new MarloPolygon();
         polygon.add(new MarloCoord(0f, 0f));
         polygon.add(new MarloCoord(3f, 0f));
         polygon.add(new MarloCoord(3f, 3f));
         polygon.add(new MarloCoord(0f, 3f));
 
-        Polygon hole = new Polygon();
+        MarloPolygon hole = new MarloPolygon();
         hole.add(new MarloCoord(1f, 1f));
         hole.add(new MarloCoord(1f, 2f));
         hole.add(new MarloCoord(2f, 2f));
@@ -132,25 +132,25 @@ public class PolygonTest {
 
 
         Assert.assertEquals(Arrays.asList(polygon),
-                Polygon.fromGeoJsonMultiPolygon("[[[ [0,0],[0,3],[3,3],[3,0]],[[1,1],[2,1],[2,2] ]]]"));
+                MarloPolygon.fromGeoJsonMultiPolygon("[[[ [0,0],[0,3],[3,3],[3,0]],[[1,1],[2,1],[2,2] ]]]"));
     }
 
     @Test
     public void fromMultiPolyGeoJsonMulti() throws Exception {
-        Polygon poly1 = new Polygon();
+        MarloPolygon poly1 = new MarloPolygon();
         poly1.add(40, 180);
         poly1.add(50, 180);
         poly1.add(50, 170);
         poly1.add(40, 170);
 
-        Polygon poly2 = new Polygon();
+        MarloPolygon poly2 = new MarloPolygon();
         poly2.add(40, -170);
         poly2.add(50, -170);
         poly2.add(50, -180);
         poly2.add(40, -180);
 
-        List<Polygon> expected = Arrays.asList(poly1, poly2);
-        List<Polygon> actual = Polygon.fromGeoJsonMultiPolygon("{\"type\": \"MultiPolygon\", \"coordinates\": "
+        List<MarloPolygon> expected = Arrays.asList(poly1, poly2);
+        List<MarloPolygon> actual = MarloPolygon.fromGeoJsonMultiPolygon("{\"type\": \"MultiPolygon\", \"coordinates\": "
                 + "[ [[[180.0, 40.0], [180.0, 50.0], [170.0, 50.0], [170.0, 40.0], [180.0, 40.0]]], "
                 + "[[[-170.0, 40.0], [-170.0, 50.0], [-180.0, 50.0], [-180.0, 40.0], [-170.0, 40.0]]] ] }");
         Assert.assertEquals(expected, actual);

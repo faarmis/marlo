@@ -27,12 +27,12 @@ import java.util.List;
 
 import th.or.nectec.marlo.exception.HoleInvalidException;
 import th.or.nectec.marlo.model.MarloCoord;
-import th.or.nectec.marlo.model.Polygon;
+import th.or.nectec.marlo.model.MarloPolygon;
 
 public class PolygonController {
 
-    private Deque<List<Polygon>> backupStack = new ArrayDeque<>();
-    private List<Polygon> polygons = new ArrayList<>();
+    private Deque<List<MarloPolygon>> backupStack = new ArrayDeque<>();
+    private List<MarloPolygon> polygons = new ArrayList<>();
     private PointInHoleValidator pointInBoundaryValidator = new PolygonUtils();
     private Presenter presenter;
 
@@ -41,7 +41,7 @@ public class PolygonController {
     }
 
     private void createPolygonObject() {
-        Polygon newPolygon = new Polygon();
+        MarloPolygon newPolygon = new MarloPolygon();
         polygons.add(newPolygon);
     }
 
@@ -54,7 +54,7 @@ public class PolygonController {
     }
 
     private void mark(MarloCoord coordinate, boolean external) {
-        Polygon focusPolygon = getFocusPolygon();
+        MarloPolygon focusPolygon = getFocusPolygon();
         if (coordinate.equals(focusPolygon.getLastCoordinate()))
             return;
 
@@ -72,9 +72,9 @@ public class PolygonController {
     }
 
     public void startNewPolygon() {
-        Polygon focusPolygon = getFocusPolygon();
+        MarloPolygon focusPolygon = getFocusPolygon();
         if (!focusPolygon.isValid())
-            throw new IllegalStateException("Should finish last Polygon before create new one");
+            throw new IllegalStateException("Should finish last MarloPolygon before create new one");
         if (focusPolygon.haveHole()) {
             if (!focusPolygon.getLastHole().isValid()) {
                 throw new IllegalStateException("Last hole should finish before add new polygon");
@@ -89,12 +89,12 @@ public class PolygonController {
             throw new HoleInvalidException();
     }
 
-    public Polygon getFocusPolygon() {
+    public MarloPolygon getFocusPolygon() {
         return polygons.get(polygons.size() - 1);
     }
 
     public void newHole() {
-        Polygon focusPolygon = getFocusPolygon();
+        MarloPolygon focusPolygon = getFocusPolygon();
         if (!focusPolygon.isValid())
             throw new IllegalStateException("Must be valid polygon before add hole");
         if (focusPolygon.haveHole()) {
@@ -102,16 +102,16 @@ public class PolygonController {
                 throw new IllegalStateException("Last hole should finish before add new hole");
             }
         }
-        focusPolygon.addHoles(new Polygon());
+        focusPolygon.addHoles(new MarloPolygon());
         presenter.prepareForNewHole();
     }
 
-    public List<Polygon> getPolygons() {
+    public List<MarloPolygon> getPolygons() {
         return polygons;
     }
 
     public boolean undo() {
-        Polygon focusPolygon = getFocusPolygon();
+        MarloPolygon focusPolygon = getFocusPolygon();
         if (polygons.size() == 1 && focusPolygon.isEmpty())
             return false;
 
@@ -123,9 +123,9 @@ public class PolygonController {
         return secondaryUndo(focusPolygon);
     }
 
-    private boolean secondaryUndo(Polygon focusPolygon) {
+    private boolean secondaryUndo(MarloPolygon focusPolygon) {
         if (focusPolygon.haveHole()) {
-            Polygon lastHole = focusPolygon.getLastHole();
+            MarloPolygon lastHole = focusPolygon.getLastHole();
             lastHole.pop();
             if (lastHole.isEmpty()) {
                 focusPolygon.removeHole(lastHole);
@@ -140,7 +140,7 @@ public class PolygonController {
         return true;
     }
 
-    public void restore(List<Polygon> polygons) {
+    public void restore(List<MarloPolygon> polygons) {
         for (int i = 0; i < polygons.size(); i++) {
             restore(polygons.get(i));
             if (i != polygons.size() - 1 && !polygons.get(i + 1).isEmpty())
@@ -148,19 +148,19 @@ public class PolygonController {
         }
     }
 
-    public void restore(@NonNull Polygon polygon) {
+    public void restore(@NonNull MarloPolygon polygon) {
         removeLastPointIfSameAsStart(polygon);
         for (MarloCoord point : polygon.getBoundary()) {
             mark(new MarloCoord(point), false);
         }
-        for (Polygon hole : polygon.getAllHoles()) {
+        for (MarloPolygon hole : polygon.getAllHoles()) {
             removeLastPointIfSameAsStart(hole);
             newHole();
             restore(hole); //Recursive
         }
     }
 
-    private void removeLastPointIfSameAsStart(Polygon polygon) {
+    private void removeLastPointIfSameAsStart(MarloPolygon polygon) {
         if (polygon.isEmpty())
             return;
         List<MarloCoord> boundary = polygon.getBoundary();
@@ -178,18 +178,18 @@ public class PolygonController {
         backupStack.push(clone(polygons));
     }
 
-    private List<Polygon> clone(List<Polygon> polygons) {
-        List<Polygon> clone = new ArrayList<>();
-        for (Polygon poly : polygons) {
-            clone.add(new Polygon(poly));
+    private List<MarloPolygon> clone(List<MarloPolygon> polygons) {
+        List<MarloPolygon> clone = new ArrayList<>();
+        for (MarloPolygon poly : polygons) {
+            clone.add(new MarloPolygon(poly));
         }
         return clone;
     }
 
     public void replaceWith(MarloCoord oldCoord, MarloCoord newCoord) {
         boolean replaced = false;
-        List<Polygon> newPoly = clone(polygons);
-        for (Polygon poly : newPoly) {
+        List<MarloPolygon> newPoly = clone(polygons);
+        for (MarloPolygon poly : newPoly) {
             if (poly.replace(oldCoord, newCoord)) {
                 replaced = true;
                 break;
@@ -200,7 +200,7 @@ public class PolygonController {
         }
     }
 
-    private void redrawPolygon(List<Polygon> polygonsToDraw) {
+    private void redrawPolygon(List<MarloPolygon> polygonsToDraw) {
         clear();
         restore(polygonsToDraw);
     }
@@ -219,8 +219,8 @@ public class PolygonController {
     }
 
     @Nullable
-    Polygon findPolygonByCoordinate(MarloCoord coord) {
-        for (Polygon poly : polygons) {
+    MarloPolygon findPolygonByCoordinate(MarloCoord coord) {
+        for (MarloPolygon poly : polygons) {
             if (poly.isCoordinateExist(coord))
                 return poly;
         }

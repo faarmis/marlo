@@ -18,8 +18,8 @@
 package th.or.nectec.marlo;
 
 import th.or.nectec.marlo.model.MarloCoord;
-import th.or.nectec.marlo.model.Polygon;
+import th.or.nectec.marlo.model.MarloPolygon;
 
 public interface PointInHoleValidator {
-    boolean inBoundary(Polygon boundary, MarloCoord point);
+    boolean inBoundary(MarloPolygon boundary, MarloCoord point);
 }

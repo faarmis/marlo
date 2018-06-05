@@ -21,7 +21,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import th.or.nectec.marlo.model.MarloCoord;
-import th.or.nectec.marlo.model.Polygon;
+import th.or.nectec.marlo.model.MarloPolygon;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
@@ -61,7 +61,7 @@ public class PolygonControllerRestoreTest {
 
     @Test
     public void testRestorePolygon() throws Exception {
-        Polygon polygon = new Polygon();
+        MarloPolygon polygon = new MarloPolygon();
         polygon.add(new MarloCoord(0f, 0f));
         polygon.add(new MarloCoord(3f, 0f));
         polygon.add(new MarloCoord(3f, 3f));
@@ -74,13 +74,13 @@ public class PolygonControllerRestoreTest {
 
     @Test
     public void testRestorePolygonWithHole() throws Exception {
-        Polygon polygon = new Polygon();
+        MarloPolygon polygon = new MarloPolygon();
         polygon.add(new MarloCoord(0f, 0f));
         polygon.add(new MarloCoord(3f, 0f));
         polygon.add(new MarloCoord(3f, 3f));
         polygon.add(new MarloCoord(0f, 3f));
 
-        Polygon hole = new Polygon();
+        MarloPolygon hole = new MarloPolygon();
         hole.add(new MarloCoord(2f, 2f));
         hole.add(new MarloCoord(2f, 3f));
         hole.add(new MarloCoord(1f, 2f));
@@ -95,7 +95,7 @@ public class PolygonControllerRestoreTest {
 
     @Test
     public void polygonInControllerNotSameInstanceWithRestorePolygon() throws Exception {
-        Polygon polygon = new Polygon();
+        MarloPolygon polygon = new MarloPolygon();
         polygon.add(new MarloCoord(0f, 0f));
         polygon.add(new MarloCoord(3f, 0f));
         polygon.add(new MarloCoord(3f, 3f));
