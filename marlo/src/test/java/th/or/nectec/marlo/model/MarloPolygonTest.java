@@ -150,7 +150,7 @@ public class MarloPolygonTest {
         poly2.add(40, -180);
 
         List<MarloPolygon> expected = Arrays.asList(poly1, poly2);
-        List<MarloPolygon> actual = MarloPolygon.fromGeoJsonMultiPolygon("{\"type\": \"MultiPolygon\", \"coordinates\": "
+        List<MarloPolygon> actual = MarloPolygon.fromGeoJsonMultiPolygon("{\"type\":\"MultiPolygon\",\"coordinates\":"
                 + "[ [[[180.0, 40.0], [180.0, 50.0], [170.0, 50.0], [170.0, 40.0], [180.0, 40.0]]], "
                 + "[[[-170.0, 40.0], [-170.0, 50.0], [-180.0, 50.0], [-180.0, 40.0], [-170.0, 40.0]]] ] }");
         Assert.assertEquals(expected, actual);
