@@ -14,7 +14,8 @@ Create awesome android application with mark location feature on google's map by
 - Mark with sound effect (you can also mute it)
 - Support data flow with GeoJson or Marlo's model
 - Build-in drawing tools that can styles as you want also can padding top or Bottom
-- Handle Location Permission and Enable Location feature if not
+- Enable Location feature if not
+- Auto start maps at current location or specify location by lazy
 - `MarloFragment` is open for extension 
 
 ## Download

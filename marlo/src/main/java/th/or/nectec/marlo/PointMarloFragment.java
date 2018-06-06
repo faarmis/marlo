@@ -33,25 +33,8 @@ import th.or.nectec.marlo.model.MarloCoord;
 public class PointMarloFragment extends MarloFragment {
 
     private Deque<Marker> markers = new ArrayDeque<>();
-
+    private OnPointChanged onPointChange;
     private int maxPoint = 1;
-
-    public void setMaxPoint(int maxPoint) {
-        this.maxPoint = maxPoint;
-        Deque<Marker> markers = new ArrayDeque<>(maxPoint);
-        boolean full = false;
-        for (Marker marker : this.markers) {
-            if (!full) {
-                markers.push(marker);
-                if (markers.size() == maxPoint) {
-                    full = true;
-                }
-            } else {
-                marker.remove();
-            }
-        }
-        this.markers = markers;
-    }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -77,6 +60,8 @@ public class PointMarloFragment extends MarloFragment {
         if (markers.size() == maxPoint) markers.removeLast().remove();
         Marker marker = googleMap.addMarker(markOptFactory.build(this, markPoint));
         markers.push(marker);
+        if (onPointChange != null)
+            onPointChange.onChanged(new ArrayList<>(markers));
     }
 
     @Override
@@ -91,12 +76,32 @@ public class PointMarloFragment extends MarloFragment {
         findViewBy(R.id.marlo_undo).setVisibility(View.VISIBLE);
     }
 
+    @Override
     public boolean undo() {
         if (!markers.isEmpty()) {
             markers.pop().remove();
+            if (onPointChange != null)
+                onPointChange.onChanged(new ArrayList<>(markers));
             return true;
         }
         return false;
+    }
+
+    public void setMaxPoint(int maxPoint) {
+        this.maxPoint = maxPoint;
+        Deque<Marker> markers = new ArrayDeque<>(maxPoint);
+        boolean full = false;
+        for (Marker marker : this.markers) {
+            if (!full) {
+                markers.push(marker);
+                if (markers.size() == maxPoint) {
+                    full = true;
+                }
+            } else {
+                marker.remove();
+            }
+        }
+        this.markers = markers;
     }
 
     public List<MarloCoord> getCoordinates() {
@@ -107,4 +112,11 @@ public class PointMarloFragment extends MarloFragment {
         return coordinates;
     }
 
+    public void setOnPointChange(OnPointChanged onPointChange) {
+        this.onPointChange = onPointChange;
+    }
+
+    public interface OnPointChanged {
+        void onChanged(List<Marker> marker);
+    }
 }

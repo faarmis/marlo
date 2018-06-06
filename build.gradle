@@ -27,6 +27,8 @@ version = { ->
 }.call()
 
 buildscript {
+    ext.kotlin_version = '1.2.41'
+
     repositories {
         jcenter()
         google()
@@ -34,6 +36,7 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:3.1.2'
         classpath "org.stoyicker.android-check:plugin:2.188"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
 

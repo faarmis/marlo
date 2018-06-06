@@ -115,7 +115,7 @@ public class PolygonActivity extends AppCompatActivity {
         marlo.useDefaultToolsMenu();
 
 
-        new TedPermission(this)
+        TedPermission.with(this)
                 .setPermissionListener(permissionlistener)
                 .setDeniedMessage("If you reject permission,you can not use this service\n\n"
                         + "Please turn on permissions at [Setting] > [Permission]")

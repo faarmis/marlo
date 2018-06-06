@@ -16,6 +16,7 @@
  */
 
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion rootProject.targetSdkVersion
@@ -64,5 +65,6 @@ dependencies {
     implementation project(':marlo')
     implementation "com.android.support:appcompat-v7:$supportLibVersion"
     implementation "com.google.android.gms:play-services-maps:$playServicesVersion" exclude group: 'com.android.support'
-    implementation 'com.github.ParkSangGwon:TedPermission:v1.0.6'
+    implementation 'gun0912.ted:tedpermission:2.2.0'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }

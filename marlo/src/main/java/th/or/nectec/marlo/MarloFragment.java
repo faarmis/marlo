@@ -36,6 +36,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
 
+import th.or.nectec.marlo.model.MarloCoord;
 import th.or.nectec.marlo.option.DefaultMarkerOptionFactory;
 import th.or.nectec.marlo.option.MarkerOptionFactory;
 
@@ -61,13 +62,17 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
     };
 
     protected boolean mute = false;
-    private boolean myLocationEnable;
+    private boolean isMyLocationEnabled;
     private CompoundButton mapTypeButton;
 
     protected View viewFinder;
     protected View myLocation;
     protected int paddingTop;
     protected int paddingBottom;
+    private LatLng startLocation;
+    private float startZoom = 14.0f;
+    private boolean isStartAtCurrentLocation = false;
+    private OnMapReadyCallback marloMapsReadyListener;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -97,9 +102,12 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
             ACCESS_COARSE_LOCATION,
             ACCESS_FINE_LOCATION})
     public void enableMyLocation() throws SecurityException {
-        myLocationEnable = true;
+        isMyLocationEnabled = true;
         if (googleMap != null) {
             googleMap.setMyLocationEnabled(true);
+            if (isStartAtCurrentLocation && isMyLocationEnabled) {
+                moveToMyLocation();
+            }
         }
     }
 
@@ -120,7 +128,7 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
     private void updateMyLocationVisibility() {
         View myLocationButton = findViewBy(R.id.marlo_gps);
         if (myLocationButton != null) {
-            myLocationButton.setVisibility(myLocationEnable ? View.VISIBLE : View.GONE);
+            myLocationButton.setVisibility(isMyLocationEnabled ? View.VISIBLE : View.GONE);
         }
     }
 
@@ -142,13 +150,21 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
         uiSettings.setMyLocationButtonEnabled(false);
         uiSettings.setCompassEnabled(true);
         try {
-            googleMap.setMyLocationEnabled(myLocationEnable);
+            googleMap.setMyLocationEnabled(isMyLocationEnabled);
+            if (isMyLocationEnabled && isStartAtCurrentLocation)
+                moveToMyLocation();
         } catch (SecurityException se) {
             if (BuildConfig.DEBUG) Log.e(TAG, "onMapReady", se);
         }
 
         mapTypeButton = ViewUtils.addMapTypeButton(this);
         updateMyLocationVisibility();
+
+        if (startLocation != null)
+            moveTo(startLocation, startZoom);
+
+        if (marloMapsReadyListener != null)
+            marloMapsReadyListener.onMapReady(googleMap);
     }
 
     /**
@@ -187,7 +203,7 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
             ACCESS_COARSE_LOCATION,
             ACCESS_FINE_LOCATION})
     public void moveToMyLocation() {
-        if (!myLocationEnable)
+        if (!isMyLocationEnabled)
             throw new IllegalStateException("Must enable myLocation feature before");
 
         PlayLocationService service = new PlayLocationService(getActivity());
@@ -200,6 +216,10 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
                 }
             }
         });
+    }
+
+    public boolean isMyLocationEnabled() {
+        return isMyLocationEnabled;
     }
 
     public abstract void hideToolsMenu();
@@ -226,11 +246,52 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
         this.markOptFactory = markerOptionFactory;
     }
 
-    public void setPaddingTop(int padding) {
-        paddingTop = padding;
+    public void setPaddingTop(int paddingTop) {
+        this.paddingTop = paddingTop;
     }
 
-    public void setPaddingBottom(int padding) {
-        paddingBottom = padding;
+    public void setPaddingBottom(int paddingBottom) {
+        this.paddingBottom = paddingBottom;
+    }
+
+    public GoogleMap getGoogleMap() {
+        return googleMap;
+    }
+
+    public void onMapReady(OnMapReadyCallback listener) {
+        marloMapsReadyListener = listener;
+    }
+
+    @SuppressLint("MissingPermission")
+    public void setStartAtCurrentLocation(boolean startAtCurrentLocation) {
+        isStartAtCurrentLocation = startAtCurrentLocation;
+        if (googleMap != null && isStartAtCurrentLocation && isMyLocationEnabled) {
+            moveToMyLocation();
+        }
+    }
+
+    public void setStartLocation(LatLng latLng, float zoom) {
+        startLocation = latLng;
+        startZoom = zoom;
+        if (googleMap != null) {
+            moveTo(latLng, zoom);
+        }
+    }
+
+    public void setStartLocation(LatLng latLng) {
+        setStartLocation(latLng, startZoom);
+    }
+
+    public void setStartLocation(MarloCoord coord, float zoom) {
+        setStartLocation(coord.toLatLng(), zoom);
+    }
+
+    public void setStartLocation(MarloCoord coord) {
+        setStartLocation(coord.toLatLng(), startZoom);
+    }
+
+    public void moveTo(LatLng latLng, float zoom) {
+        if (googleMap != null)
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
     }
 }
