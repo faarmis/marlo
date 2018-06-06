@@ -65,7 +65,6 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
     protected boolean mute = false;
     private boolean isMyLocationEnabled;
     private CompoundButton mapTypeButton;
-
     protected View viewFinder;
     protected View myLocation;
     protected int paddingTop;
@@ -73,9 +72,8 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
     private LatLng startLocation;
     private float startZoom = 14.0f;
     private boolean isStartAtCurrentLocation = false;
+    private boolean isFirstStart = true;
     private OnMapReadyCallback marloMapsReadyListener;
-
-    boolean isFirstStart = true;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
