@@ -22,7 +22,6 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
-import com.google.android.gms.maps.model.LatLng
 import th.or.nectec.marlo.PointMarloFragment
 
 class MultiPointActivity : AppCompatActivity() {
@@ -44,10 +43,8 @@ class MultiPointActivity : AppCompatActivity() {
             }
         }.check()
 
-        if (savedInstanceState == null) {
-//          marlo.setStartAtCurrentLocation(true)
-            marlo.setStartLocation(LatLng(14.07716, 100.601103), 15.0f)
-        }
+        marlo.setStartAtCurrentLocation(true)
+//        marlo.setStartLocation(LatLng(14.07716, 100.601103), 15.0f)
         marlo.setMaxPoint(5)
         marlo.setOnPointChange {
             Toast.makeText(this@MultiPointActivity, "${it.size}", Toast.LENGTH_SHORT).show()

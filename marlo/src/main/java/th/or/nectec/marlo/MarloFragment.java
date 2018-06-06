@@ -28,6 +28,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -74,9 +75,12 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
     private boolean isStartAtCurrentLocation = false;
     private OnMapReadyCallback marloMapsReadyListener;
 
+    boolean isFirstStart = true;
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        isFirstStart = savedInstanceState == null;
         getMapAsync(this);
 
         viewFinder = ViewUtils.addViewFinder(this);
@@ -105,7 +109,7 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
         isMyLocationEnabled = true;
         if (googleMap != null) {
             googleMap.setMyLocationEnabled(true);
-            if (isStartAtCurrentLocation && isMyLocationEnabled) {
+            if (isStartAtCurrentLocation && isMyLocationEnabled && isFirstStart) {
                 moveToMyLocation();
             }
         }
@@ -151,7 +155,7 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
         uiSettings.setCompassEnabled(true);
         try {
             googleMap.setMyLocationEnabled(isMyLocationEnabled);
-            if (isMyLocationEnabled && isStartAtCurrentLocation)
+            if (isMyLocationEnabled && isStartAtCurrentLocation && isFirstStart)
                 moveToMyLocation();
         } catch (SecurityException se) {
             if (BuildConfig.DEBUG) Log.e(TAG, "onMapReady", se);
@@ -160,7 +164,7 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
         mapTypeButton = ViewUtils.addMapTypeButton(this);
         updateMyLocationVisibility();
 
-        if (startLocation != null)
+        if (startLocation != null && isFirstStart)
             moveTo(startLocation, startZoom);
 
         if (marloMapsReadyListener != null)
@@ -265,15 +269,16 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
     @SuppressLint("MissingPermission")
     public void setStartAtCurrentLocation(boolean startAtCurrentLocation) {
         isStartAtCurrentLocation = startAtCurrentLocation;
-        if (googleMap != null && isStartAtCurrentLocation && isMyLocationEnabled) {
+        if (googleMap != null && isStartAtCurrentLocation && isMyLocationEnabled && isFirstStart) {
             moveToMyLocation();
+            Toast.makeText(getContext(), "First Start", Toast.LENGTH_SHORT).show();
         }
     }
 
     public void setStartLocation(LatLng latLng, float zoom) {
         startLocation = latLng;
         startZoom = zoom;
-        if (googleMap != null) {
+        if (googleMap != null && isFirstStart) {
             moveTo(latLng, zoom);
         }
     }
