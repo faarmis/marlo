@@ -38,27 +38,9 @@ dependencies {
 }
 ```
 
-## Code Quality
-This project use quality control by unit-test ui-test and code analysis tools.
-
-Static code analysis tools
-
-- [Checkstyle](http://checkstyle.sourceforge.net/)
-- [PMD](https://pmd.github.io/)
-- [Findbugs](http://findbugs.sourceforge.net/)
-- [Android Check](https://github.com/noveogroup/android-check)
-
-check for config of those tools at [Java Quality Config](https://github.com/Blazei/java-quality-config)
-
 ## Library User
 
 - [FAARMis](https://play.google.com/store/apps/details?id=th.in.faarmis)
-
-## Developer
-- [Blast Piruin](https://github.com/piruin)
-- [N. Choatravee](https://github.com/chncs23)
-- [yahfard007](https://github.com/yahfard007)
-
 
 ## License
 
