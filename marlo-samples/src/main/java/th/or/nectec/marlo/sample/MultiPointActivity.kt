@@ -44,6 +44,7 @@ class MultiPointActivity : AppCompatActivity() {
         }.check()
 
         marlo.setStartAtCurrentLocation(true)
+        marlo.setPaddingTop(180)
 //        marlo.setStartLocation(LatLng(14.07716, 100.601103), 15.0f)
         marlo.setMaxPoint(5)
         marlo.setOnPointChange {

@@ -53,7 +53,9 @@ final class ViewUtils {
         if (rootView != null) {
             int size = fragment.getResources().getDimensionPixelOffset(R.dimen.marlo_view_finder_size);
             LayoutParams params = new LayoutParams(size, size, Gravity.CENTER);
-            params.setMargins(0, fragment.paddingTop, 0, fragment.paddingBottom);
+            int paddingTop = fragment.paddingTop / 2;
+            int paddingBottom = fragment.paddingBottom / 2;
+            params.setMargins(0, paddingTop, 0, paddingBottom);
             rootView.addView(viewFinder, params);
         }
         return viewFinder;
