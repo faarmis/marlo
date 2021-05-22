@@ -17,14 +17,7 @@
 
 group = "th.or.nectec.android"
 description = 'Helper to create awesome android app with location marking feature on google\'s map.'
-version = { ->
-    def stdout = new ByteArrayOutputStream()
-    exec {
-        commandLine 'git', 'describe', '--tags'
-        standardOutput = stdout
-    }
-    return stdout.toString().trim()
-}.call()
+version = '0.5.3'
 
 buildscript {
     ext.kotlin_version = '1.2.41'
@@ -66,6 +59,6 @@ ext {
 
 task wrapper(type: Wrapper) {
     description 'Creates the gradle wrapper.'
-    gradleVersion '4.6'
+    gradleVersion '4.8.1'
 }
 
