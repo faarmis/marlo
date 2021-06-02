@@ -20,23 +20,23 @@ description = 'Helper to create awesome android app with location marking featur
 version = '0.5.3'
 
 buildscript {
-    ext.kotlin_version = '1.2.41'
+    ext.kotlin_version = '1.4.10'
 
     repositories {
-        jcenter()
         google()
+        mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.1.2'
-        classpath "org.stoyicker.android-check:plugin:2.188"
+        classpath 'com.android.tools.build:gradle:3.6.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
 
 allprojects {
     repositories {
-        jcenter()
         google()
+        mavenCentral()
+        jcenter()
         maven { url "https://jitpack.io" }
     }
 }
@@ -44,10 +44,10 @@ allprojects {
 ext {
     githubRepo = 'nectec-opensource/marlo'
 
-    javaVersion = JavaVersion.VERSION_1_7
+    javaVersion = JavaVersion.VERSION_1_8
 
     minSdkVersion = 19
-    targetSdkVersion = 27
+    targetSdkVersion = 28
 
     supportLibVersion = "27.1.1"
     playServicesVersion = "15.0.1"
@@ -57,8 +57,4 @@ ext {
     mockitoVersion = "1.10.19"
 }
 
-task wrapper(type: Wrapper) {
-    description 'Creates the gradle wrapper.'
-    gradleVersion '4.8.1'
-}
 
