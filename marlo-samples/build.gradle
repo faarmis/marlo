@@ -64,7 +64,7 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation project(':marlo')
     implementation "com.android.support:appcompat-v7:$supportLibVersion"
-    implementation "com.google.android.gms:play-services-maps:$playServicesVersion" exclude group: 'com.android.support'
+    implementation "com.google.android.gms:play-services-maps:16.0.0" exclude group: 'com.android.support'
     implementation 'gun0912.ted:tedpermission:2.2.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
