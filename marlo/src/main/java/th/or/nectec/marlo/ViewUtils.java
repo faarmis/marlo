@@ -19,8 +19,8 @@ package th.or.nectec.marlo;
 
 import android.annotation.SuppressLint;
 import android.graphics.Color;
-import android.support.annotation.DrawableRes;
-import android.support.design.widget.FloatingActionButton;
+import androidx.annotation.DrawableRes;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -91,7 +91,7 @@ final class ViewUtils {
         View layout = fragment.getActivity().getLayoutInflater().inflate(R.layout.marlo_my_location, null);
         FloatingActionButton fab = layout.findViewById(R.id.marlo_gps);
         fab.setOnClickListener(fragment);
-        fab.setVisibility(View.GONE);
+        fab.hide();
 
         ViewGroup rootView = (ViewGroup) fragment.getView();
         if (rootView != null) {

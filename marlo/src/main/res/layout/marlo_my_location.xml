@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:paddingTop="@dimen/marlo_fab_vertical_margin">
 
-    <android.support.design.widget.FloatingActionButton
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@id/marlo_gps"
         style="@style/marloFab.tools"
         android:layout_width="wrap_content"
