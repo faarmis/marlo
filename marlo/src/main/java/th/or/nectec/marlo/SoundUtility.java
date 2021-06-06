@@ -19,7 +19,7 @@ package th.or.nectec.marlo;
 
 import android.content.Context;
 import android.media.MediaPlayer;
-import android.support.annotation.RawRes;
+import androidx.annotation.RawRes;
 
 final class SoundUtility {
 
