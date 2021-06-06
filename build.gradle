@@ -49,10 +49,9 @@ ext {
     minSdkVersion = 19
     targetSdkVersion = 28
 
-    supportLibVersion = "27.1.1"
     androidMapUtilsVersion = "0.5"
 
-    junitVersion = "4.12"
+    junitVersion = "4.13.2"
     mockitoVersion = "1.10.19"
 }
 
