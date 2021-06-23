@@ -18,16 +18,17 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light">
+    <style name="AppTheme" parent="Theme.AppCompat">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">#ff5f5d</item>
-        <item name="colorPrimaryDark">#ff4545</item>
-        <item name="colorAccent">#30c9ff</item>
+        <item name="colorPrimary">#26C6DA</item>
+        <item name="colorPrimaryDark">#0097A7</item>
+        <item name="colorAccent">#FF8F00</item>
     </style>
 
+    <!-- override built-in FAB style  -->
     <style name="marloFab.tools">
-        <item name="android:backgroundTint" tools:targetApi="lollipop">#000000</item>
-        <item name="backgroundTint">#000000</item>
+        <item name="android:backgroundTint" tools:targetApi="lollipop">#FF8F00</item>
+        <item name="backgroundTint">#FF8F00</item>
     </style>
 
 </resources>

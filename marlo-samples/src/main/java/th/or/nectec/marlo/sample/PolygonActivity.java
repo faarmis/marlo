@@ -83,8 +83,8 @@ public class PolygonActivity extends AppCompatActivity {
             @Override
             public PolygonOptions build(PolygonMarloFragment fragment) {
                 return new PolygonOptions()
-                        .fillColor(Color.argb(50, 255, 50, 50))
-                        .strokeColor(Color.RED)
+                        .fillColor(Color.argb(100, 0, 50, 50))
+                        .strokeColor(Color.CYAN)
                         .strokeWidth(5);
             }
         });
@@ -94,7 +94,7 @@ public class PolygonActivity extends AppCompatActivity {
                 return new MarkerOptions()
                     .title("Marlo")
                     .snippet(position.latitude + ", " + position.longitude)
-                    .icon(defaultMarker(BitmapDescriptorFactory.HUE_RED))
+                    .icon(defaultMarker(BitmapDescriptorFactory.HUE_ORANGE))
                     .draggable(true)
                     .position(position);
             }
@@ -107,7 +107,7 @@ public class PolygonActivity extends AppCompatActivity {
                     .alpha(0.75f)
                     .draggable(true)
                     .snippet(position.latitude + ", " + position.longitude)
-                    .icon(defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
+                    .icon(defaultMarker(BitmapDescriptorFactory.HUE_CYAN));
             }
         });
         marlo.setActivity(this);
