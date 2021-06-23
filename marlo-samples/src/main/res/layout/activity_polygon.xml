@@ -28,6 +28,7 @@
         android:id="@+id/marker_count"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:visibility="gone"
         tools:text="@string/app_name" />
 
     <Button
@@ -35,6 +36,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="hide/show"
+        android:visibility="gone"
         android:layout_marginTop="24dp"
         android:onClick="toggleTools" />
+
+    <Button
+        android:id="@+id/overlay_toggle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Forest Map"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/marlo_screen_vertical_margin"
+        android:onClick="toggleOverlay" />
 </merge>

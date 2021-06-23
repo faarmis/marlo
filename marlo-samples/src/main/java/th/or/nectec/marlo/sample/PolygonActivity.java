@@ -42,6 +42,7 @@ import th.or.nectec.marlo.model.MarloCoord;
 import th.or.nectec.marlo.model.MarloPolygon;
 import th.or.nectec.marlo.option.MarkerOptionFactory;
 import th.or.nectec.marlo.option.PolygonOptionFactory;
+import th.or.nectec.marlo.tile.WMSTileProvider;
 
 import static com.google.android.gms.maps.model.BitmapDescriptorFactory.defaultMarker;
 
@@ -74,7 +75,7 @@ public class PolygonActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_polygon);
-        markerCount = (TextView) findViewById(R.id.marker_count);
+        markerCount = findViewById(R.id.marker_count);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
@@ -132,13 +133,29 @@ public class PolygonActivity extends AppCompatActivity {
     }
 
     boolean isShowTools = true;
+    boolean isTileProviderConfigured = false;
+
 
     public void toggleTools(View view) {
-        if (isShowTools)
+        if (!isTileProviderConfigured) {
+            marlo.setTileProvider(WMSTileProvider.FOREST);
+        }
+        marlo.setTileEnabled(!marlo.isTileEnabled());
+
+        if (isShowTools) {
             marlo.hideToolsMenu();
-        else
+        }
+        else {
             marlo.showToolsMenu();
+        }
         isShowTools = !isShowTools;
+    }
+
+    public void toggleOverlay(View view) {
+        if (!isTileProviderConfigured) {
+            marlo.setTileProvider(WMSTileProvider.FOREST);
+        }
+        marlo.setTileEnabled(!marlo.isTileEnabled());
     }
 
     public static class CustomMarloFragment extends PolygonMarloFragment {

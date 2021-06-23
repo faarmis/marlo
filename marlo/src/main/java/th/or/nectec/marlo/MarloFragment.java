@@ -37,9 +37,13 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
 
+import com.google.android.gms.maps.model.TileOverlay;
+import com.google.android.gms.maps.model.TileOverlayOptions;
+import com.google.android.gms.maps.model.UrlTileProvider;
 import th.or.nectec.marlo.model.MarloCoord;
 import th.or.nectec.marlo.option.DefaultMarkerOptionFactory;
 import th.or.nectec.marlo.option.MarkerOptionFactory;
+import th.or.nectec.marlo.tile.WMSTileProvider;
 
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
@@ -296,5 +300,32 @@ public abstract class MarloFragment extends SupportMapFragment implements OnMapR
     public void moveTo(LatLng latLng, float zoom) {
         if (googleMap != null)
             googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
+    }
+
+    private WMSTileProvider tileProvider = null;
+    private TileOverlay tileOverlay = null;
+    private boolean tileEnabled = false;
+
+    public void setTileProvider(WMSTileProvider tileProvider) {
+        this.tileProvider = tileProvider;
+    }
+
+    public boolean isTileEnabled() {
+        return tileEnabled;
+    }
+
+    public void setTileEnabled(boolean enabled) {
+        if (tileProvider == null)
+            throw new IllegalStateException("Must set tile provider before");
+
+        if (!this.tileEnabled && enabled) {
+            tileOverlay = googleMap.addTileOverlay(tileProvider.toOverlayOption().fadeIn(false).zIndex(1.2f));
+            this.tileEnabled = true;
+        }
+        if (this.tileEnabled && !enabled) {
+            tileOverlay.remove();
+            this.tileEnabled = false;
+        }
+
     }
 }

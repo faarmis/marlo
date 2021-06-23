@@ -16,9 +16,9 @@
   -->
 
 <resources>
-    <string name="app_name">Marlo</string>
+    <string name="app_name">FAARMis Maps</string>
 
-    <string name="title_main_acitivty">Marlo</string>
+    <string name="title_main_acitivty">FAARMis Maps</string>
     <string name="title_polygon_activity">Polygon</string>
     <string name="title_multi_point_activity">Multi Point</string>
 </resources>
